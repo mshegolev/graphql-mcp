@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: ready_to_plan
-last_updated: "2026-06-05T22:36:10Z"
+status: complete
+last_updated: "2026-06-05T22:44:19Z"
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 9
-  completed_plans: 8
-  percent: 80
+  completed_plans: 9
+  percent: 100
 ---
 
 # graphql-mcp — Project State
@@ -29,15 +29,15 @@ progress:
 
 ## Current Position
 
-Phase: 04 (Ship) — EXECUTING
-Plan: 2 of 2
-**Current phase**: Phase 4 — Ship — IN PROGRESS
-**Current plan**: 04-01-PLAN.md ✅ complete — Fix ruff violations + verify test suite green
-**Status**: Phase 4 plan 1 complete. All ruff violations fixed (6 total: 4×TC001 + 1×UP035 + 1×TC003). 128 tests pass green. Plan 2 (CI + README + Glama) next.
+Phase: 04 (Ship) — COMPLETE
+Plan: 2 of 2 ✅
+**Current phase**: Phase 4 — Ship — COMPLETE
+**Current plan**: 04-02-PLAN.md ✅ complete — CI workflow + README + Glama files
+**Status**: All 4 phases complete. All 9 plans executed. CI pipeline with cibuildwheel full platform matrix, comprehensive README, and Glama publication files created. 10/10 requirements satisfied.
 **Phase goal**: The brick is fully tested, CI produces installable wheels for the complete platform matrix, and the package is discoverable on Glama.
 
 ```
-Progress: [████████████████░░░░] 80% (Phase 4/4, Plan 1/2 ✅)
+Progress: [████████████████████] 100% (Phase 4/4, Plan 2/2 ✅)
 ```
 
 ---
@@ -47,11 +47,11 @@ Progress: [████████████████░░░░] 80% (Ph
 | Metric | Value |
 |--------|-------|
 | Phases total | 4 |
-| Phases complete | 3 |
+| Phases complete | 4 |
 | Requirements total | 10 |
-| Requirements complete | 9 |
-| Plans written | 7 |
-| Plans complete | 8 |
+| Requirements complete | 10 |
+| Plans written | 9 |
+| Plans complete | 9 |
 
 ---
 
@@ -118,12 +118,14 @@ None currently.
 | 2026-06-05 | set_client() public API in rest.py | Explicit test injection without monkeypatching globals |
 | 2026-06-05 | MCP tools as module-level functions | FastMCP @mcp.tool() decorator idiom; matches library pattern |
 | 2026-06-05 | TC003 Sequence also needs TYPE_CHECKING guard | Sequence is annotation-only; from __future__ annotations makes it safe |
+| 2026-06-05 | Fallback-install tests wheel not sdist | maturin requires Rust; wheel embeds native ext; orjson fallback handles runtime |
+| 2026-06-05 | OWNER placeholder in repo URLs | User replaces with actual GitHub org before publishing |
 
 ---
 
 ## Session Continuity
 
-**Last session**: 2026-06-05 — Executed 04-01-PLAN.md (Fix ruff violations + verify test suite green)
-**Stopped at**: Completed 04-01-PLAN.md
-**Next action**: Execute 04-02-PLAN.md — CI workflow (cibuildwheel full matrix) + README + Glama files
-**Context needed for next session**: Phase 1-3 complete. Phase 4 plan 1 done: ruff clean, 128 tests green. GQL-10 CI + publish portion remains in 04-02.
+**Last session**: 2026-06-05 — Executed 04-02-PLAN.md (CI workflow + README + Glama files)
+**Stopped at**: Completed 04-02-PLAN.md — All phases complete
+**Next action**: Milestone complete — project ready for PyPI publish and Glama submission
+**Context needed for next session**: All 4 phases, 9 plans, 10 requirements complete. Replace OWNER placeholder in README/glama.json with actual GitHub org. Push to GitHub and verify CI passes.

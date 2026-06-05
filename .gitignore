@@ -24,3 +24,6 @@ venv/
 
 # Environment
 .env
+
+# Lock files
+uv.lock

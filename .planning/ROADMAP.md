@@ -13,7 +13,7 @@
 - [x] **Phase 1: Foundation & Schema Sources** — Hexagonal skeleton + schema cascade (domain/ports/adapters layout, http transport, GitLab→introspection→`_service{sdl}`→file) ✅
 - [x] **Phase 2: Operations, Errors & Federation** — All 6 operations live in every face; 3-class error typing; mutation-guard; federation ownership ✅
 - [x] **Phase 3: Native & Faces** — pyo3 JsonCodec crate + orjson fallback with parity test; all inbound adapters (lib/mcp_stdio/FastAPI/CLI) ✅
-- [ ] **Phase 4: Ship** — pytest suite + bench; CI wheel matrix; README + Glama publish
+- [x] **Phase 4: Ship** — pytest suite + bench; CI wheel matrix; README + Glama publish ✅
 
 ---
 
@@ -122,13 +122,13 @@ Plans:
 4. `pip install dist/graphql_mcp-*.whl` on a clean Python 3.11 environment (no Rust toolchain) succeeds and `from graphql_mcp import GraphQLClient` imports without error (orjson fallback path).
 5. The package is listed and passes validation on Glama; `server.json` and `glama.json` are present and reference the correct PyPI package name.
 
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 Plans:
 **Wave 1** *(parallel — no file overlap)*
 
 - [x] 04-01-PLAN.md — Fix ruff violations + verify full test suite green ✅
-- [ ] 04-02-PLAN.md — CI workflow (cibuildwheel full matrix) + README + Glama files
+- [x] 04-02-PLAN.md — CI workflow (cibuildwheel full matrix) + README + Glama files ✅
 
 **UI hint**: no
 
@@ -141,4 +141,4 @@ Plans:
 | 1. Foundation & Schema Sources | 3/3 | Complete    | 2026-06-05 |
 | 2. Operations, Errors & Federation | 2/2 | Complete    | 2026-06-05 |
 | 3. Native & Faces | 2/2 | Complete    | 2026-06-05 |
-| 4. Ship | 1/2 | In Progress | - |
+| 4. Ship | 2/2 | Complete | 2026-06-05 |
