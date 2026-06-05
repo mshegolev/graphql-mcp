@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-06-05T22:05:49.000Z"
+last_updated: "2026-06-05T22:16:00.000Z"
 progress:
   total_phases: 4
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 7
-  completed_plans: 6
-  percent: 64
+  completed_plans: 7
+  percent: 75
 ---
 
 # graphql-mcp — Project State
@@ -29,15 +29,15 @@ progress:
 
 ## Current Position
 
-Phase: 03 (Native & Faces) — EXECUTING
-Plan: 2 of 2
-**Current phase**: Phase 3 — Native & Faces — IN PROGRESS
-**Current plan**: 03-01-PLAN.md ✅ complete — Rust pyo3 JsonCodec + OrjsonCodec + parity tests
-**Status**: Plan 1 of Phase 3 complete. Native codec builds, both codecs at byte-parity, 105 tests passing. Plan 2 (inbound adapters) next.
-**Phase goal**: The pyo3 JsonCodec crate builds via maturin, the orjson fallback passes the same parity test, and all four inbound adapters expose the full operation set.
+Phase: 03 (Native & Faces) — COMPLETE ✅
+Plan: 2 of 2 ✅
+**Current phase**: Phase 3 — Native & Faces — COMPLETE ✅
+**Current plan**: 03-02-PLAN.md ✅ complete — FastAPI REST + MCP stdio + CLI inbound adapters
+**Status**: Phase 3 complete. All inbound adapters (REST, MCP stdio, CLI) live with 128 tests passing. Phase 4 (Ship) next.
+**Phase goal**: The pyo3 JsonCodec crate builds via maturin, the orjson fallback passes the same parity test, and all four inbound adapters expose the full operation set. ✅ ACHIEVED
 
 ```
-Progress: [████████████░░░░░░░░] 64% (Phase 3/4, Plan 1/2 ✅)
+Progress: [███████████████░░░░░] 75% (Phase 3/4 ✅, Plan 2/2 ✅)
 ```
 
 ---
@@ -47,11 +47,11 @@ Progress: [████████████░░░░░░░░] 64% (Ph
 | Metric | Value |
 |--------|-------|
 | Phases total | 4 |
-| Phases complete | 2 |
+| Phases complete | 3 |
 | Requirements total | 10 |
 | Requirements complete | 9 |
 | Plans written | 7 |
-| Plans complete | 6 |
+| Plans complete | 7 |
 
 ---
 
@@ -113,12 +113,16 @@ None currently.
 | 2026-06-05 | Upgraded pyo3 0.25 → 0.28 for pythonize compatibility | pythonize 0.28 (latest) requires pyo3 0.28; no compatible version for 0.25 |
 | 2026-06-05 | pythonize for Python↔serde conversion | Direct object conversion; avoids double-serialization |
 | 2026-06-05 | TYPE_CHECKING for JsonCodec in codec_factory | Satisfies ruff TCH001 |
+| 2026-06-05 | Lazy singleton _get_client() in all adapters | Defers from_env() until first request; avoids startup cost |
+| 2026-06-05 | CLI deferred imports in command handlers | Fast --help response; doesn't load GraphQLClient until command executes |
+| 2026-06-05 | set_client() public API in rest.py | Explicit test injection without monkeypatching globals |
+| 2026-06-05 | MCP tools as module-level functions | FastMCP @mcp.tool() decorator idiom; matches library pattern |
 
 ---
 
 ## Session Continuity
 
-**Last session**: 2026-06-05 — Executed 03-01-PLAN.md (Rust pyo3 JsonCodec + OrjsonCodec + parity tests)
-**Stopped at**: Completed 03-01-PLAN.md, next is 03-02-PLAN.md (inbound adapters)
-**Next action**: Execute 03-02-PLAN.md — FastAPI REST + MCP stdio + CLI inbound adapters
-**Context needed for next session**: Phase 1 + Phase 2 complete. Phase 3 plan 1 complete: Rust native codec builds (pyo3 0.28, pythonize 0.28, serde_json), RustJsonCodec and OrjsonCodec at byte-parity under 45-test suite. 105 tests pass. GQL-10 partially complete (native codec done, inbound adapters + CI remain).
+**Last session**: 2026-06-05 — Executed 03-02-PLAN.md (FastAPI REST + MCP stdio + CLI inbound adapters)
+**Stopped at**: Completed 03-02-PLAN.md, Phase 3 fully complete
+**Next action**: Plan and execute Phase 4 (Ship) — pytest suite + bench, CI wheel matrix, README + Glama publish
+**Context needed for next session**: Phase 1-3 complete. All 6 operations wired through 4 faces (lib, REST, MCP stdio, CLI). Rust native codec + orjson fallback at parity. 128 tests passing. GQL-10 partially complete (native codec + faces done, CI + publish remains for Phase 4).

@@ -12,7 +12,7 @@
 
 - [x] **Phase 1: Foundation & Schema Sources** — Hexagonal skeleton + schema cascade (domain/ports/adapters layout, http transport, GitLab→introspection→`_service{sdl}`→file) ✅
 - [x] **Phase 2: Operations, Errors & Federation** — All 6 operations live in every face; 3-class error typing; mutation-guard; federation ownership ✅
-- [ ] **Phase 3: Native & Faces** — pyo3 JsonCodec crate + orjson fallback with parity test; all inbound adapters (lib/mcp_stdio/FastAPI/CLI)
+- [x] **Phase 3: Native & Faces** — pyo3 JsonCodec crate + orjson fallback with parity test; all inbound adapters (lib/mcp_stdio/FastAPI/CLI) ✅
 - [ ] **Phase 4: Ship** — pytest suite + bench; CI wheel matrix; README + Glama publish
 
 ---
@@ -95,13 +95,13 @@ Plans:
 4. `graphql-mcp query '{ __typename }'` (CLI) exits 0 and prints JSON to stdout on a reachable endpoint.
 5. `GET /health` on the FastAPI app returns `{"status": "ok"}`; `POST /graphql/query` with a valid query body returns a JSON response with `data`, `errors`, `error_class` fields.
 
-**Plans:** 1/2 plans complete
+**Plans:** 2/2 plans complete
 
 Plans:
 **Wave 1** *(parallel — no file overlap)*
 
 - [x] 03-01-PLAN.md — Rust pyo3 JsonCodec + OrjsonCodec fallback + codec factory + parity tests ✅
-- [ ] 03-02-PLAN.md — FastAPI REST + MCP stdio + CLI inbound adapters + pyproject.toml optional deps + adapter tests
+- [x] 03-02-PLAN.md — FastAPI REST + MCP stdio + CLI inbound adapters + pyproject.toml optional deps + adapter tests ✅
 
 **UI hint**: no
 
@@ -133,5 +133,5 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Foundation & Schema Sources | 3/3 | Complete    | 2026-06-05 |
 | 2. Operations, Errors & Federation | 2/2 | Complete    | 2026-06-05 |
-| 3. Native & Faces | 1/2 | In Progress | - |
+| 3. Native & Faces | 2/2 | Complete    | 2026-06-05 |
 | 4. Ship | 0/? | Not started | - |
