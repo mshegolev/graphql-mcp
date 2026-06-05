@@ -45,6 +45,36 @@ class MockSchemaSource:
         return SchemaGraph(sdl=self._sdl, source_name=self._name)
 
 
+SAMPLE_SUPERGRAPH_SDL = (
+    "directive @join__graph(name: String!, url: String!) on ENUM_VALUE\n"
+    "directive @join__type(graph: join__Graph!)"
+    " on OBJECT | INTERFACE | UNION | ENUM | INPUT_OBJECT | SCALAR\n"
+    "\n"
+    "enum join__Graph {\n"
+    '  USERS @join__graph(name: "users", url: "http://users:4001/graphql")\n'
+    '  PRODUCTS @join__graph(name: "products",'
+    ' url: "http://products:4002/graphql")\n'
+    "}\n"
+    "\n"
+    "type Query {\n"
+    "  users: [User]\n"
+    "  products: [Product]\n"
+    "}\n"
+    "\n"
+    "type User @join__type(graph: USERS) {\n"
+    "  id: ID!\n"
+    "  name: String!\n"
+    "  email: String\n"
+    "}\n"
+    "\n"
+    "type Product @join__type(graph: PRODUCTS) {\n"
+    "  id: ID!\n"
+    "  title: String!\n"
+    "  price: Float\n"
+    "}\n"
+)
+
+
 @pytest.fixture
 def sample_sdl() -> str:
     return SAMPLE_SDL
