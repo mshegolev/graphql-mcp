@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-06-05T19:57:51Z"
+last_updated: "2026-06-05T20:08:37Z"
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
-  percent: 8
+  completed_plans: 2
+  percent: 17
 ---
 
 # graphql-mcp — Project State
@@ -30,14 +30,14 @@ progress:
 ## Current Position
 
 Phase: 01 (Foundation & Schema Sources) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 **Current phase**: Phase 1 — Foundation & Schema Sources
-**Current plan**: 01-02 (SchemaService cascade + outbound adapters)
+**Current plan**: 01-03 (Config, GraphQLClient.from_env(), test suite)
 **Status**: Executing
 **Phase goal**: The hexagonal skeleton compiles and the schema cascade resolves a live or offline schema through all four source adapters.
 
 ```
-Progress: [██░░░░░░░░░░░░░░░░░░] 8% (Phase 1/4, Plan 2/3)
+Progress: [███░░░░░░░░░░░░░░░░░] 17% (Phase 1/4, Plan 3/3)
 ```
 
 ---
@@ -51,7 +51,7 @@ Progress: [██░░░░░░░░░░░░░░░░░░] 8% (Pha
 | Requirements total | 10 |
 | Requirements complete | 0 |
 | Plans written | 3 |
-| Plans complete | 1 |
+| Plans complete | 2 |
 
 ---
 
@@ -96,11 +96,15 @@ None currently.
 | 2026-06-05 | GQL-10 split across Phase 3 (native+faces) and Phase 4 (CI+publish) | Single requirement spans two natural delivery boundaries; both phases required for full v2 template |
 | 2026-06-05 | Used respx (not responses) for httpx mocking | respx is purpose-built for httpx; RESEARCH.md recommended it |
 | 2026-06-05 | Added .gitignore for build artifacts | Cargo workspace generates target/ and Cargo.lock; must not be tracked |
+| 2026-06-05 | SchemaService uses time.monotonic() for TTL cache | stdlib, no I/O imports needed in domain layer |
+| 2026-06-05 | HttpTransport uses orjson.dumps() for request body | Consistency with future Rust native codec path |
+| 2026-06-05 | GitLab /raw endpoint (not base64) | Returns raw SDL text directly; avoids decoding step |
+| 2026-06-05 | build_client_schema for introspection | Introspection JSON requires client-side builder, not build_schema |
 
 ---
 
 ## Session Continuity
 
-**Last session**: 2026-06-05 — Executed 01-01-PLAN.md (project scaffold + domain core)
-**Next action**: Execute 01-02-PLAN.md — SchemaService cascade + outbound adapters
-**Context needed for next session**: Scaffold complete. domain/models.py has SchemaGraph, QueryResult, ErrorClass + 5 more models. ports/ has SchemaSource, GraphQLTransport, JsonCodec protocols. Need to implement schema cascade service and 4 outbound adapters next.
+**Last session**: 2026-06-05 — Executed 01-02-PLAN.md (SchemaService cascade + outbound adapters)
+**Next action**: Execute 01-03-PLAN.md — Config, GraphQLClient.from_env(), test suite
+**Context needed for next session**: Schema cascade complete. SchemaService orchestrates 4 sources in priority order with TTL cache. HttpTransport provides httpx-based GraphQL transport with 3-class error typing. All 4 schema sources (GitLab, introspection, federation SDL, file) implement SchemaSource protocol. Need config loader, GraphQLClient.from_env() factory, and test suite next.
