@@ -66,7 +66,16 @@ Plans:
 4. `client.list_subgraphs()` returns a non-empty list of `Subgraph{name, url, owned_types}` parsed from a sample supergraph SDL; returns an empty list (not an error) when `GRAPHQL_SUPERGRAPH_SOURCE=off`.
 5. `client.refresh_schema()` completes without error and forces the next schema access to re-fetch (verified by confirming the mock adapter is called exactly twice across two `introspect()` calls separated by `refresh_schema()`).
 
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+**Wave 1**
+
+- [ ] 02-01-PLAN.md — Query guard (mutation detection via AST) + Schema analyzer (SDL→SchemaSummary, TypeInfo, Subgraph[])
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
+- [ ] 02-02-PLAN.md — Wire operations into GraphQLClient + config extension + integration test suite
+
 **UI hint**: no
 
 ---
