@@ -50,13 +50,13 @@ The following are explicitly deferred and must NOT be implemented in v1:
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| GQL-01 | Phase 2 | Pending |
-| GQL-02 | Phase 2 | Pending |
-| GQL-03 | Phase 2 | Pending |
-| GQL-04 | Phase 2 | Pending |
-| GQL-05 | Phase 2 | Pending |
+| GQL-01 | Phase 2 | Complete |
+| GQL-02 | Phase 2 | Complete |
+| GQL-03 | Phase 2 | Complete |
+| GQL-04 | Phase 2 | Complete |
+| GQL-05 | Phase 2 | Complete |
 | GQL-06 | Phase 1 | Complete |
-| GQL-07 | Phase 2 | Pending |
-| GQL-08 | Phase 2 | Pending |
-| GQL-09 | Phase 2 | Pending |
+| GQL-07 | Phase 2 | Complete |
+| GQL-08 | Phase 2 | Complete |
+| GQL-09 | Phase 2 | Complete |
 | GQL-10 | Phase 3 + Phase 4 | Pending |

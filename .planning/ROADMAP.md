@@ -11,7 +11,7 @@
 ## Phases
 
 - [x] **Phase 1: Foundation & Schema Sources** — Hexagonal skeleton + schema cascade (domain/ports/adapters layout, http transport, GitLab→introspection→`_service{sdl}`→file) ✅
-- [ ] **Phase 2: Operations, Errors & Federation** — All 6 operations live in every face; 3-class error typing; mutation-guard; federation ownership
+- [x] **Phase 2: Operations, Errors & Federation** — All 6 operations live in every face; 3-class error typing; mutation-guard; federation ownership ✅
 - [ ] **Phase 3: Native & Faces** — pyo3 JsonCodec crate + orjson fallback with parity test; all inbound adapters (lib/mcp_stdio/FastAPI/CLI)
 - [ ] **Phase 4: Ship** — pytest suite + bench; CI wheel matrix; README + Glama publish
 
@@ -66,7 +66,7 @@ Plans:
 4. `client.list_subgraphs()` returns a non-empty list of `Subgraph{name, url, owned_types}` parsed from a sample supergraph SDL; returns an empty list (not an error) when `GRAPHQL_SUPERGRAPH_SOURCE=off`.
 5. `client.refresh_schema()` completes without error and forces the next schema access to re-fetch (verified by confirming the mock adapter is called exactly twice across two `introspect()` calls separated by `refresh_schema()`).
 
-**Plans:** 1/2 plans complete
+**Plans:** 2/2 plans complete
 Plans:
 **Wave 1**
 
@@ -74,7 +74,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
-- [ ] 02-02-PLAN.md — Wire operations into GraphQLClient + config extension + integration test suite
+- [x] 02-02-PLAN.md — Wire operations into GraphQLClient + config extension + integration test suite ✅
 
 **UI hint**: no
 
@@ -125,6 +125,6 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Schema Sources | 3/3 | Complete    | 2026-06-05 |
-| 2. Operations, Errors & Federation | 1/2 | In progress | - |
+| 2. Operations, Errors & Federation | 2/2 | Complete    | 2026-06-05 |
 | 3. Native & Faces | 0/? | Not started | - |
 | 4. Ship | 0/? | Not started | - |

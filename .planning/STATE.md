@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-06-05T21:13:00Z"
+last_updated: "2026-06-05T21:24:37Z"
 progress:
   total_phases: 4
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 5
-  completed_plans: 4
-  percent: 40
+  completed_plans: 5
+  percent: 50
 ---
 
 # graphql-mcp — Project State
@@ -29,15 +29,15 @@ progress:
 
 ## Current Position
 
-Phase: 02 (Operations, Errors & Federation) — EXECUTING
-Plan: 2 of 2
-**Current phase**: Phase 2 — Operations, Errors & Federation — IN PROGRESS
-**Current plan**: 02-01-PLAN.md ✅ complete, 02-02-PLAN.md next
-**Status**: Plan 02-01 complete — query guard + schema analyzer adapters built and tested
+Phase: 02 (Operations, Errors & Federation) — COMPLETE
+Plan: 2 of 2 ✅
+**Current phase**: Phase 2 — Operations, Errors & Federation — COMPLETE ✅
+**Current plan**: 02-02-PLAN.md ✅ complete — all operations wired + integration tests passing
+**Status**: Phase 2 complete — all 6 GraphQLClient operations wired, 60 tests passing, all Phase 2 requirements (GQL-01..05, GQL-07..09) complete
 **Phase goal**: All 6 operations are callable through the lib facade and return typed results with correct error classification and federation metadata.
 
 ```
-Progress: [████████░░░░░░░░░░░░] 40% (Phase 2/4, Plan 1/2 ✅)
+Progress: [██████████░░░░░░░░░░] 50% (Phase 2/4 ✅, Plan 2/2 ✅)
 ```
 
 ---
@@ -47,11 +47,11 @@ Progress: [████████░░░░░░░░░░░░] 40% (Ph
 | Metric | Value |
 |--------|-------|
 | Phases total | 4 |
-| Phases complete | 1 |
+| Phases complete | 2 |
 | Requirements total | 10 |
-| Requirements complete | 1 |
+| Requirements complete | 9 |
 | Plans written | 5 |
-| Plans complete | 4 |
+| Plans complete | 5 |
 
 ---
 
@@ -107,11 +107,14 @@ None currently.
 | 2026-06-05 | SDL-hash caching via SHA-256 in SchemaAnalyzer | Avoid redundant build_schema() calls on same SDL |
 | 2026-06-05 | build_schema fallback to assume_valid_sdl=True | Supergraph SDL has duplicate @link directives that fail strict mode |
 | 2026-06-05 | Dual validation for supergraph detection | Both join__Graph enum AND @join__graph directive required — prevents false positives |
+| 2026-06-05 | ErrorClass + QueryResult as runtime imports in lib.py | Needed for return values — cannot be TYPE_CHECKING only |
+| 2026-06-05 | Mutation guard runs before transport None check | Block mutations even when no endpoint is configured |
+| 2026-06-05 | respx mock uses trailing-slash URL | httpx base_url adds trailing slash on .post("") |
 
 ---
 
 ## Session Continuity
 
-**Last session**: 2026-06-05 — Executed 02-01-PLAN.md (Query guard + Schema analyzer adapters)
-**Next action**: Execute 02-02-PLAN.md — Wire operations into GraphQLClient + config extension + integration test suite
-**Context needed for next session**: Phase 1 complete + Plan 02-01 done. Two new adapter modules ready: `query_guard.py` (contains_mutation + check_mutation_guard) and `schema_analyzer.py` (SchemaAnalyzer with build_summary, describe_type, list_subgraphs). SAMPLE_SUPERGRAPH_SDL in conftest.py. 38 tests pass (13 existing + 25 new). Plan 02-02 will wire these into GraphQLClient operations.
+**Last session**: 2026-06-05 — Executed 02-02-PLAN.md (Wire operations into GraphQLClient + integration tests)
+**Next action**: Plan and execute Phase 3 — Native & Faces (pyo3 JsonCodec, inbound adapters)
+**Context needed for next session**: Phase 1 + Phase 2 complete. GraphQLClient has all 6 operations: query, raw, introspect, describe_type, list_subgraphs, refresh_schema. 60 tests pass. Requirements GQL-01..09 complete (except GQL-06 from Phase 1). Only GQL-10 remains (Phase 3 + 4).
