@@ -33,7 +33,13 @@
 3. With introspection disabled and no GitLab token, the client silently falls back to `_service{sdl}` and then to an SDL file — verified by mocked adapters in a unit test.
 4. The TTL cache returns the cached schema without a network call on repeated access within the TTL window.
 
-**Plans**: TBD
+**Plans:** 3 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Project scaffold, domain models, ports, errors
+- [ ] 01-02-PLAN.md — SchemaService cascade + outbound adapters
+- [ ] 01-03-PLAN.md — Config, GraphQLClient.from_env(), test suite
+
 **UI hint**: no
 
 ---
@@ -102,7 +108,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Schema Sources | 0/? | Not started | - |
+| 1. Foundation & Schema Sources | 0/3 | Planned | - |
 | 2. Operations, Errors & Federation | 0/? | Not started | - |
 | 3. Native & Faces | 0/? | Not started | - |
 | 4. Ship | 0/? | Not started | - |
