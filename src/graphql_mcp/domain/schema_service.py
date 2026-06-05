@@ -2,11 +2,15 @@ from __future__ import annotations
 
 import logging
 import time
-from typing import Sequence
+from typing import TYPE_CHECKING
 
 from graphql_mcp.domain.errors import SchemaResolutionError
-from graphql_mcp.domain.models import SchemaGraph
-from graphql_mcp.ports.schema_source import SchemaSource
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from graphql_mcp.domain.models import SchemaGraph
+    from graphql_mcp.ports.schema_source import SchemaSource
 
 logger = logging.getLogger(__name__)
 

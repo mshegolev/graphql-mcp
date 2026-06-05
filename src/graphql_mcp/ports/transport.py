@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import Any, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
 
-from graphql_mcp.domain.models import QueryResult
+if TYPE_CHECKING:
+    from graphql_mcp.domain.models import QueryResult
 
 
 @runtime_checkable

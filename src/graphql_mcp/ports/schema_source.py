@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from typing import Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
-from graphql_mcp.domain.models import SchemaGraph
+if TYPE_CHECKING:
+    from graphql_mcp.domain.models import SchemaGraph
 
 
 @runtime_checkable
