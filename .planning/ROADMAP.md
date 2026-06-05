@@ -141,4 +141,4 @@ Plans:
 | 1. Foundation & Schema Sources | 3/3 | Complete    | 2026-06-05 |
 | 2. Operations, Errors & Federation | 2/2 | Complete    | 2026-06-05 |
 | 3. Native & Faces | 2/2 | Complete    | 2026-06-05 |
-| 4. Ship | 2/2 | Complete | 2026-06-05 |
+| 4. Ship | 2/2 | Complete    | 2026-06-05 |
