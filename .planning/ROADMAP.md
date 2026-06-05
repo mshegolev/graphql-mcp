@@ -37,7 +37,7 @@
 Plans:
 **Wave 1**
 
-- [ ] 01-01-PLAN.md — Project scaffold, domain models, ports, errors
+- [x] 01-01-PLAN.md — Project scaffold, domain models, ports, errors ✅
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -115,7 +115,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Schema Sources | 0/3 | Planned | - |
+| 1. Foundation & Schema Sources | 1/3 | Executing | - |
 | 2. Operations, Errors & Federation | 0/? | Not started | - |
 | 3. Native & Faces | 0/? | Not started | - |
 | 4. Ship | 0/? | Not started | - |

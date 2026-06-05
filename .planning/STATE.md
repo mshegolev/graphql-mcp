@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: unknown
-last_updated: "2026-06-05T19:47:35.368Z"
+status: executing
+last_updated: "2026-06-05T19:57:51Z"
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 3
-  completed_plans: 0
-  percent: 0
+  completed_plans: 1
+  percent: 8
 ---
 
 # graphql-mcp — Project State
@@ -29,13 +29,15 @@ progress:
 
 ## Current Position
 
+Phase: 01 (Foundation & Schema Sources) — EXECUTING
+Plan: 2 of 3
 **Current phase**: Phase 1 — Foundation & Schema Sources
-**Current plan**: TBD (not yet planned)
-**Status**: Not started
+**Current plan**: 01-02 (SchemaService cascade + outbound adapters)
+**Status**: Executing
 **Phase goal**: The hexagonal skeleton compiles and the schema cascade resolves a live or offline schema through all four source adapters.
 
 ```
-Progress: [░░░░░░░░░░░░░░░░░░░░] 0% (Phase 1/4)
+Progress: [██░░░░░░░░░░░░░░░░░░] 8% (Phase 1/4, Plan 2/3)
 ```
 
 ---
@@ -48,8 +50,8 @@ Progress: [░░░░░░░░░░░░░░░░░░░░] 0% (Pha
 | Phases complete | 0 |
 | Requirements total | 10 |
 | Requirements complete | 0 |
-| Plans written | 0 |
-| Plans complete | 0 |
+| Plans written | 3 |
+| Plans complete | 1 |
 
 ---
 
@@ -92,11 +94,13 @@ None currently.
 |------|----------|-----------|
 | 2026-06-05 | 4 coarse phases derived from build order | Granularity=coarse; build order maps cleanly to Foundation/Operations/Native+Faces/Ship |
 | 2026-06-05 | GQL-10 split across Phase 3 (native+faces) and Phase 4 (CI+publish) | Single requirement spans two natural delivery boundaries; both phases required for full v2 template |
+| 2026-06-05 | Used respx (not responses) for httpx mocking | respx is purpose-built for httpx; RESEARCH.md recommended it |
+| 2026-06-05 | Added .gitignore for build artifacts | Cargo workspace generates target/ and Cargo.lock; must not be tracked |
 
 ---
 
 ## Session Continuity
 
-**Last session**: 2026-06-05 — Roadmap bootstrapped (REQUIREMENTS.md, ROADMAP.md, STATE.md written)
-**Next action**: `/gsd-plan-phase 1` — plan Foundation & Schema Sources
-**Context needed for next session**: Phase 1 goal is the hexagonal skeleton + 4-source schema cascade. domain/ purity is the primary constraint. No plans exist yet.
+**Last session**: 2026-06-05 — Executed 01-01-PLAN.md (project scaffold + domain core)
+**Next action**: Execute 01-02-PLAN.md — SchemaService cascade + outbound adapters
+**Context needed for next session**: Scaffold complete. domain/models.py has SchemaGraph, QueryResult, ErrorClass + 5 more models. ports/ has SchemaSource, GraphQLTransport, JsonCodec protocols. Need to implement schema cascade service and 4 outbound adapters next.
