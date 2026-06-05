@@ -1,0 +1,36 @@
+{
+  "name": "graphql-mcp",
+  "description": "Generic read-only GraphQL MCP server — schema discovery, query execution, error typing, federation ownership",
+  "version": "0.1.0",
+  "tools": [
+    {
+      "name": "query",
+      "description": "Execute a GraphQL query and return typed result with error classification"
+    },
+    {
+      "name": "raw",
+      "description": "Send an arbitrary GraphQL POST body and return typed result"
+    },
+    {
+      "name": "introspect",
+      "description": "Return a summary of Query fields and types from the active schema"
+    },
+    {
+      "name": "describe_type",
+      "description": "Return field/arg details for a named type, with federation subgraph if available"
+    },
+    {
+      "name": "list_subgraphs",
+      "description": "Return subgraph metadata parsed from supergraph SDL"
+    },
+    {
+      "name": "refresh_schema",
+      "description": "Clear schema cache, forcing next access to re-fetch"
+    }
+  ],
+  "transport": {
+    "type": "stdio",
+    "command": "python",
+    "args": ["-m", "graphql_mcp.adapters.inbound.mcp_stdio"]
+  }
+}

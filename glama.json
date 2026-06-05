@@ -1,0 +1,10 @@
+{
+  "name": "graphql-mcp",
+  "display_name": "GraphQL MCP",
+  "description": "Generic read-only GraphQL MCP server — schema discovery, query execution, 3-class error typing, and federation ownership mapping",
+  "category": "developer-tools",
+  "tags": ["graphql", "mcp", "schema", "federation", "query"],
+  "repository": "https://github.com/OWNER/graphql-mcp",
+  "license": "MIT",
+  "server_json": "server.json"
+}
