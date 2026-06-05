@@ -122,7 +122,14 @@ Plans:
 4. `pip install dist/graphql_mcp-*.whl` on a clean Python 3.11 environment (no Rust toolchain) succeeds and `from graphql_mcp import GraphQLClient` imports without error (orjson fallback path).
 5. The package is listed and passes validation on Glama; `server.json` and `glama.json` are present and reference the correct PyPI package name.
 
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+**Wave 1** *(parallel — no file overlap)*
+
+- [ ] 04-01-PLAN.md — Fix ruff violations + verify full test suite green
+- [ ] 04-02-PLAN.md — CI workflow (cibuildwheel full matrix) + README + Glama files
+
 **UI hint**: no
 
 ---
@@ -134,4 +141,4 @@ Plans:
 | 1. Foundation & Schema Sources | 3/3 | Complete    | 2026-06-05 |
 | 2. Operations, Errors & Federation | 2/2 | Complete    | 2026-06-05 |
 | 3. Native & Faces | 2/2 | Complete    | 2026-06-05 |
-| 4. Ship | 0/? | Not started | - |
+| 4. Ship | 0/2 | In Progress | - |
