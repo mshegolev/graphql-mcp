@@ -34,10 +34,17 @@
 4. The TTL cache returns the cached schema without a network call on repeated access within the TTL window.
 
 **Plans:** 3 plans
-
 Plans:
+**Wave 1**
+
 - [ ] 01-01-PLAN.md — Project scaffold, domain models, ports, errors
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 01-02-PLAN.md — SchemaService cascade + outbound adapters
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
 - [ ] 01-03-PLAN.md — Config, GraphQLClient.from_env(), test suite
 
 **UI hint**: no
