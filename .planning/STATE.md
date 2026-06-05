@@ -2,15 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: ready_to_plan
-last_updated: 2026-06-05T21:35:25.303Z
+status: executing
+last_updated: "2026-06-05T22:05:49.000Z"
 progress:
   total_phases: 4
   completed_phases: 2
-  total_plans: 5
-  completed_plans: 5
-  percent: 50
-stopped_at: Phase 2 complete (2/2) — ready to discuss Phase 3
+  total_plans: 7
+  completed_plans: 6
+  percent: 64
 ---
 
 # graphql-mcp — Project State
@@ -30,15 +29,15 @@ stopped_at: Phase 2 complete (2/2) — ready to discuss Phase 3
 
 ## Current Position
 
-Phase: 3
-Plan: Not started
-**Current phase**: Phase 2 — Operations, Errors & Federation — COMPLETE ✅
-**Current plan**: 02-02-PLAN.md ✅ complete — all operations wired + integration tests passing
-**Status**: Phase 2 complete — all 6 GraphQLClient operations wired, 60 tests passing, all Phase 2 requirements (GQL-01..05, GQL-07..09) complete
-**Phase goal**: All 6 operations are callable through the lib facade and return typed results with correct error classification and federation metadata.
+Phase: 03 (Native & Faces) — EXECUTING
+Plan: 2 of 2
+**Current phase**: Phase 3 — Native & Faces — IN PROGRESS
+**Current plan**: 03-01-PLAN.md ✅ complete — Rust pyo3 JsonCodec + OrjsonCodec + parity tests
+**Status**: Plan 1 of Phase 3 complete. Native codec builds, both codecs at byte-parity, 105 tests passing. Plan 2 (inbound adapters) next.
+**Phase goal**: The pyo3 JsonCodec crate builds via maturin, the orjson fallback passes the same parity test, and all four inbound adapters expose the full operation set.
 
 ```
-Progress: [██████████░░░░░░░░░░] 50% (Phase 2/4 ✅, Plan 2/2 ✅)
+Progress: [████████████░░░░░░░░] 64% (Phase 3/4, Plan 1/2 ✅)
 ```
 
 ---
@@ -51,8 +50,8 @@ Progress: [██████████░░░░░░░░░░] 50% (Ph
 | Phases complete | 2 |
 | Requirements total | 10 |
 | Requirements complete | 9 |
-| Plans written | 5 |
-| Plans complete | 5 |
+| Plans written | 7 |
+| Plans complete | 6 |
 
 ---
 
@@ -81,8 +80,8 @@ domain → ports → outbound adapters (http/schema sources) → Rust native + o
 
 ### Todos
 
-- [ ] Run `/gsd-plan-phase 1` to decompose Phase 1 into executable plans
-- [ ] Verify pyproject.toml maturin build-backend config before Phase 3
+- [x] Run `/gsd-plan-phase 1` to decompose Phase 1 into executable plans
+- [x] Verify pyproject.toml maturin build-backend config before Phase 3
 - [ ] Confirm Glama submission requirements before Phase 4
 
 ### Blockers
@@ -111,11 +110,15 @@ None currently.
 | 2026-06-05 | ErrorClass + QueryResult as runtime imports in lib.py | Needed for return values — cannot be TYPE_CHECKING only |
 | 2026-06-05 | Mutation guard runs before transport None check | Block mutations even when no endpoint is configured |
 | 2026-06-05 | respx mock uses trailing-slash URL | httpx base_url adds trailing slash on .post("") |
+| 2026-06-05 | Upgraded pyo3 0.25 → 0.28 for pythonize compatibility | pythonize 0.28 (latest) requires pyo3 0.28; no compatible version for 0.25 |
+| 2026-06-05 | pythonize for Python↔serde conversion | Direct object conversion; avoids double-serialization |
+| 2026-06-05 | TYPE_CHECKING for JsonCodec in codec_factory | Satisfies ruff TCH001 |
 
 ---
 
 ## Session Continuity
 
-**Last session**: 2026-06-05 — Executed 02-02-PLAN.md (Wire operations into GraphQLClient + integration tests)
-**Next action**: Plan and execute Phase 3 — Native & Faces (pyo3 JsonCodec, inbound adapters)
-**Context needed for next session**: Phase 1 + Phase 2 complete. GraphQLClient has all 6 operations: query, raw, introspect, describe_type, list_subgraphs, refresh_schema. 60 tests pass. Requirements GQL-01..09 complete (except GQL-06 from Phase 1). Only GQL-10 remains (Phase 3 + 4).
+**Last session**: 2026-06-05 — Executed 03-01-PLAN.md (Rust pyo3 JsonCodec + OrjsonCodec + parity tests)
+**Stopped at**: Completed 03-01-PLAN.md, next is 03-02-PLAN.md (inbound adapters)
+**Next action**: Execute 03-02-PLAN.md — FastAPI REST + MCP stdio + CLI inbound adapters
+**Context needed for next session**: Phase 1 + Phase 2 complete. Phase 3 plan 1 complete: Rust native codec builds (pyo3 0.28, pythonize 0.28, serde_json), RustJsonCodec and OrjsonCodec at byte-parity under 45-test suite. 105 tests pass. GQL-10 partially complete (native codec done, inbound adapters + CI remain).
