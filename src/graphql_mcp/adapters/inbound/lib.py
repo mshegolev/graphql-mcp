@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from graphql_mcp.adapters.outbound.file_source import FileSdlSource
 from graphql_mcp.adapters.outbound.gitlab_source import GitLabSource
@@ -9,12 +9,11 @@ from graphql_mcp.adapters.outbound.http_transport import HttpTransport
 from graphql_mcp.adapters.outbound.introspection_source import IntrospectionSource
 from graphql_mcp.adapters.outbound.service_sdl_source import ServiceSdlSource
 from graphql_mcp.config import GraphQLConfig
-from graphql_mcp.domain.models import SchemaGraph
 from graphql_mcp.domain.schema_service import SchemaService
-from graphql_mcp.ports.schema_source import SchemaSource
 
 if TYPE_CHECKING:
-    pass
+    from graphql_mcp.domain.models import SchemaGraph
+    from graphql_mcp.ports.schema_source import SchemaSource
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +39,7 @@ class GraphQLClient:
         self._config = config
 
     @classmethod
-    def from_env(cls, **overrides: str) -> GraphQLClient:
+    def from_env(cls, **overrides: Any) -> GraphQLClient:
         """Create a GraphQLClient from environment variables.
 
         Reads GRAPHQL_* env vars, builds the schema cascade based on
@@ -66,31 +65,32 @@ class GraphQLClient:
         sources: list[SchemaSource] = []
         source_mode = config.schema_source.lower()
 
-        if source_mode in ("auto", "gitlab"):
-            if config.schema_gitlab_url and config.schema_gitlab_project_id and config.schema_gitlab_file_path:
-                sources.append(
-                    GitLabSource(
-                        gitlab_url=config.schema_gitlab_url,
-                        project_id=config.schema_gitlab_project_id,
-                        file_path=config.schema_gitlab_file_path,
-                        ref=config.schema_gitlab_ref,
-                        token=config.gitlab_token,
-                        timeout=float(config.timeout),
-                        ssl_verify=config.ssl_verify,
-                    )
+        if (
+            source_mode in ("auto", "gitlab")
+            and config.schema_gitlab_url
+            and config.schema_gitlab_project_id
+            and config.schema_gitlab_file_path
+        ):
+            sources.append(
+                GitLabSource(
+                    gitlab_url=config.schema_gitlab_url,
+                    project_id=config.schema_gitlab_project_id,
+                    file_path=config.schema_gitlab_file_path,
+                    ref=config.schema_gitlab_ref,
+                    token=config.gitlab_token,
+                    timeout=float(config.timeout),
+                    ssl_verify=config.ssl_verify,
                 )
+            )
 
-        if source_mode in ("auto", "introspection"):
-            if transport is not None:
-                sources.append(IntrospectionSource(transport=transport))
+        if source_mode in ("auto", "introspection") and transport is not None:
+            sources.append(IntrospectionSource(transport=transport))
 
-        if source_mode in ("auto", "federation"):
-            if transport is not None:
-                sources.append(ServiceSdlSource(transport=transport))
+        if source_mode in ("auto", "federation") and transport is not None:
+            sources.append(ServiceSdlSource(transport=transport))
 
-        if source_mode in ("auto", "sdl_file"):
-            if config.schema_sdl:
-                sources.append(FileSdlSource(file_path=config.schema_sdl))
+        if source_mode in ("auto", "sdl_file") and config.schema_sdl:
+            sources.append(FileSdlSource(file_path=config.schema_sdl))
 
         schema_service = SchemaService(
             sources=sources,
