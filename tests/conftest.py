@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import pytest
 
+from graphql_mcp.adapters.inbound.lib import GraphQLClient
+from graphql_mcp.config import GraphQLConfig
 from graphql_mcp.domain.models import SchemaGraph
+from graphql_mcp.domain.schema_service import SchemaService
 
 SAMPLE_SDL = """\
 type Query {
@@ -93,3 +96,12 @@ def failing_source() -> MockSchemaSource:
 @pytest.fixture
 def none_source() -> MockSchemaSource:
     return MockSchemaSource("none_source", sdl=None)
+
+
+@pytest.fixture
+def simple_client(sample_sdl: str) -> GraphQLClient:
+    """GraphQLClient with mock schema source and no transport (schema-only ops)."""
+    source = MockSchemaSource("test", sdl=sample_sdl)
+    service = SchemaService(sources=[source], ttl_seconds=0)
+    config = GraphQLConfig(allow_mutations=False)
+    return GraphQLClient(schema_service=service, transport=None, config=config)
