@@ -36,3 +36,6 @@ class GraphQLConfig(BaseSettings):
 
     # Behavior
     allow_mutations: bool = False
+
+    # Federation
+    supergraph_source: str = "auto"  # auto|off — controls list_subgraphs behavior
