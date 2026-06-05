@@ -66,11 +66,11 @@ Plans:
 4. `client.list_subgraphs()` returns a non-empty list of `Subgraph{name, url, owned_types}` parsed from a sample supergraph SDL; returns an empty list (not an error) when `GRAPHQL_SUPERGRAPH_SOURCE=off`.
 5. `client.refresh_schema()` completes without error and forces the next schema access to re-fetch (verified by confirming the mock adapter is called exactly twice across two `introspect()` calls separated by `refresh_schema()`).
 
-**Plans:** 2 plans
+**Plans:** 1/2 plans complete
 Plans:
 **Wave 1**
 
-- [ ] 02-01-PLAN.md — Query guard (mutation detection via AST) + Schema analyzer (SDL→SchemaSummary, TypeInfo, Subgraph[])
+- [x] 02-01-PLAN.md — Query guard (mutation detection via AST) + Schema analyzer (SDL→SchemaSummary, TypeInfo, Subgraph[]) ✅
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -125,6 +125,6 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation & Schema Sources | 3/3 | Complete    | 2026-06-05 |
-| 2. Operations, Errors & Federation | 0/? | Not started | - |
+| 2. Operations, Errors & Federation | 1/2 | In progress | - |
 | 3. Native & Faces | 0/? | Not started | - |
 | 4. Ship | 0/? | Not started | - |

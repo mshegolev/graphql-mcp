@@ -2,15 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: ready_to_plan
-last_updated: 2026-06-05T20:31:34.606Z
+status: executing
+last_updated: "2026-06-05T21:13:00Z"
 progress:
   total_phases: 4
   completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
-  percent: 25
-stopped_at: Phase 1 complete (3/3) — ready to discuss Phase 2
+  total_plans: 5
+  completed_plans: 4
+  percent: 40
 ---
 
 # graphql-mcp — Project State
@@ -30,15 +29,15 @@ stopped_at: Phase 1 complete (3/3) — ready to discuss Phase 2
 
 ## Current Position
 
-Phase: 2
-Plan: Not started
-**Current phase**: Phase 1 — Foundation & Schema Sources — COMPLETE
-**Current plan**: All plans complete
-**Status**: Phase 1 complete, ready for Phase 2
-**Phase goal**: The hexagonal skeleton compiles and the schema cascade resolves a live or offline schema through all four source adapters.
+Phase: 02 (Operations, Errors & Federation) — EXECUTING
+Plan: 2 of 2
+**Current phase**: Phase 2 — Operations, Errors & Federation — IN PROGRESS
+**Current plan**: 02-01-PLAN.md ✅ complete, 02-02-PLAN.md next
+**Status**: Plan 02-01 complete — query guard + schema analyzer adapters built and tested
+**Phase goal**: All 6 operations are callable through the lib facade and return typed results with correct error classification and federation metadata.
 
 ```
-Progress: [█████░░░░░░░░░░░░░░░] 25% (Phase 1/4, Plan 3/3 ✅)
+Progress: [████████░░░░░░░░░░░░] 40% (Phase 2/4, Plan 1/2 ✅)
 ```
 
 ---
@@ -51,8 +50,8 @@ Progress: [█████░░░░░░░░░░░░░░░] 25% (Ph
 | Phases complete | 1 |
 | Requirements total | 10 |
 | Requirements complete | 1 |
-| Plans written | 3 |
-| Plans complete | 3 |
+| Plans written | 5 |
+| Plans complete | 4 |
 
 ---
 
@@ -103,11 +102,16 @@ None currently.
 | 2026-06-05 | build_client_schema for introspection | Introspection JSON requires client-side builder, not build_schema |
 | 2026-06-05 | from_env(**overrides: Any) not str | Config has int/bool fields; pydantic-settings coerces at runtime |
 | 2026-06-05 | TYPE_CHECKING block for domain imports in lib.py | Satisfies ruff TC001; domain types only needed for annotations |
+| 2026-06-05 | AST parse (not regex) for mutation detection | graphql-core OperationType.MUTATION — reliable, no false positives |
+| 2026-06-05 | Unparseable queries pass through to server | Server-side validation decides; don't block on client parse errors |
+| 2026-06-05 | SDL-hash caching via SHA-256 in SchemaAnalyzer | Avoid redundant build_schema() calls on same SDL |
+| 2026-06-05 | build_schema fallback to assume_valid_sdl=True | Supergraph SDL has duplicate @link directives that fail strict mode |
+| 2026-06-05 | Dual validation for supergraph detection | Both join__Graph enum AND @join__graph directive required — prevents false positives |
 
 ---
 
 ## Session Continuity
 
-**Last session**: 2026-06-05 — Executed 01-03-PLAN.md (Config, GraphQLClient.from_env(), test suite)
-**Next action**: Plan Phase 2 — Operations, Errors & Federation
-**Context needed for next session**: Phase 1 complete. Full hexagonal skeleton working: domain models (SchemaGraph, QueryResult, TypeInfo, etc.), ports (SchemaSource, GraphQLTransport, JsonCodec), SchemaService with TTL cascade, 4 outbound adapters (GitLab, introspection, federation SDL, file), HttpTransport with 3-class error typing, GraphQLConfig (pydantic-settings), GraphQLClient.from_env() composition root, `from graphql_mcp import GraphQLClient` works. 13 tests pass: domain purity, cascade fallback, TTL cache. Need Phase 2: operations (query, raw, introspect, describe_type, list_subgraphs, refresh_schema), mutation guard, federation ownership.
+**Last session**: 2026-06-05 — Executed 02-01-PLAN.md (Query guard + Schema analyzer adapters)
+**Next action**: Execute 02-02-PLAN.md — Wire operations into GraphQLClient + config extension + integration test suite
+**Context needed for next session**: Phase 1 complete + Plan 02-01 done. Two new adapter modules ready: `query_guard.py` (contains_mutation + check_mutation_guard) and `schema_analyzer.py` (SchemaAnalyzer with build_summary, describe_type, list_subgraphs). SAMPLE_SUPERGRAPH_SDL in conftest.py. 38 tests pass (13 existing + 25 new). Plan 02-02 will wire these into GraphQLClient operations.
