@@ -1,0 +1,81 @@
+"""Click CLI inbound adapter — ad-hoc queries from terminal.
+
+Usage: graphql-mcp query '{ __typename }'
+       graphql-mcp introspect
+       graphql-mcp describe-type User
+       graphql-mcp list-subgraphs
+       graphql-mcp refresh
+"""
+
+from __future__ import annotations
+
+import json
+import sys
+
+import click
+
+
+@click.group()
+def main() -> None:
+    """graphql-mcp — Generic read-only GraphQL client."""
+
+
+@main.command()
+@click.argument("query_string")
+@click.option("--variables", "-v", default=None, help="JSON string of variables")
+def query(query_string: str, variables: str | None) -> None:
+    """Execute a GraphQL query."""
+    from graphql_mcp import GraphQLClient
+
+    client = GraphQLClient.from_env()
+    vars_dict = json.loads(variables) if variables else None
+    result = client.query(query_string, vars_dict)
+    click.echo(json.dumps(result.model_dump(), indent=2, default=str))
+
+
+@main.command()
+def introspect() -> None:
+    """Show schema summary (Query fields and types)."""
+    from graphql_mcp import GraphQLClient
+
+    client = GraphQLClient.from_env()
+    summary = client.introspect()
+    click.echo(json.dumps(summary.model_dump(), indent=2, default=str))
+
+
+@main.command("describe-type")
+@click.argument("type_name")
+def describe_type(type_name: str) -> None:
+    """Describe a GraphQL type (fields, args, subgraph)."""
+    from graphql_mcp import GraphQLClient
+
+    client = GraphQLClient.from_env()
+    info = client.describe_type(type_name)
+    if info is None:
+        click.echo(f"Type '{type_name}' not found", err=True)
+        sys.exit(1)
+    click.echo(json.dumps(info.model_dump(), indent=2, default=str))
+
+
+@main.command("list-subgraphs")
+def list_subgraphs() -> None:
+    """List federation subgraphs."""
+    from graphql_mcp import GraphQLClient
+
+    client = GraphQLClient.from_env()
+    subgraphs = client.list_subgraphs()
+    click.echo(json.dumps([s.model_dump() for s in subgraphs], indent=2, default=str))
+
+
+@main.command()
+def refresh() -> None:
+    """Clear schema cache, forcing re-fetch."""
+    from graphql_mcp import GraphQLClient
+
+    client = GraphQLClient.from_env()
+    client.refresh_schema()
+    click.echo(json.dumps({"status": "refreshed"}))
+
+
+if __name__ == "__main__":
+    main()

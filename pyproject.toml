@@ -22,7 +22,24 @@ dev = [
     "respx>=0.22",
     "ruff>=0.15",
     "pytest-cov>=5",
+    "httpx[cli]>=0.28",
 ]
+server = [
+    "fastapi>=0.100,<1",
+    "uvicorn>=0.20,<1",
+]
+mcp = [
+    "mcp>=1.0,<2",
+]
+cli = [
+    "click>=8,<9",
+]
+all = [
+    "graphql-mcp[server,mcp,cli]",
+]
+
+[project.scripts]
+graphql-mcp = "graphql_mcp.adapters.inbound.cli:main"
 
 [tool.maturin]
 python-source = "src"
