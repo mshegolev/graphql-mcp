@@ -27,6 +27,7 @@ dev = [
 [tool.maturin]
 python-source = "src"
 module-name = "graphql_mcp._native"
+manifest-path = "native/Cargo.toml"
 features = ["pyo3/extension-module"]
 
 [tool.ruff]
