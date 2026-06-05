@@ -95,7 +95,14 @@ Plans:
 4. `graphql-mcp query '{ __typename }'` (CLI) exits 0 and prints JSON to stdout on a reachable endpoint.
 5. `GET /health` on the FastAPI app returns `{"status": "ok"}`; `POST /graphql/query` with a valid query body returns a JSON response with `data`, `errors`, `error_class` fields.
 
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+**Wave 1** *(parallel — no file overlap)*
+
+- [ ] 03-01-PLAN.md — Rust pyo3 JsonCodec + OrjsonCodec fallback + codec factory + parity tests
+- [ ] 03-02-PLAN.md — FastAPI REST + MCP stdio + CLI inbound adapters + pyproject.toml optional deps + adapter tests
+
 **UI hint**: no
 
 ---
@@ -126,5 +133,5 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Foundation & Schema Sources | 3/3 | Complete    | 2026-06-05 |
 | 2. Operations, Errors & Federation | 2/2 | Complete    | 2026-06-05 |
-| 3. Native & Faces | 0/? | Not started | - |
+| 3. Native & Faces | 0/2 | Planned | - |
 | 4. Ship | 0/? | Not started | - |
