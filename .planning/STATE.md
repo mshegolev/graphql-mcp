@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-06-05T20:08:37Z"
+last_updated: "2026-06-05T20:20:01Z"
 progress:
   total_phases: 4
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 3
-  completed_plans: 2
-  percent: 17
+  completed_plans: 3
+  percent: 25
 ---
 
 # graphql-mcp — Project State
@@ -29,15 +29,15 @@ progress:
 
 ## Current Position
 
-Phase: 01 (Foundation & Schema Sources) — EXECUTING
-Plan: 3 of 3
-**Current phase**: Phase 1 — Foundation & Schema Sources
-**Current plan**: 01-03 (Config, GraphQLClient.from_env(), test suite)
-**Status**: Executing
+Phase: 01 (Foundation & Schema Sources) — COMPLETE
+Plan: 3 of 3 (all complete)
+**Current phase**: Phase 1 — Foundation & Schema Sources — COMPLETE
+**Current plan**: All plans complete
+**Status**: Phase 1 complete, ready for Phase 2
 **Phase goal**: The hexagonal skeleton compiles and the schema cascade resolves a live or offline schema through all four source adapters.
 
 ```
-Progress: [███░░░░░░░░░░░░░░░░░] 17% (Phase 1/4, Plan 3/3)
+Progress: [█████░░░░░░░░░░░░░░░] 25% (Phase 1/4, Plan 3/3 ✅)
 ```
 
 ---
@@ -47,11 +47,11 @@ Progress: [███░░░░░░░░░░░░░░░░░] 17% (Ph
 | Metric | Value |
 |--------|-------|
 | Phases total | 4 |
-| Phases complete | 0 |
+| Phases complete | 1 |
 | Requirements total | 10 |
-| Requirements complete | 0 |
+| Requirements complete | 1 |
 | Plans written | 3 |
-| Plans complete | 2 |
+| Plans complete | 3 |
 
 ---
 
@@ -100,11 +100,13 @@ None currently.
 | 2026-06-05 | HttpTransport uses orjson.dumps() for request body | Consistency with future Rust native codec path |
 | 2026-06-05 | GitLab /raw endpoint (not base64) | Returns raw SDL text directly; avoids decoding step |
 | 2026-06-05 | build_client_schema for introspection | Introspection JSON requires client-side builder, not build_schema |
+| 2026-06-05 | from_env(**overrides: Any) not str | Config has int/bool fields; pydantic-settings coerces at runtime |
+| 2026-06-05 | TYPE_CHECKING block for domain imports in lib.py | Satisfies ruff TC001; domain types only needed for annotations |
 
 ---
 
 ## Session Continuity
 
-**Last session**: 2026-06-05 — Executed 01-02-PLAN.md (SchemaService cascade + outbound adapters)
-**Next action**: Execute 01-03-PLAN.md — Config, GraphQLClient.from_env(), test suite
-**Context needed for next session**: Schema cascade complete. SchemaService orchestrates 4 sources in priority order with TTL cache. HttpTransport provides httpx-based GraphQL transport with 3-class error typing. All 4 schema sources (GitLab, introspection, federation SDL, file) implement SchemaSource protocol. Need config loader, GraphQLClient.from_env() factory, and test suite next.
+**Last session**: 2026-06-05 — Executed 01-03-PLAN.md (Config, GraphQLClient.from_env(), test suite)
+**Next action**: Plan Phase 2 — Operations, Errors & Federation
+**Context needed for next session**: Phase 1 complete. Full hexagonal skeleton working: domain models (SchemaGraph, QueryResult, TypeInfo, etc.), ports (SchemaSource, GraphQLTransport, JsonCodec), SchemaService with TTL cascade, 4 outbound adapters (GitLab, introspection, federation SDL, file), HttpTransport with 3-class error typing, GraphQLConfig (pydantic-settings), GraphQLClient.from_env() composition root, `from graphql_mcp import GraphQLClient` works. 13 tests pass: domain purity, cascade fallback, TTL cache. Need Phase 2: operations (query, raw, introspect, describe_type, list_subgraphs, refresh_schema), mutation guard, federation ownership.

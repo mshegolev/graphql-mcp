@@ -55,7 +55,7 @@ The following are explicitly deferred and must NOT be implemented in v1:
 | GQL-03 | Phase 2 | Pending |
 | GQL-04 | Phase 2 | Pending |
 | GQL-05 | Phase 2 | Pending |
-| GQL-06 | Phase 1 | Pending |
+| GQL-06 | Phase 1 | Complete |
 | GQL-07 | Phase 2 | Pending |
 | GQL-08 | Phase 2 | Pending |
 | GQL-09 | Phase 2 | Pending |

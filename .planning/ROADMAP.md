@@ -10,7 +10,7 @@
 
 ## Phases
 
-- [ ] **Phase 1: Foundation & Schema Sources** — Hexagonal skeleton + schema cascade (domain/ports/adapters layout, http transport, GitLab→introspection→`_service{sdl}`→file)
+- [x] **Phase 1: Foundation & Schema Sources** — Hexagonal skeleton + schema cascade (domain/ports/adapters layout, http transport, GitLab→introspection→`_service{sdl}`→file) ✅
 - [ ] **Phase 2: Operations, Errors & Federation** — All 6 operations live in every face; 3-class error typing; mutation-guard; federation ownership
 - [ ] **Phase 3: Native & Faces** — pyo3 JsonCodec crate + orjson fallback with parity test; all inbound adapters (lib/mcp_stdio/FastAPI/CLI)
 - [ ] **Phase 4: Ship** — pytest suite + bench; CI wheel matrix; README + Glama publish
@@ -45,7 +45,7 @@ Plans:
 
 **Wave 3** *(blocked on Wave 2 completion)*
 
-- [ ] 01-03-PLAN.md — Config, GraphQLClient.from_env(), test suite
+- [x] 01-03-PLAN.md — Config, GraphQLClient.from_env(), test suite ✅
 
 **UI hint**: no
 
@@ -115,7 +115,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Schema Sources | 2/3 | Executing | - |
+| 1. Foundation & Schema Sources | 3/3 | Complete | 2026-06-05 |
 | 2. Operations, Errors & Federation | 0/? | Not started | - |
 | 3. Native & Faces | 0/? | Not started | - |
 | 4. Ship | 0/? | Not started | - |
