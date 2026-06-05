@@ -127,7 +127,7 @@ Plans:
 Plans:
 **Wave 1** *(parallel — no file overlap)*
 
-- [ ] 04-01-PLAN.md — Fix ruff violations + verify full test suite green
+- [x] 04-01-PLAN.md — Fix ruff violations + verify full test suite green ✅
 - [ ] 04-02-PLAN.md — CI workflow (cibuildwheel full matrix) + README + Glama files
 
 **UI hint**: no
@@ -141,4 +141,4 @@ Plans:
 | 1. Foundation & Schema Sources | 3/3 | Complete    | 2026-06-05 |
 | 2. Operations, Errors & Federation | 2/2 | Complete    | 2026-06-05 |
 | 3. Native & Faces | 2/2 | Complete    | 2026-06-05 |
-| 4. Ship | 0/2 | In Progress | - |
+| 4. Ship | 1/2 | In Progress | - |

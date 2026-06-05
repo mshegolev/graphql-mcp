@@ -3,14 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: ready_to_plan
-last_updated: 2026-06-05T22:26:38.586Z
+last_updated: "2026-06-05T22:36:10Z"
 progress:
   total_phases: 4
   completed_phases: 3
-  total_plans: 7
-  completed_plans: 7
-  percent: 75
-stopped_at: Phase 3 complete (2/2) — ready to discuss Phase 4
+  total_plans: 9
+  completed_plans: 8
+  percent: 80
 ---
 
 # graphql-mcp — Project State
@@ -30,15 +29,15 @@ stopped_at: Phase 3 complete (2/2) — ready to discuss Phase 4
 
 ## Current Position
 
-Phase: 4
-Plan: Not started
-**Current phase**: Phase 3 — Native & Faces — COMPLETE ✅
-**Current plan**: 03-02-PLAN.md ✅ complete — FastAPI REST + MCP stdio + CLI inbound adapters
-**Status**: Phase 3 complete. All inbound adapters (REST, MCP stdio, CLI) live with 128 tests passing. Phase 4 (Ship) next.
-**Phase goal**: The pyo3 JsonCodec crate builds via maturin, the orjson fallback passes the same parity test, and all four inbound adapters expose the full operation set. ✅ ACHIEVED
+Phase: 04 (Ship) — EXECUTING
+Plan: 2 of 2
+**Current phase**: Phase 4 — Ship — IN PROGRESS
+**Current plan**: 04-01-PLAN.md ✅ complete — Fix ruff violations + verify test suite green
+**Status**: Phase 4 plan 1 complete. All ruff violations fixed (6 total: 4×TC001 + 1×UP035 + 1×TC003). 128 tests pass green. Plan 2 (CI + README + Glama) next.
+**Phase goal**: The brick is fully tested, CI produces installable wheels for the complete platform matrix, and the package is discoverable on Glama.
 
 ```
-Progress: [███████████████░░░░░] 75% (Phase 3/4 ✅, Plan 2/2 ✅)
+Progress: [████████████████░░░░] 80% (Phase 4/4, Plan 1/2 ✅)
 ```
 
 ---
@@ -52,7 +51,7 @@ Progress: [███████████████░░░░░] 75% (Ph
 | Requirements total | 10 |
 | Requirements complete | 9 |
 | Plans written | 7 |
-| Plans complete | 7 |
+| Plans complete | 8 |
 
 ---
 
@@ -118,12 +117,13 @@ None currently.
 | 2026-06-05 | CLI deferred imports in command handlers | Fast --help response; doesn't load GraphQLClient until command executes |
 | 2026-06-05 | set_client() public API in rest.py | Explicit test injection without monkeypatching globals |
 | 2026-06-05 | MCP tools as module-level functions | FastMCP @mcp.tool() decorator idiom; matches library pattern |
+| 2026-06-05 | TC003 Sequence also needs TYPE_CHECKING guard | Sequence is annotation-only; from __future__ annotations makes it safe |
 
 ---
 
 ## Session Continuity
 
-**Last session**: 2026-06-05 — Executed 03-02-PLAN.md (FastAPI REST + MCP stdio + CLI inbound adapters)
-**Stopped at**: Completed 03-02-PLAN.md, Phase 3 fully complete
-**Next action**: Plan and execute Phase 4 (Ship) — pytest suite + bench, CI wheel matrix, README + Glama publish
-**Context needed for next session**: Phase 1-3 complete. All 6 operations wired through 4 faces (lib, REST, MCP stdio, CLI). Rust native codec + orjson fallback at parity. 128 tests passing. GQL-10 partially complete (native codec + faces done, CI + publish remains for Phase 4).
+**Last session**: 2026-06-05 — Executed 04-01-PLAN.md (Fix ruff violations + verify test suite green)
+**Stopped at**: Completed 04-01-PLAN.md
+**Next action**: Execute 04-02-PLAN.md — CI workflow (cibuildwheel full matrix) + README + Glama files
+**Context needed for next session**: Phase 1-3 complete. Phase 4 plan 1 done: ruff clean, 128 tests green. GQL-10 CI + publish portion remains in 04-02.
