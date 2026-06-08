@@ -37,5 +37,9 @@ class GraphQLConfig(BaseSettings):
     # Behavior
     allow_mutations: bool = False
 
+    # HTTP server
+    http_host: str = "0.0.0.0"
+    http_port: int = 8000
+
     # Federation
     supergraph_source: str = "auto"  # auto|off — controls list_subgraphs behavior
