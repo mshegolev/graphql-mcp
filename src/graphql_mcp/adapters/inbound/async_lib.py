@@ -26,6 +26,13 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+_ENTITIES_QUERY = """\
+query ($representations: [_Any!]!) {
+  _entities(representations: $representations) {
+    __typename
+  }
+}"""
+
 
 class AsyncGraphQLClient:
     """Async library-first facade for graphql-mcp.
@@ -175,6 +182,23 @@ class AsyncGraphQLClient:
                 error_class=ErrorClass.TRANSPORT,
             )
         return await self._transport.post_raw(body)
+
+    async def entities(self, representations: list[dict[str, Any]]) -> QueryResult:
+        """Resolve federation entities via _entities(representations:) pass-through.
+
+        Sends the representations to the federation gateway's _entities query
+        and returns the raw result. This is a query (not a mutation), so the
+        mutation guard does not apply.
+        """
+        if self._transport is None:
+            return QueryResult(
+                errors=[{"message": "No endpoint configured"}],
+                error_class=ErrorClass.TRANSPORT,
+            )
+        return await self._transport.execute(
+            _ENTITIES_QUERY,
+            {"representations": representations},
+        )
 
     def introspect(self) -> SchemaSummary:
         """Return a summary of Query fields and types from the active schema."""
