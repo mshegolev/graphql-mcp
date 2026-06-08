@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import httpx
-import orjson
 
+from graphql_mcp.adapters.outbound.codec_factory import get_codec
 from graphql_mcp.domain.models import ErrorClass, QueryResult
+
+if TYPE_CHECKING:
+    from graphql_mcp.ports.json_codec import JsonCodec
 
 logger = logging.getLogger(__name__)
 
@@ -21,12 +24,15 @@ class HttpTransport:
         timeout: float = 30.0,
         ssl_verify: bool = True,
         headers: dict[str, str] | None = None,
+        codec: JsonCodec | None = None,
     ) -> None:
         h: dict[str, str] = {"Content-Type": "application/json"}
         if bearer_token:
             h["Authorization"] = f"Bearer {bearer_token}"
         if headers:
             h.update(headers)
+
+        self._codec = codec or get_codec()
 
         self._client = httpx.Client(
             base_url=endpoint,
@@ -47,7 +53,7 @@ class HttpTransport:
 
     def post_raw(self, body: dict[str, Any]) -> QueryResult:
         try:
-            response = self._client.post("", content=orjson.dumps(body))
+            response = self._client.post("", content=self._codec.encode(body))
         except (httpx.HTTPError, httpx.StreamError, OSError) as exc:
             logger.warning("Transport error: %s", exc)
             return QueryResult(
@@ -64,8 +70,8 @@ class HttpTransport:
             )
 
         try:
-            result = orjson.loads(response.content)
-        except (orjson.JSONDecodeError, ValueError) as exc:
+            result = self._codec.decode(response.content)
+        except (ValueError, TypeError) as exc:
             return QueryResult(
                 data=None,
                 errors=[{"message": f"Invalid JSON response: {exc}"}],
