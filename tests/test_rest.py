@@ -1,7 +1,7 @@
 """Tests for FastAPI REST inbound adapter.
 
-Covers: /health, /graphql/query, /graphql/introspect, /graphql/type/{name},
-/graphql/subgraphs, /graphql/refresh, mutation guard via HTTP.
+Covers: /health, /ready, /graphql/query, /graphql/introspect, /graphql/type/{name},
+/graphql/subgraphs, /graphql/refresh, mutation guard via HTTP, MCP mount.
 """
 
 from __future__ import annotations
@@ -95,8 +95,35 @@ class TestListSubgraphs:
         assert resp.json() == []
 
 
+class TestReady:
+    def test_ready_returns_200_when_schema_available(self, test_client: TestClient) -> None:
+        resp = test_client.get("/ready")
+        assert resp.status_code == 200
+        assert resp.json()["status"] == "ready"
+
+    def test_ready_returns_503_when_no_schema(self) -> None:
+        """When all schema sources fail, /ready returns 503."""
+        source = MockSchemaSource("failing", should_raise=True)
+        service = SchemaService(sources=[source], ttl_seconds=0)
+        config = GraphQLConfig(allow_mutations=False)
+        client = GraphQLClient(schema_service=service, transport=None, config=config)
+        set_client(client)
+        tc = TestClient(app)
+        resp = tc.get("/ready")
+        assert resp.status_code == 503
+        assert resp.json()["status"] == "unavailable"
+        assert "detail" in resp.json()
+
+
 class TestRefresh:
     def test_refresh_returns_ok(self, test_client: TestClient) -> None:
         resp = test_client.post("/graphql/refresh")
         assert resp.status_code == 200
         assert resp.json() == {"status": "refreshed"}
+
+
+class TestMCPMount:
+    def test_mcp_route_exists(self) -> None:
+        """Verify the MCP sub-app is mounted at /mcp."""
+        paths = [r.path for r in app.routes]
+        assert "/mcp" in paths
