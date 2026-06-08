@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Production Hardening
 status: executing
-last_updated: "2026-06-08T15:18:54Z"
-last_activity: 2026-06-08 -- Phase 07 Plan 01 complete (REST + MCP-over-HTTP & serve)
+last_updated: "2026-06-08T15:26:49Z"
+last_activity: 2026-06-08 -- Phase 07 Plan 02 complete (Dockerfile & .dockerignore)
 progress:
   total_phases: 4
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 8
-  completed_plans: 7
-  percent: 63
+  completed_plans: 8
+  percent: 75
 ---
 
 # graphql-mcp — Project State
@@ -30,10 +30,10 @@ progress:
 
 ## Current Position
 
-Phase: 07 (MCP-over-HTTP & Serve Infrastructure) — EXECUTING
-Plan: 2 of 2
-Status: Plan 01 complete, ready for Plan 02
-Last activity: 2026-06-08 -- Phase 07 Plan 01 complete
+Phase: 07 (MCP-over-HTTP & Serve Infrastructure) — COMPLETE
+Plan: 2 of 2 (all complete)
+Status: Phase 07 complete, ready for Phase 08
+Last activity: 2026-06-08 -- Phase 07 Plan 02 complete (Dockerfile)
 
 ## Performance Metrics
 
@@ -44,9 +44,9 @@ Last activity: 2026-06-08 -- Phase 07 Plan 01 complete
 | v1.0 Plans | 9/9 complete |
 | v1.0 Tests | 128 passing |
 | v1.1 Tests | 213 passing |
-| v1.1 Phases | 2/4 complete |
-| v1.1 Plans | 7/8 complete (Phase 05 done, Phase 06 done, Phase 07-01 done) |
-| v1.1 Requirements | 5/13 complete |
+| v1.1 Phases | 3/4 complete |
+| v1.1 Plans | 8/8 complete (Phase 05 done, Phase 06 done, Phase 07 done) |
+| v1.1 Requirements | 6/13 complete |
 
 ---
 
@@ -83,6 +83,8 @@ Last activity: 2026-06-08 -- Phase 07 Plan 01 complete
 | 2026-06-08 | streamable_http_path=/ for MCP sub-app | Avoids /mcp/mcp double-path when mounted at /mcp on FastAPI |
 | 2026-06-08 | MCP sub-app tested directly (not via FastAPI mount) | FastAPI doesn't invoke sub-app lifespans; Starlette TestClient does |
 | 2026-06-08 | DNS rebinding protection disabled in test fixtures only | Production security preserved; testserver host fails DNS check |
+| 2026-06-08 | Two-stage pip install in Dockerfile (wheel then extras) | pip doesn't support *.whl[extras] syntax for local file paths |
+| 2026-06-08 | stdlib urllib HEALTHCHECK (no curl) | python:3.12-slim doesn't include curl; urllib always available |
 
 ### Key Constraints
 
@@ -106,10 +108,10 @@ None currently.
 
 ## Session Continuity
 
-**Last session**: 2026-06-08 — Completed Phase 07 Plan 01 (REST + MCP-over-HTTP & serve)
-**Next action**: Execute Phase 07 Plan 02
-**Context**: Phase 07 Plan 01 complete — /ready endpoint, MCP-over-HTTP at /mcp, serve CLI command. 213 tests passing. Ready for Plan 02.
+**Last session**: 2026-06-08 — Completed Phase 07 Plan 02 (Dockerfile & .dockerignore)
+**Next action**: Execute Phase 08 (_entities & Ship v1.1)
+**Context**: Phase 07 complete — Dockerfile, .dockerignore, /ready, MCP-over-HTTP, serve CLI. 213 tests passing. Ready for Phase 08.
 
 ## Operator Next Steps
 
-- Execute Phase 07 Plan 02
+- Execute Phase 08 Plan 01

@@ -24,7 +24,7 @@
 
 - [x] **FACE-01**: `graphql-mcp serve` CLI command — starts FastAPI via uvicorn with configurable host/port (`GRAPHQL_HTTP_HOST`/`GRAPHQL_HTTP_PORT`).
 - [x] **FACE-02**: MCP-over-HTTP (streamable HTTP transport) on FastAPI app — alongside existing REST routes. Uses `mcp` SDK's `StreamableHTTPServerTransport` or equivalent.
-- [ ] **FACE-03**: `Dockerfile` — uvicorn default, multi-stage build, health + readiness probes, non-root user.
+- [x] **FACE-03**: `Dockerfile` — uvicorn default, multi-stage build, health + readiness probes, non-root user.
 - [x] **FACE-04**: `/ready` endpoint — returns 200 only when schema is resolvable (distinguishes from `/health` which always returns 200).
 
 ### Federation & Ship
@@ -47,7 +47,7 @@
 | PERF-03 | Phase 6 | Complete |
 | FACE-01 | Phase 7 | Complete |
 | FACE-02 | Phase 7 | Complete |
-| FACE-03 | Phase 7 | Pending |
+| FACE-03 | Phase 7 | Complete |
 | FACE-04 | Phase 7 | Complete |
 | ENT-01 | Phase 8 | Pending |
 | SHIP-01 | Phase 8 | Pending |
