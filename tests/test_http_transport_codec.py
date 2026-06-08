@@ -9,7 +9,6 @@ from typing import Any
 from unittest.mock import MagicMock
 
 import httpx
-import pytest
 import respx
 
 from graphql_mcp.adapters.outbound.http_transport import HttpTransport

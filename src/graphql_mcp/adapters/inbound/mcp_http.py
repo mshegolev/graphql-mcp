@@ -5,7 +5,10 @@ Mounted as a sub-app on the FastAPI application at /mcp.
 
 from __future__ import annotations
 
-from starlette.applications import Starlette
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from starlette.applications import Starlette
 
 from graphql_mcp.adapters.inbound.mcp_stdio import mcp
 

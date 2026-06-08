@@ -10,7 +10,6 @@ from typing import Any
 from unittest.mock import MagicMock
 
 import httpx
-import pytest
 import respx
 
 from graphql_mcp.adapters.outbound.async_http_transport import AsyncHttpTransport

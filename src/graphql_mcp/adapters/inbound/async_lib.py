@@ -1,16 +1,15 @@
 from __future__ import annotations
 
 import atexit
+import contextlib
 import logging
 from typing import TYPE_CHECKING, Any
 
 from graphql_mcp.adapters.outbound.async_http_transport import AsyncHttpTransport
 from graphql_mcp.adapters.outbound.file_source import FileSdlSource
 from graphql_mcp.adapters.outbound.gitlab_source import GitLabSource
-from graphql_mcp.adapters.outbound.introspection_source import IntrospectionSource
 from graphql_mcp.adapters.outbound.query_guard import check_mutation_guard
 from graphql_mcp.adapters.outbound.schema_analyzer import SchemaAnalyzer
-from graphql_mcp.adapters.outbound.service_sdl_source import ServiceSdlSource
 from graphql_mcp.config import GraphQLConfig
 from graphql_mcp.domain.models import ErrorClass, QueryResult
 from graphql_mcp.domain.schema_service import SchemaService
@@ -137,10 +136,8 @@ class AsyncGraphQLClient:
             if not instance._closed:
                 instance._closed = True
                 if instance._transport is not None:
-                    try:
+                    with contextlib.suppress(Exception):
                         instance._transport._client.close()
-                    except Exception:  # noqa: BLE001
-                        pass
                     logger.debug("Async transport cleaned up via atexit")
 
         atexit.register(_sync_cleanup)

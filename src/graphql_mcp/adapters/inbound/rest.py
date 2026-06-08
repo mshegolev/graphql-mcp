@@ -12,9 +12,8 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from graphql_mcp.adapters.inbound.lib import GraphQLClient
-from graphql_mcp.domain.errors import MutationGuardError, SchemaResolutionError
-
 from graphql_mcp.adapters.inbound.mcp_http import create_mcp_http_app
+from graphql_mcp.domain.errors import MutationGuardError, SchemaResolutionError
 
 app = FastAPI(title="graphql-mcp", version="0.1.0")
 app.mount("/mcp", create_mcp_http_app())
@@ -53,7 +52,7 @@ def ready() -> JSONResponse:
     """Readiness probe: 200 when schema source is resolvable, 503 otherwise."""
     client = _get_client()
     try:
-        client.schema  # triggers SchemaService.resolve()
+        _ = client.schema  # triggers SchemaService.resolve()
         return JSONResponse(status_code=200, content={"status": "ready"})
     except SchemaResolutionError:
         return JSONResponse(

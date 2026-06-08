@@ -44,9 +44,8 @@ class TestContextManager:
     def test_context_manager_exit_on_exception(self) -> None:
         """Transport is closed even if exception occurs inside with block."""
         client, mock_transport = _make_client_with_mock_transport()
-        with pytest.raises(ValueError, match="test error"):
-            with client:
-                raise ValueError("test error")
+        with pytest.raises(ValueError, match="test error"), client:
+            raise ValueError("test error")
         mock_transport.close.assert_called_once()
 
     def test_context_manager_no_transport(self) -> None:
