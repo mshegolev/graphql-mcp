@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<evaluation phase="06" name="Async Transport &amp; Perf Benchmarks">
+  <requirement id="PERF-03" status="implemented">
+    <description>Perf benchmark suite using pytest-benchmark</description>
+    <benchmarks>
+      <benchmark name="orjson_encode_100kb" codec="orjson" operation="encode" payload="100KB" />
+      <benchmark name="orjson_decode_100kb" codec="orjson" operation="decode" payload="100KB" />
+      <benchmark name="orjson_encode_1mb" codec="orjson" operation="encode" payload="1MB" />
+      <benchmark name="orjson_decode_1mb" codec="orjson" operation="decode" payload="1MB" />
+      <benchmark name="rust_encode_100kb" codec="rust" operation="encode" payload="100KB" optional="true" />
+      <benchmark name="rust_decode_100kb" codec="rust" operation="decode" payload="100KB" optional="true" />
+      <benchmark name="rust_encode_1mb" codec="rust" operation="encode" payload="1MB" optional="true" />
+      <benchmark name="rust_decode_1mb" codec="rust" operation="decode" payload="1MB" optional="true" />
+    </benchmarks>
+    <thresholds>
+      <threshold metric="orjson_encode_1mb_median" max_ms="50" />
+      <threshold metric="orjson_decode_1mb_median" max_ms="50" />
+      <threshold metric="rust_vs_orjson_1mb_encode" expectation="rust_faster_or_equal" />
+    </thresholds>
+    <artifacts>
+      <artifact path="tests/benchmarks/test_codec_bench.py" />
+      <artifact path="tests/benchmarks/conftest.py" />
+      <artifact path="EVALUATION.md" />
+    </artifacts>
+  </requirement>
+  <notes>
+    Transport round-trip benchmarks deferred: codec is the CPU-bound component.
+    Network latency dominates transport timing, making codec-level benchmarks
+    the meaningful reproducible comparison.
+  </notes>
+</evaluation>
