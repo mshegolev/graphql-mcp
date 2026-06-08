@@ -11,7 +11,7 @@
 ## Milestones
 
 - ✅ **v1.0 MVP** — Phases 1-4 (shipped 2026-06-08) — [details](milestones/v1.0-ROADMAP.md)
-- 🚧 **v1.1 Production Hardening** — Phases 5-8
+- ✅ **v1.1 Production Hardening** — Phases 5-8 (shipped 2026-06-08)
 
 ## Phases
 
@@ -25,7 +25,7 @@
 
 </details>
 
-### 🚧 v1.1 Production Hardening (Phases 5-8)
+### ✅ v1.1 Production Hardening (Phases 5-8) — SHIPPED 2026-06-08
 
 - [x] Phase 5: Tech Debt & Error Hardening (3 plans) — completed 2026-06-08
   Plans:
@@ -41,10 +41,10 @@
     Plans:
     - [x] 07-01-PLAN.md — /ready endpoint, MCP-over-HTTP mount, `serve` CLI command
     - [x] 07-02-PLAN.md — Dockerfile with multi-stage build and health probes
-- [ ] Phase 8: _entities & Ship v1.1 (2 plans) — 1/2 plans complete
+- [x] Phase 8: _entities & Ship v1.1 (2 plans) — completed 2026-06-08
     Plans:
     - [x] 08-01-PLAN.md — Add entities() to both clients + all faces (REST, MCP, CLI)
-    - [ ] 08-02-PLAN.md — CHANGELOG.md, LICENSE, server.json/glama.json/README updates
+    - [x] 08-02-PLAN.md — CHANGELOG.md, LICENSE, server.json/glama.json/README updates
 
 ---
 
@@ -134,4 +134,4 @@
 | 5. Tech Debt & Error Hardening | v1.1 | 3/3 | Complete    | 2026-06-08 |
 | 6. Async Transport & Perf Benchmarks | v1.1 | 3/3 | Complete    | 2026-06-08 |
 | 7. MCP-over-HTTP & Serve Infrastructure | v1.1 | 2/2 | Complete    | 2026-06-08 |
-| 8. _entities & Ship v1.1 | v1.1 | 1/2 | Executing | — |
+| 8. _entities & Ship v1.1 | v1.1 | 2/2 | Complete | 2026-06-08 |

@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Production Hardening
-status: executing
-last_updated: "2026-06-08T15:49:25Z"
-last_activity: 2026-06-08 -- Phase 08 Plan 01 complete (entities operation)
+status: complete
+last_updated: "2026-06-08T15:58:13Z"
+last_activity: 2026-06-08 -- Phase 08 Plan 02 complete (Ship v1.1 artifacts)
 progress:
   total_phases: 4
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 10
-  completed_plans: 9
-  percent: 85
+  completed_plans: 10
+  percent: 100
 ---
 
 # graphql-mcp — Project State
@@ -30,10 +30,10 @@ progress:
 
 ## Current Position
 
-Phase: 08 (_entities & Ship v1.1) — EXECUTING
-Plan: 2 of 2
-Status: Plan 01 complete, Plan 02 next
-Last activity: 2026-06-08 -- Phase 08 Plan 01 complete (entities operation)
+Phase: 08 (_entities & Ship v1.1) — COMPLETE
+Plan: 2 of 2 (all complete)
+Status: v1.1 milestone shipped
+Last activity: 2026-06-08 -- Phase 08 Plan 02 complete (Ship v1.1 artifacts)
 
 ## Performance Metrics
 
@@ -44,9 +44,9 @@ Last activity: 2026-06-08 -- Phase 08 Plan 01 complete (entities operation)
 | v1.0 Plans | 9/9 complete |
 | v1.0 Tests | 128 passing |
 | v1.1 Tests | 229 passing |
-| v1.1 Phases | 3/4 complete |
-| v1.1 Plans | 9/10 complete (Phase 05 done, Phase 06 done, Phase 07 done, Phase 08 plan 01 done) |
-| v1.1 Requirements | 7/13 complete |
+| v1.1 Phases | 4/4 complete |
+| v1.1 Plans | 10/10 complete (Phase 05 done, Phase 06 done, Phase 07 done, Phase 08 done) |
+| v1.1 Requirements | 9/13 complete |
 
 ---
 
@@ -87,6 +87,7 @@ Last activity: 2026-06-08 -- Phase 08 Plan 01 complete (entities operation)
 | 2026-06-08 | stdlib urllib HEALTHCHECK (no curl) | python:3.12-slim doesn't include curl; urllib always available |
 | 2026-06-08 | _ENTITIES_QUERY uses __typename-only selection set | Gateway resolves entity fields; client just passes representations through |
 | 2026-06-08 | entities() bypasses mutation guard | _entities is a query operation, not a mutation — guard not applicable |
+| 2026-06-08 | pyproject.toml version left dynamic | maturin/Cargo.toml controls version; no static bump needed in pyproject.toml |
 
 ### Key Constraints
 
@@ -110,10 +111,11 @@ None currently.
 
 ## Session Continuity
 
-**Last session**: 2026-06-08 — Completed Phase 08 Plan 01 (entities operation)
-**Next action**: Execute Phase 08 Plan 02 (Ship v1.1)
-**Context**: entities() implemented on both clients, exposed in REST/MCP/CLI. 229 tests passing. Ready for Plan 02.
+**Last session**: 2026-06-08 — Completed Phase 08 Plan 02 (Ship v1.1 artifacts)
+**Next action**: v1.1 milestone complete. Tag release and publish.
+**Context**: All v1.1 requirements shipped. 229 tests passing. CHANGELOG.md, LICENSE, updated server.json/glama.json/README.md. All 4 phases, 10 plans complete.
 
 ## Operator Next Steps
 
-- Execute Phase 08 Plan 02
+- Tag v1.1.0 release
+- Publish to PyPI / container registry

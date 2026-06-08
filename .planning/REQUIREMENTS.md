@@ -30,8 +30,8 @@
 ### Federation & Ship
 
 - [x] **ENT-01**: `_entities(representations:)` pass-through operation — sends `_entities` query to federation gateway, returns typed result. 7th operation on `GraphQLClient` and `AsyncGraphQLClient`. Exposed in all faces.
-- [ ] **SHIP-01**: `CHANGELOG.md` covering v1.0 and v1.1 changes.
-- [ ] **SHIP-02**: `LICENSE` file (MIT).
+- [x] **SHIP-01**: `CHANGELOG.md` covering v1.0 and v1.1 changes.
+- [x] **SHIP-02**: `LICENSE` file (MIT).
 
 ---
 
@@ -50,5 +50,5 @@
 | FACE-03 | Phase 7 | Complete |
 | FACE-04 | Phase 7 | Complete |
 | ENT-01 | Phase 8 | Complete |
-| SHIP-01 | Phase 8 | Pending |
-| SHIP-02 | Phase 8 | Pending |
+| SHIP-01 | Phase 8 | Complete |
+| SHIP-02 | Phase 8 | Complete |
