@@ -5,6 +5,7 @@ Usage: graphql-mcp query '{ __typename }'
        graphql-mcp describe-type User
        graphql-mcp list-subgraphs
        graphql-mcp refresh
+       graphql-mcp serve [--host HOST] [--port PORT]
 """
 
 from __future__ import annotations
@@ -112,6 +113,25 @@ def refresh() -> None:
     client = GraphQLClient.from_env()
     client.refresh_schema()
     click.echo(json.dumps({"status": "refreshed"}))
+
+
+@main.command()
+@click.option("--host", default=None, help="Bind host (overrides GRAPHQL_HTTP_HOST, default 0.0.0.0)")
+@click.option("--port", default=None, type=int, help="Bind port (overrides GRAPHQL_HTTP_PORT, default 8000)")
+def serve(host: str | None, port: int | None) -> None:
+    """Start the FastAPI server with REST + MCP-over-HTTP endpoints."""
+    import uvicorn
+
+    from graphql_mcp.config import GraphQLConfig
+
+    config = GraphQLConfig()
+    bind_host = host or config.http_host
+    bind_port = port or config.http_port
+    uvicorn.run(
+        "graphql_mcp.adapters.inbound.rest:app",
+        host=bind_host,
+        port=bind_port,
+    )
 
 
 if __name__ == "__main__":
