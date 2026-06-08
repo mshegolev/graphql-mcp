@@ -67,6 +67,10 @@ class QueryRequest(BaseModel):
     variables: dict[str, Any] | None = None
 
 
+class EntitiesRequest(BaseModel):
+    representations: list[dict[str, Any]]
+
+
 @app.post("/graphql/query")
 def graphql_query(req: QueryRequest) -> dict[str, Any]:
     client = _get_client()
@@ -111,6 +115,18 @@ def graphql_raw(body: dict[str, Any]) -> dict[str, Any]:
         result = client.raw(body)
     except MutationGuardError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
+    return {
+        "data": result.data,
+        "errors": result.errors,
+        "error_class": result.error_class.value,
+    }
+
+
+@app.post("/graphql/entities")
+def graphql_entities(req: EntitiesRequest) -> dict[str, Any]:
+    """Resolve federation entities via _entities pass-through."""
+    client = _get_client()
+    result = client.entities(req.representations)
     return {
         "data": result.data,
         "errors": result.errors,

@@ -106,6 +106,18 @@ def raw(body_json: str) -> None:
 
 
 @main.command()
+@click.argument("representations_json")
+def entities(representations_json: str) -> None:
+    """Resolve federation entities via _entities pass-through (JSON array of representations)."""
+    from graphql_mcp import GraphQLClient
+
+    client = GraphQLClient.from_env()
+    reps = json.loads(representations_json)
+    result = client.entities(reps)
+    click.echo(json.dumps(result.model_dump(), indent=2, default=str))
+
+
+@main.command()
 def refresh() -> None:
     """Clear schema cache, forcing re-fetch."""
     from graphql_mcp import GraphQLClient

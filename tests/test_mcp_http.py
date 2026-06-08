@@ -156,5 +156,5 @@ class TestMCPHTTPToolsList:
         assert resp.status_code == 200
         data = _parse_sse_data(resp.text)
         tool_names = {t["name"] for t in data["result"]["tools"]}
-        expected = {"query", "raw", "introspect", "describe_type", "list_subgraphs", "refresh_schema"}
+        expected = {"query", "raw", "introspect", "describe_type", "list_subgraphs", "refresh_schema", "entities"}
         assert tool_names == expected

@@ -31,10 +31,10 @@ class TestMCPToolRegistration:
         assert mcp.name == "graphql-mcp"
 
     def test_all_tools_registered(self) -> None:
-        """All 6 GraphQLClient operations should be registered as MCP tools."""
+        """All 7 GraphQLClient operations should be registered as MCP tools."""
         import graphql_mcp.adapters.inbound.mcp_stdio as mod
 
-        expected_tools = {"query", "raw", "introspect", "describe_type", "list_subgraphs", "refresh_schema"}
+        expected_tools = {"query", "raw", "introspect", "describe_type", "list_subgraphs", "refresh_schema", "entities"}
         for tool_name in expected_tools:
             assert hasattr(mod, tool_name), f"Missing MCP tool: {tool_name}"
             assert callable(getattr(mod, tool_name)), f"MCP tool not callable: {tool_name}"
@@ -87,4 +87,11 @@ class TestMCPToolDelegation:
 
         with patch.object(mod, "_get_client", return_value=_mock_client()):
             result = mod.raw({"query": "{ hello }"})
+        assert result["error_class"] == "transport"
+
+    def test_entities_tool_no_transport(self) -> None:
+        import graphql_mcp.adapters.inbound.mcp_stdio as mod
+
+        with patch.object(mod, "_get_client", return_value=_mock_client()):
+            result = mod.entities([{"__typename": "Product", "id": "123"}])
         assert result["error_class"] == "transport"

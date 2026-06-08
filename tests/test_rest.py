@@ -115,6 +115,21 @@ class TestReady:
         assert "detail" in resp.json()
 
 
+class TestEntities:
+    def test_entities_no_transport_returns_transport_error(self, test_client: TestClient) -> None:
+        resp = test_client.post(
+            "/graphql/entities",
+            json={"representations": [{"__typename": "Product", "id": "123"}]},
+        )
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["error_class"] == "transport"
+
+    def test_entities_requires_representations(self, test_client: TestClient) -> None:
+        resp = test_client.post("/graphql/entities", json={})
+        assert resp.status_code == 422  # Pydantic validation error
+
+
 class TestRefresh:
     def test_refresh_returns_ok(self, test_client: TestClient) -> None:
         resp = test_client.post("/graphql/refresh")

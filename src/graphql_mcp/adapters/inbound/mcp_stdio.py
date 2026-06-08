@@ -77,6 +77,14 @@ def list_subgraphs() -> list[dict] | dict:
 
 
 @mcp.tool()
+def entities(representations: list[dict]) -> dict:
+    """Resolve federation entities via _entities(representations:) pass-through."""
+    client = _get_client()
+    result = client.entities(representations)
+    return result.model_dump()
+
+
+@mcp.tool()
 def refresh_schema() -> dict:
     """Clear schema cache, forcing next access to re-fetch."""
     client = _get_client()

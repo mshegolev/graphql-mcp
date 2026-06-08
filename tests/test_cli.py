@@ -73,6 +73,17 @@ class TestCLIRefresh:
         assert body["status"] == "refreshed"
 
 
+class TestCLIEntities:
+    def test_entities_no_transport(self, runner: CliRunner, mock_from_env) -> None:
+        result = runner.invoke(
+            main,
+            ["entities", '[{"__typename": "Product", "id": "123"}]'],
+        )
+        assert result.exit_code == 0
+        body = json.loads(result.output)
+        assert body["error_class"] == "transport"
+
+
 class TestCLIQuery:
     def test_query_no_transport(self, runner: CliRunner, mock_from_env) -> None:
         """query command with no transport returns transport error in JSON."""
