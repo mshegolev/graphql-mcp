@@ -32,10 +32,10 @@
   - [x] 05-01-PLAN.md — Wire JsonCodec into HttpTransport via get_codec()
   - [x] 05-02-PLAN.md — Handle SchemaResolutionError in all inbound adapters
   - [x] 05-03-PLAN.md — Add context manager + close() + atexit to GraphQLClient
-- [ ] Phase 6: Async Transport & Perf Benchmarks (3 plans)
+- [x] Phase 6: Async Transport & Perf Benchmarks (3 plans) — completed 2026-06-08
   Plans:
   - [x] 06-01-PLAN.md — AsyncHttpTransport + AsyncGraphQLTransport protocol
-  - [ ] 06-02-PLAN.md — AsyncGraphQLClient with 6 async operations
+  - [x] 06-02-PLAN.md — AsyncGraphQLClient with 6 async operations
   - [x] 06-03-PLAN.md — Codec perf benchmarks + EVALUATION.md
 - [ ] Phase 7: MCP-over-HTTP & Serve Infrastructure
 - [ ] Phase 8: _entities & Ship v1.1
@@ -125,6 +125,6 @@
 | 3. Native & Faces | v1.0 | 2/2 | Complete | 2026-06-05 |
 | 4. Ship | v1.0 | 2/2 | Complete | 2026-06-05 |
 | 5. Tech Debt & Error Hardening | v1.1 | 3/3 | Complete    | 2026-06-08 |
-| 6. Async Transport & Perf Benchmarks | v1.1 | 2/3 | In Progress | — |
+| 6. Async Transport & Perf Benchmarks | v1.1 | 3/3 | Complete    | 2026-06-08 |
 | 7. MCP-over-HTTP & Serve Infrastructure | v1.1 | — | Not Started | — |
 | 8. _entities & Ship v1.1 | v1.1 | — | Not Started | — |
