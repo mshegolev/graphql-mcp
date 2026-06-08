@@ -343,3 +343,95 @@ class TestAsyncRefreshSchema:
         # Next call should re-fetch
         client.introspect()
         assert source.call_count == 2
+
+
+# ---------------------------------------------------------------------------
+# Test Group 7: entities() — ENT-01 async counterpart
+# ---------------------------------------------------------------------------
+
+
+class TestAsyncEntities:
+    """Tests for AsyncGraphQLClient.entities()."""
+
+    @respx.mock
+    async def test_entities_returns_query_result_with_data(self) -> None:
+        """entities() returns QueryResult with _entities data."""
+        respx.post(MOCK_ENDPOINT_RESOLVED).mock(
+            return_value=httpx.Response(
+                200,
+                json={"data": {"_entities": [{"__typename": "Product", "id": "123"}]}},
+            ),
+        )
+        client = _make_async_client()
+        result = await client.entities([{"__typename": "Product", "id": "123"}])
+
+        assert result.data == {"_entities": [{"__typename": "Product", "id": "123"}]}
+        assert result.errors == []
+        assert result.error_class == ErrorClass.OK
+
+    @respx.mock
+    async def test_entities_sends_representations_as_variables(self) -> None:
+        """entities() sends representations as $representations variable."""
+        route = respx.post(MOCK_ENDPOINT_RESOLVED).mock(
+            return_value=httpx.Response(
+                200,
+                json={"data": {"_entities": [{"__typename": "Product"}, {"__typename": "User"}]}},
+            ),
+        )
+        client = _make_async_client()
+        reps = [
+            {"__typename": "Product", "id": "1"},
+            {"__typename": "User", "id": "2"},
+        ]
+        await client.entities(reps)
+
+        assert route.called
+        import json
+
+        request_body = json.loads(route.calls.last.request.content)
+        assert request_body["variables"]["representations"] == reps
+
+    async def test_entities_no_transport_returns_transport_error(self) -> None:
+        """entities() with no endpoint returns error_class=transport."""
+        client = _make_async_client(with_transport=False)
+        result = await client.entities([{"__typename": "Product", "id": "123"}])
+
+        assert result.error_class == ErrorClass.TRANSPORT
+        assert "No endpoint configured" in result.errors[0]["message"]
+
+    async def test_entities_does_not_trigger_mutation_guard(self) -> None:
+        """entities() is a query, not a mutation — no MutationGuardError."""
+        client = _make_async_client(with_transport=False)
+        # Should NOT raise MutationGuardError — just returns transport error
+        result = await client.entities([{"__typename": "Product", "id": "123"}])
+        assert result.error_class == ErrorClass.TRANSPORT
+        # The key assertion: no MutationGuardError was raised
+
+    @respx.mock
+    async def test_entities_transport_error(self) -> None:
+        """entities() returns error_class=transport on HTTP 500."""
+        respx.post(MOCK_ENDPOINT_RESOLVED).mock(
+            return_value=httpx.Response(500, text="Internal Server Error"),
+        )
+        client = _make_async_client()
+        result = await client.entities([{"__typename": "Product", "id": "123"}])
+
+        assert result.error_class == ErrorClass.TRANSPORT
+
+    @respx.mock
+    async def test_entities_graphql_error(self) -> None:
+        """entities() returns error_class=graphql on GraphQL errors."""
+        respx.post(MOCK_ENDPOINT_RESOLVED).mock(
+            return_value=httpx.Response(
+                200,
+                json={
+                    "data": None,
+                    "errors": [{"message": "Unknown type Product"}],
+                },
+            ),
+        )
+        client = _make_async_client()
+        result = await client.entities([{"__typename": "Product", "id": "123"}])
+
+        assert result.error_class == ErrorClass.GRAPHQL
+        assert len(result.errors) == 1
