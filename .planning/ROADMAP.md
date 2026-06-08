@@ -39,7 +39,7 @@
   - [x] 06-03-PLAN.md — Codec perf benchmarks + EVALUATION.md
 - [ ] Phase 7: MCP-over-HTTP & Serve Infrastructure (2 plans)
     Plans:
-    - [ ] 07-01-PLAN.md — /ready endpoint, MCP-over-HTTP mount, `serve` CLI command
+    - [x] 07-01-PLAN.md — /ready endpoint, MCP-over-HTTP mount, `serve` CLI command
     - [ ] 07-02-PLAN.md — Dockerfile with multi-stage build and health probes
 - [ ] Phase 8: _entities & Ship v1.1
 
@@ -130,5 +130,5 @@
 | 4. Ship | v1.0 | 2/2 | Complete | 2026-06-05 |
 | 5. Tech Debt & Error Hardening | v1.1 | 3/3 | Complete    | 2026-06-08 |
 | 6. Async Transport & Perf Benchmarks | v1.1 | 3/3 | Complete    | 2026-06-08 |
-| 7. MCP-over-HTTP & Serve Infrastructure | v1.1 | 0/2 | Planned | — |
+| 7. MCP-over-HTTP & Serve Infrastructure | v1.1 | 1/2 | In Progress | — |
 | 8. _entities & Ship v1.1 | v1.1 | — | Not Started | — |

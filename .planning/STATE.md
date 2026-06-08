@@ -2,16 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Production Hardening
-status: ready_to_plan
-last_updated: 2026-06-08T13:21:07.461Z
-last_activity: 2026-06-08 -- Completed Phase 06 Plan 02 (async GraphQL client)
+status: executing
+last_updated: "2026-06-08T15:18:54Z"
+last_activity: 2026-06-08 -- Phase 07 Plan 01 complete (REST + MCP-over-HTTP & serve)
 progress:
   total_phases: 4
-  completed_phases: 1
-  total_plans: 6
-  completed_plans: 15
-  percent: 25
-stopped_at: Phase 6 complete (3/3) — ready to discuss Phase 7
+  completed_phases: 2
+  total_plans: 8
+  completed_plans: 7
+  percent: 63
 ---
 
 # graphql-mcp — Project State
@@ -31,10 +30,10 @@ stopped_at: Phase 6 complete (3/3) — ready to discuss Phase 7
 
 ## Current Position
 
-Phase: 7
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-06-08
+Phase: 07 (MCP-over-HTTP & Serve Infrastructure) — EXECUTING
+Plan: 2 of 2
+Status: Plan 01 complete, ready for Plan 02
+Last activity: 2026-06-08 -- Phase 07 Plan 01 complete
 
 ## Performance Metrics
 
@@ -44,9 +43,9 @@ Last activity: 2026-06-08
 | v1.0 Requirements | 10/10 complete |
 | v1.0 Plans | 9/9 complete |
 | v1.0 Tests | 128 passing |
-| v1.1 Tests | 204 passing |
+| v1.1 Tests | 213 passing |
 | v1.1 Phases | 2/4 complete |
-| v1.1 Plans | 6/6 complete (Phase 05 done, Phase 06 done) |
+| v1.1 Plans | 7/8 complete (Phase 05 done, Phase 06 done, Phase 07-01 done) |
 | v1.1 Requirements | 5/13 complete |
 
 ---
@@ -81,6 +80,9 @@ Last activity: 2026-06-08
 | 2026-06-08 | query/raw async, schema ops sync | Schema resolution is in-process (no I/O); only transport-bound ops need await |
 | 2026-06-08 | atexit sync cleanup for async client | atexit cannot await; use httpx.AsyncClient sync close path for cleanup |
 | 2026-06-08 | from_env() skips introspection/federation sources | Async client cannot use sync HttpTransport-based schema sources |
+| 2026-06-08 | streamable_http_path=/ for MCP sub-app | Avoids /mcp/mcp double-path when mounted at /mcp on FastAPI |
+| 2026-06-08 | MCP sub-app tested directly (not via FastAPI mount) | FastAPI doesn't invoke sub-app lifespans; Starlette TestClient does |
+| 2026-06-08 | DNS rebinding protection disabled in test fixtures only | Production security preserved; testserver host fails DNS check |
 
 ### Key Constraints
 
@@ -94,7 +96,7 @@ Last activity: 2026-06-08
 1. ~~Codec dead code — RustJsonCodec/OrjsonCodec never wired into HttpTransport production path~~ ✅ Resolved in 05-01
 2. ~~SchemaResolutionError unhandled in all inbound adapters → 500/traceback~~ ✅ Resolved in 05-02
 3. ~~HttpTransport.close() never called — no resource cleanup~~ ✅ Resolved in 05-03
-4. MCP-over-HTTP deferred — only stdio transport
+4. ~~MCP-over-HTTP deferred — only stdio transport~~ ✅ Resolved in 07-01
 
 ### Blockers
 
@@ -104,10 +106,10 @@ None currently.
 
 ## Session Continuity
 
-**Last session**: 2026-06-08 — Completed Phase 06 Plan 02 (async GraphQL client)
-**Next action**: Execute Phase 07 (next milestone phase)
-**Context**: Phase 06 fully complete — async transport (01), async client (02), codec benchmarks (03). AsyncGraphQLClient with 6 operations, 204 tests passing. Both sync and async clients importable from package.
+**Last session**: 2026-06-08 — Completed Phase 07 Plan 01 (REST + MCP-over-HTTP & serve)
+**Next action**: Execute Phase 07 Plan 02
+**Context**: Phase 07 Plan 01 complete — /ready endpoint, MCP-over-HTTP at /mcp, serve CLI command. 213 tests passing. Ready for Plan 02.
 
 ## Operator Next Steps
 
-- Execute Phase 07 (next v1.1 phase)
+- Execute Phase 07 Plan 02
