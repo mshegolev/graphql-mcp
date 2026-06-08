@@ -8,7 +8,7 @@ from __future__ import annotations
 from mcp.server.fastmcp import FastMCP
 
 from graphql_mcp.adapters.inbound.lib import GraphQLClient
-from graphql_mcp.domain.errors import MutationGuardError
+from graphql_mcp.domain.errors import MutationGuardError, SchemaResolutionError
 
 mcp = FastMCP("graphql-mcp")
 
@@ -48,7 +48,10 @@ def raw(body: dict) -> dict:
 def introspect() -> dict:
     """Return a summary of Query fields and types from the active schema."""
     client = _get_client()
-    summary = client.introspect()
+    try:
+        summary = client.introspect()
+    except SchemaResolutionError as exc:
+        return {"error": str(exc), "error_class": "schema_unavailable"}
     return summary.model_dump()
 
 
@@ -56,15 +59,21 @@ def introspect() -> dict:
 def describe_type(name: str) -> dict | None:
     """Return field/arg details for a named type, with federation subgraph if available."""
     client = _get_client()
-    info = client.describe_type(name)
+    try:
+        info = client.describe_type(name)
+    except SchemaResolutionError as exc:
+        return {"error": str(exc), "error_class": "schema_unavailable"}
     return info.model_dump() if info else None
 
 
 @mcp.tool()
-def list_subgraphs() -> list[dict]:
+def list_subgraphs() -> list[dict] | dict:
     """Return subgraph metadata parsed from supergraph SDL."""
     client = _get_client()
-    return [s.model_dump() for s in client.list_subgraphs()]
+    try:
+        return [s.model_dump() for s in client.list_subgraphs()]
+    except SchemaResolutionError as exc:
+        return {"error": str(exc), "error_class": "schema_unavailable"}
 
 
 @mcp.tool()

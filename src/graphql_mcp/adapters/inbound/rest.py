@@ -7,11 +7,12 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from graphql_mcp.adapters.inbound.lib import GraphQLClient
-from graphql_mcp.domain.errors import MutationGuardError
+from graphql_mcp.domain.errors import MutationGuardError, SchemaResolutionError
 
 app = FastAPI(title="graphql-mcp", version="0.1.0")
 
@@ -29,6 +30,14 @@ def set_client(client: GraphQLClient) -> None:
     """Override the global client (for testing)."""
     global _client  # noqa: PLW0603
     _client = client
+
+
+@app.exception_handler(SchemaResolutionError)
+async def schema_resolution_handler(request: Request, exc: SchemaResolutionError) -> JSONResponse:
+    return JSONResponse(
+        status_code=503,
+        content={"error": "schema unavailable", "detail": str(exc)},
+    )
 
 
 @app.get("/health")

@@ -42,9 +42,14 @@ def query(query_string: str, variables: str | None) -> None:
 def introspect() -> None:
     """Show schema summary (Query fields and types)."""
     from graphql_mcp import GraphQLClient
+    from graphql_mcp.domain.errors import SchemaResolutionError
 
     client = GraphQLClient.from_env()
-    summary = client.introspect()
+    try:
+        summary = client.introspect()
+    except SchemaResolutionError as exc:
+        click.echo(f"Error: {exc}", err=True)
+        sys.exit(1)
     click.echo(json.dumps(summary.model_dump(), indent=2, default=str))
 
 
@@ -53,9 +58,14 @@ def introspect() -> None:
 def describe_type(type_name: str) -> None:
     """Describe a GraphQL type (fields, args, subgraph)."""
     from graphql_mcp import GraphQLClient
+    from graphql_mcp.domain.errors import SchemaResolutionError
 
     client = GraphQLClient.from_env()
-    info = client.describe_type(type_name)
+    try:
+        info = client.describe_type(type_name)
+    except SchemaResolutionError as exc:
+        click.echo(f"Error: {exc}", err=True)
+        sys.exit(1)
     if info is None:
         click.echo(f"Type '{type_name}' not found", err=True)
         sys.exit(1)
@@ -66,9 +76,14 @@ def describe_type(type_name: str) -> None:
 def list_subgraphs() -> None:
     """List federation subgraphs."""
     from graphql_mcp import GraphQLClient
+    from graphql_mcp.domain.errors import SchemaResolutionError
 
     client = GraphQLClient.from_env()
-    subgraphs = client.list_subgraphs()
+    try:
+        subgraphs = client.list_subgraphs()
+    except SchemaResolutionError as exc:
+        click.echo(f"Error: {exc}", err=True)
+        sys.exit(1)
     click.echo(json.dumps([s.model_dump() for s in subgraphs], indent=2, default=str))
 
 
