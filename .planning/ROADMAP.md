@@ -89,7 +89,7 @@
 **Mode:** mvp
 **Depends on**: Phase 6
 **Requirements**: FACE-01, FACE-02, FACE-03, FACE-04
-**Plans:** 2 plans
+**Plans:** 2/2 plans complete
 
 **Success Criteria** (what must be TRUE):
 
@@ -130,5 +130,5 @@
 | 4. Ship | v1.0 | 2/2 | Complete | 2026-06-05 |
 | 5. Tech Debt & Error Hardening | v1.1 | 3/3 | Complete    | 2026-06-08 |
 | 6. Async Transport & Perf Benchmarks | v1.1 | 3/3 | Complete    | 2026-06-08 |
-| 7. MCP-over-HTTP & Serve Infrastructure | v1.1 | 2/2 | Complete | 2026-06-08 |
+| 7. MCP-over-HTTP & Serve Infrastructure | v1.1 | 2/2 | Complete    | 2026-06-08 |
 | 8. _entities & Ship v1.1 | v1.1 | — | Not Started | — |
