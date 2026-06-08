@@ -41,7 +41,10 @@
     Plans:
     - [x] 07-01-PLAN.md — /ready endpoint, MCP-over-HTTP mount, `serve` CLI command
     - [x] 07-02-PLAN.md — Dockerfile with multi-stage build and health probes
-- [ ] Phase 8: _entities & Ship v1.1
+- [ ] Phase 8: _entities & Ship v1.1 (2 plans)
+    Plans:
+    - [ ] 08-01-PLAN.md — Add entities() to both clients + all faces (REST, MCP, CLI)
+    - [ ] 08-02-PLAN.md — CHANGELOG.md, LICENSE, server.json/glama.json/README updates
 
 ---
 
