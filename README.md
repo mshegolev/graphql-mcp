@@ -3,16 +3,17 @@
 ![CI](https://github.com/OWNER/graphql-mcp/actions/workflows/ci.yml/badge.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Generic read-only GraphQL MCP brick — schema discovery, query execution, 3-class error typing, and federation ownership mapping.
+Generic read-only GraphQL MCP brick — schema discovery, query execution, 3-class error typing, federation ownership mapping, and entity resolution.
 
 ## Features
 
-- **6 operations**: `query`, `raw`, `introspect`, `describe_type`, `list_subgraphs`, `refresh_schema`
+- **7 operations**: `query`, `raw`, `introspect`, `describe_type`, `list_subgraphs`, `refresh_schema`, `entities`
 - **3-class error typing**: `ok` (success), `graphql` (response contains errors), `transport` (HTTP / network failure)
 - **Mutation guard**: blocks mutations by default; opt-in via `GRAPHQL_ALLOW_MUTATIONS=true`
 - **Schema cascade**: GitLab (pinned SDL) → introspection (live) → `_service{sdl}` (federation) → local SDL file
 - **Federation ownership**: maps types and fields to subgraphs via supergraph SDL parsing
 - **Rust-native JSON codec**: pyo3 extension for high-throughput JSON processing, with automatic orjson fallback
+- **Async support**: `AsyncGraphQLClient` with full behavioral parity for FastAPI and async workflows
 - **Library-first**: `from graphql_mcp import GraphQLClient` works in pytest without network, MCP, or FastAPI
 
 ## Installation
@@ -63,6 +64,23 @@ for sg in subgraphs:
 
 # Force schema re-fetch
 client.refresh_schema()
+
+# Resolve federation entities
+result = client.entities([
+    {"__typename": "Product", "id": "123"},
+    {"__typename": "User", "id": "456"},
+])
+print(result.data)  # {"_entities": [{"__typename": "Product", ...}, ...]}
+```
+
+### Async Usage
+
+```python
+from graphql_mcp import AsyncGraphQLClient
+
+async with AsyncGraphQLClient.from_env() as client:
+    result = await client.query("{ users { id } }")
+    entities = await client.entities([{"__typename": "User", "id": "1"}])
 ```
 
 ## Configuration
@@ -115,6 +133,8 @@ Endpoints:
 - `GET /graphql/type/{name}` — describe type
 - `GET /graphql/subgraphs` — list federation subgraphs
 - `POST /graphql/refresh` — clear schema cache
+- `POST /graphql/entities` — resolve federation entities
+- `GET /ready` — readiness probe (200 when schema resolvable, 503 otherwise)
 
 ### MCP stdio
 
@@ -125,7 +145,7 @@ pip install graphql-mcp[mcp]
 python -m graphql_mcp.adapters.inbound.mcp_stdio
 ```
 
-Exposes 6 MCP tools: `query`, `raw`, `introspect`, `describe_type`, `list_subgraphs`, `refresh_schema`.
+Exposes 7 MCP tools: `query`, `raw`, `introspect`, `describe_type`, `list_subgraphs`, `refresh_schema`, `entities`.
 
 ### CLI
 
@@ -139,6 +159,26 @@ graphql-mcp introspect
 graphql-mcp describe-type User
 graphql-mcp list-subgraphs
 graphql-mcp refresh
+graphql-mcp entities '[{"__typename": "Product", "id": "123"}]'
+```
+
+### Serve (REST + MCP-over-HTTP)
+
+Start FastAPI with REST endpoints and MCP-over-HTTP transport:
+
+```bash
+pip install graphql-mcp[all]
+
+# Start the server
+graphql-mcp serve --host 0.0.0.0 --port 8000
+```
+
+### Docker
+
+```bash
+docker build -t graphql-mcp .
+docker run -e GRAPHQL_ENDPOINT=https://api.example.com/graphql \
+  -p 8000:8000 graphql-mcp
 ```
 
 ## Architecture

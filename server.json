@@ -1,7 +1,7 @@
 {
   "name": "graphql-mcp",
-  "description": "Generic read-only GraphQL MCP server — schema discovery, query execution, error typing, federation ownership",
-  "version": "0.1.0",
+  "description": "Generic read-only GraphQL MCP server — schema discovery, query execution, error typing, federation ownership and entity resolution",
+  "version": "1.1.0",
   "tools": [
     {
       "name": "query",
@@ -26,6 +26,10 @@
     {
       "name": "refresh_schema",
       "description": "Clear schema cache, forcing next access to re-fetch"
+    },
+    {
+      "name": "entities",
+      "description": "Resolve federation entities via _entities(representations:) pass-through"
     }
   ],
   "transport": {
