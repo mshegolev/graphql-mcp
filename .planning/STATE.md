@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Production Hardening
 status: executing
-last_updated: "2026-06-08T12:32:52Z"
-last_activity: 2026-06-08 -- Completed Phase 06 Plan 01 (async HTTP transport)
+last_updated: "2026-06-08T12:49:14Z"
+last_activity: 2026-06-08 -- Completed Phase 06 Plan 03 (codec perf benchmarks)
 progress:
   total_phases: 4
   completed_phases: 1
   total_plans: 6
-  completed_plans: 4
-  percent: 33
+  completed_plans: 5
+  percent: 50
 ---
 
 # graphql-mcp — Project State
@@ -31,9 +31,9 @@ progress:
 ## Current Position
 
 Phase: 06 (Async Transport & Perf Benchmarks) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Executing Phase 06
-Last activity: 2026-06-08 -- Completed Phase 06 Plan 01 (async HTTP transport)
+Last activity: 2026-06-08 -- Completed Phase 06 Plan 03 (codec perf benchmarks)
 
 ## Performance Metrics
 
@@ -43,10 +43,10 @@ Last activity: 2026-06-08 -- Completed Phase 06 Plan 01 (async HTTP transport)
 | v1.0 Requirements | 10/10 complete |
 | v1.0 Plans | 9/9 complete |
 | v1.0 Tests | 128 passing |
-| v1.1 Tests | 164 passing |
+| v1.1 Tests | 172 passing |
 | v1.1 Phases | 1/4 complete |
-| v1.1 Plans | 4/6 complete (Phase 05 done, 06-01 done) |
-| v1.1 Requirements | 3/13 complete |
+| v1.1 Plans | 5/6 complete (Phase 05 done, 06-01, 06-03 done) |
+| v1.1 Requirements | 4/13 complete |
 
 ---
 
@@ -74,6 +74,8 @@ Last activity: 2026-06-08 -- Completed Phase 06 Plan 01 (async HTTP transport)
 | 2026-06-08 | atexit in from_env() only, not __init__ | Manual construction shouldn't auto-register cleanup; caller controls lifecycle |
 | 2026-06-08 | AsyncHttpTransport mirrors sync exactly | Same constructor, error handling, codec injection — behavioral parity over DRY abstraction |
 | 2026-06-08 | asyncio_mode=auto for pytest | Global config in pyproject.toml — async test functions auto-detected without per-test markers |
+| 2026-06-08 | Benchmarks disabled by default (--benchmark-disable) | Users enable explicitly with --benchmark-enable; prevents slowing normal test runs |
+| 2026-06-08 | Transport round-trip benchmarks deferred | Codec is CPU-bound/reproducible; transport measures httpx+network, not our code |
 
 ### Key Constraints
 
@@ -97,9 +99,9 @@ None currently.
 
 ## Session Continuity
 
-**Last session**: 2026-06-08 — Completed Phase 06 Plan 01 (async HTTP transport)
-**Next action**: Execute Phase 06 Plan 02
-**Context**: AsyncHttpTransport and AsyncGraphQLTransport protocol added. 164 tests passing (10 new async transport tests). Phase 06 Plan 01 complete.
+**Last session**: 2026-06-08 — Completed Phase 06 Plan 03 (codec perf benchmarks)
+**Next action**: Execute Phase 06 Plan 02 (remaining plan)
+**Context**: Codec benchmark suite added with pytest-benchmark. 8 benchmarks (orjson + rust encode/decode on 100KB/1MB). 172 tests passing. EVALUATION.md and evaluation.xml document thresholds and methodology.
 
 ## Operator Next Steps
 
