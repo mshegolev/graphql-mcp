@@ -27,7 +27,11 @@
 
 ### 🚧 v1.1 Production Hardening (Phases 5-8)
 
-- [ ] Phase 5: Tech Debt & Error Hardening
+- [ ] Phase 5: Tech Debt & Error Hardening (3 plans)
+  Plans:
+  - [ ] 05-01-PLAN.md — Wire JsonCodec into HttpTransport via get_codec()
+  - [ ] 05-02-PLAN.md — Handle SchemaResolutionError in all inbound adapters
+  - [ ] 05-03-PLAN.md — Add context manager + close() + atexit to GraphQLClient
 - [ ] Phase 6: Async Transport & Perf Benchmarks
 - [ ] Phase 7: MCP-over-HTTP & Serve Infrastructure
 - [ ] Phase 8: _entities & Ship v1.1
@@ -116,7 +120,7 @@
 | 2. Operations, Errors & Federation | v1.0 | 2/2 | Complete | 2026-06-05 |
 | 3. Native & Faces | v1.0 | 2/2 | Complete | 2026-06-05 |
 | 4. Ship | v1.0 | 2/2 | Complete | 2026-06-05 |
-| 5. Tech Debt & Error Hardening | v1.1 | — | Not Started | — |
+| 5. Tech Debt & Error Hardening | v1.1 | 0/3 | Planning | — |
 | 6. Async Transport & Perf Benchmarks | v1.1 | — | Not Started | — |
 | 7. MCP-over-HTTP & Serve Infrastructure | v1.1 | — | Not Started | — |
 | 8. _entities & Ship v1.1 | v1.1 | — | Not Started | — |
