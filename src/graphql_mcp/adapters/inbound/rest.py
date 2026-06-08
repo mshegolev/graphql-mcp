@@ -77,6 +77,21 @@ def graphql_list_subgraphs() -> list[dict[str, Any]]:
     return [s.model_dump() for s in client.list_subgraphs()]
 
 
+@app.post("/graphql/raw")
+def graphql_raw(body: dict[str, Any]) -> dict[str, Any]:
+    """Send an arbitrary GraphQL POST body and return typed result."""
+    client = _get_client()
+    try:
+        result = client.raw(body)
+    except MutationGuardError as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
+    return {
+        "data": result.data,
+        "errors": result.errors,
+        "error_class": result.error_class.value,
+    }
+
+
 @app.post("/graphql/refresh")
 def graphql_refresh() -> dict[str, str]:
     client = _get_client()

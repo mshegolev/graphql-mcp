@@ -8,6 +8,7 @@ from __future__ import annotations
 from mcp.server.fastmcp import FastMCP
 
 from graphql_mcp.adapters.inbound.lib import GraphQLClient
+from graphql_mcp.domain.errors import MutationGuardError
 
 mcp = FastMCP("graphql-mcp")
 
@@ -25,7 +26,10 @@ def _get_client() -> GraphQLClient:
 def query(query: str, variables: dict | None = None) -> dict:
     """Execute a GraphQL query and return typed result."""
     client = _get_client()
-    result = client.query(query, variables)
+    try:
+        result = client.query(query, variables)
+    except MutationGuardError as exc:
+        return {"error": str(exc), "error_class": "mutation_blocked"}
     return result.model_dump()
 
 
@@ -33,7 +37,10 @@ def query(query: str, variables: dict | None = None) -> dict:
 def raw(body: dict) -> dict:
     """Send an arbitrary GraphQL POST body and return typed result."""
     client = _get_client()
-    result = client.raw(body)
+    try:
+        result = client.raw(body)
+    except MutationGuardError as exc:
+        return {"error": str(exc), "error_class": "mutation_blocked"}
     return result.model_dump()
 
 

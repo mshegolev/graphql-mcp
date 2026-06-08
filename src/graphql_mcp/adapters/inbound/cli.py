@@ -26,10 +26,15 @@ def main() -> None:
 def query(query_string: str, variables: str | None) -> None:
     """Execute a GraphQL query."""
     from graphql_mcp import GraphQLClient
+    from graphql_mcp.domain.errors import MutationGuardError
 
     client = GraphQLClient.from_env()
     vars_dict = json.loads(variables) if variables else None
-    result = client.query(query_string, vars_dict)
+    try:
+        result = client.query(query_string, vars_dict)
+    except MutationGuardError as exc:
+        click.echo(f"Error: {exc}", err=True)
+        sys.exit(1)
     click.echo(json.dumps(result.model_dump(), indent=2, default=str))
 
 
@@ -65,6 +70,23 @@ def list_subgraphs() -> None:
     client = GraphQLClient.from_env()
     subgraphs = client.list_subgraphs()
     click.echo(json.dumps([s.model_dump() for s in subgraphs], indent=2, default=str))
+
+
+@main.command()
+@click.argument("body_json")
+def raw(body_json: str) -> None:
+    """Send an arbitrary GraphQL POST body (JSON string)."""
+    from graphql_mcp import GraphQLClient
+    from graphql_mcp.domain.errors import MutationGuardError
+
+    client = GraphQLClient.from_env()
+    body = json.loads(body_json)
+    try:
+        result = client.raw(body)
+    except MutationGuardError as exc:
+        click.echo(f"Error: {exc}", err=True)
+        sys.exit(1)
+    click.echo(json.dumps(result.model_dump(), indent=2, default=str))
 
 
 @main.command()
