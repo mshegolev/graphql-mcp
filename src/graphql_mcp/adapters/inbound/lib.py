@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import atexit
 import logging
 from typing import TYPE_CHECKING, Any
 
@@ -48,6 +49,7 @@ class GraphQLClient:
         self._allow_mutations = config.allow_mutations if config else False
         self._supergraph_source = config.supergraph_source if config else "auto"
         self._analyzer = SchemaAnalyzer()
+        self._closed = False
 
     @classmethod
     def from_env(cls, **overrides: Any) -> GraphQLClient:
@@ -108,11 +110,13 @@ class GraphQLClient:
             ttl_seconds=float(config.schema_ttl),
         )
 
-        return cls(
+        instance = cls(
             schema_service=schema_service,
             transport=transport,
             config=config,
         )
+        atexit.register(instance.close)
+        return instance
 
     @property
     def schema(self) -> SchemaGraph:
@@ -175,3 +179,23 @@ class GraphQLClient:
     def refresh_schema(self) -> None:
         """Clear schema cache, forcing next access to re-fetch."""
         self._schema_service.invalidate()
+
+    def close(self) -> None:
+        """Release transport resources. Safe to call multiple times."""
+        if self._closed:
+            return
+        self._closed = True
+        if self._transport is not None:
+            self._transport.close()
+            logger.debug("Transport closed")
+
+    def __enter__(self) -> GraphQLClient:
+        return self
+
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: Any,
+    ) -> None:
+        self.close()
