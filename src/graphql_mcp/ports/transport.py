@@ -21,3 +21,20 @@ class GraphQLTransport(Protocol):
     def post_raw(self, body: dict[str, Any]) -> QueryResult:
         """Send arbitrary POST body, return typed result."""
         ...
+
+
+@runtime_checkable
+class AsyncGraphQLTransport(Protocol):
+    """Port: async counterpart to GraphQLTransport."""
+
+    async def execute(
+        self,
+        query: str,
+        variables: dict[str, Any] | None = None,
+    ) -> QueryResult:
+        """Send query + variables asynchronously, return typed result with error_class."""
+        ...
+
+    async def post_raw(self, body: dict[str, Any]) -> QueryResult:
+        """Send arbitrary POST body asynchronously, return typed result."""
+        ...
