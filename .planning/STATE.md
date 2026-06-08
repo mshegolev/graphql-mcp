@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Production Hardening
 status: executing
-last_updated: "2026-06-08T12:00:35Z"
-last_activity: 2026-06-08 -- Completed 05-02 SchemaResolutionError adapter handling
+last_updated: "2026-06-08T12:08:17Z"
+last_activity: 2026-06-08 -- Completed 05-03 Client lifecycle management
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 3
-  completed_plans: 2
-  percent: 66
+  completed_plans: 3
+  percent: 100
 ---
 
 # graphql-mcp — Project State
@@ -30,10 +30,10 @@ progress:
 
 ## Current Position
 
-Phase: 05 (Tech Debt & Error Hardening) — EXECUTING
-Plan: 3 of 3
-Status: Plan 02 complete, advancing to Plan 03
-Last activity: 2026-06-08 -- Completed 05-02 SchemaResolutionError adapter handling
+Phase: 05 (Tech Debt & Error Hardening) — COMPLETE
+Plan: 3 of 3 (all complete)
+Status: Phase 05 complete, all 3 plans executed
+Last activity: 2026-06-08 -- Completed 05-03 Client lifecycle management
 
 ## Performance Metrics
 
@@ -43,10 +43,10 @@ Last activity: 2026-06-08 -- Completed 05-02 SchemaResolutionError adapter handl
 | v1.0 Requirements | 10/10 complete |
 | v1.0 Plans | 9/9 complete |
 | v1.0 Tests | 128 passing |
-| v1.1 Tests | 144 passing |
-| v1.1 Phases | 0/4 complete |
-| v1.1 Plans | 2/3 complete (Phase 05) |
-| v1.1 Requirements | 2/13 complete |
+| v1.1 Tests | 154 passing |
+| v1.1 Phases | 1/4 complete |
+| v1.1 Plans | 3/3 complete (Phase 05) |
+| v1.1 Requirements | 3/13 complete |
 
 ---
 
@@ -70,6 +70,8 @@ Last activity: 2026-06-08 -- Completed 05-02 SchemaResolutionError adapter handl
 | 2026-06-08 | v1.1 not v2.0 | _entities is additive (new operation), not breaking. Tech debt + infra hardening is minor version scope. |
 | 2026-06-08 | Codec-agnostic ValueError/TypeError catch in transport | orjson.JSONDecodeError is ValueError subclass; codec-neutral error handling |
 | 2026-06-08 | FastAPI exception_handler (global) for SchemaResolutionError | Single handler catches all endpoints; cleaner than per-endpoint try/except |
+| 2026-06-08 | Idempotent close via _closed flag | Both atexit and context manager call close(); _closed prevents double transport.close() |
+| 2026-06-08 | atexit in from_env() only, not __init__ | Manual construction shouldn't auto-register cleanup; caller controls lifecycle |
 
 ### Key Constraints
 
@@ -82,7 +84,7 @@ Last activity: 2026-06-08 -- Completed 05-02 SchemaResolutionError adapter handl
 
 1. ~~Codec dead code — RustJsonCodec/OrjsonCodec never wired into HttpTransport production path~~ ✅ Resolved in 05-01
 2. ~~SchemaResolutionError unhandled in all inbound adapters → 500/traceback~~ ✅ Resolved in 05-02
-3. HttpTransport.close() never called — no resource cleanup
+3. ~~HttpTransport.close() never called — no resource cleanup~~ ✅ Resolved in 05-03
 4. MCP-over-HTTP deferred — only stdio transport
 
 ### Blockers
@@ -93,9 +95,9 @@ None currently.
 
 ## Session Continuity
 
-**Last session**: 2026-06-08 — Completed Phase 05 Plan 02 (SchemaResolutionError handling)
-**Next action**: Execute Phase 05 Plan 03 (context manager + close() + atexit)
-**Context**: v1.0 shipped with 128 tests, 1310 LOC source, 1302 LOC tests. 4 tech debt items identified in audit. Items #1 (codec dead code) and #2 (SchemaResolutionError) now resolved. 144 tests passing.
+**Last session**: 2026-06-08 — Completed Phase 05 Plan 03 (client lifecycle management)
+**Next action**: Advance to Phase 06
+**Context**: v1.0 shipped with 128 tests, 1310 LOC source, 1302 LOC tests. 4 tech debt items identified in audit. Items #1 (codec dead code), #2 (SchemaResolutionError), and #3 (resource cleanup) now resolved. 154 tests passing. Phase 05 complete.
 
 ## Operator Next Steps
 
