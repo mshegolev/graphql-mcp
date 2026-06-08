@@ -120,7 +120,7 @@
 | 2. Operations, Errors & Federation | v1.0 | 2/2 | Complete | 2026-06-05 |
 | 3. Native & Faces | v1.0 | 2/2 | Complete | 2026-06-05 |
 | 4. Ship | v1.0 | 2/2 | Complete | 2026-06-05 |
-| 5. Tech Debt & Error Hardening | v1.1 | 3/3 | Complete | 2026-06-08 |
+| 5. Tech Debt & Error Hardening | v1.1 | 3/3 | Complete    | 2026-06-08 |
 | 6. Async Transport & Perf Benchmarks | v1.1 | — | Not Started | — |
 | 7. MCP-over-HTTP & Serve Infrastructure | v1.1 | — | Not Started | — |
 | 8. _entities & Ship v1.1 | v1.1 | — | Not Started | — |
