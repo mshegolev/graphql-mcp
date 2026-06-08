@@ -37,7 +37,10 @@
   - [x] 06-01-PLAN.md — AsyncHttpTransport + AsyncGraphQLTransport protocol
   - [x] 06-02-PLAN.md — AsyncGraphQLClient with 6 async operations
   - [x] 06-03-PLAN.md — Codec perf benchmarks + EVALUATION.md
-- [ ] Phase 7: MCP-over-HTTP & Serve Infrastructure
+- [ ] Phase 7: MCP-over-HTTP & Serve Infrastructure (2 plans)
+    Plans:
+    - [ ] 07-01-PLAN.md — /ready endpoint, MCP-over-HTTP mount, `serve` CLI command
+    - [ ] 07-02-PLAN.md — Dockerfile with multi-stage build and health probes
 - [ ] Phase 8: _entities & Ship v1.1
 
 ---
@@ -86,6 +89,7 @@
 **Mode:** mvp
 **Depends on**: Phase 6
 **Requirements**: FACE-01, FACE-02, FACE-03, FACE-04
+**Plans:** 2 plans
 
 **Success Criteria** (what must be TRUE):
 
@@ -126,5 +130,5 @@
 | 4. Ship | v1.0 | 2/2 | Complete | 2026-06-05 |
 | 5. Tech Debt & Error Hardening | v1.1 | 3/3 | Complete    | 2026-06-08 |
 | 6. Async Transport & Perf Benchmarks | v1.1 | 3/3 | Complete    | 2026-06-08 |
-| 7. MCP-over-HTTP & Serve Infrastructure | v1.1 | — | Not Started | — |
+| 7. MCP-over-HTTP & Serve Infrastructure | v1.1 | 0/2 | Planned | — |
 | 8. _entities & Ship v1.1 | v1.1 | — | Not Started | — |
