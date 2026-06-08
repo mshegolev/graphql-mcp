@@ -2,16 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Production Hardening
-status: ready_to_plan
-last_updated: 2026-06-08T15:32:09.874Z
-last_activity: 2026-06-08 -- Phase 07 Plan 02 complete (Dockerfile & .dockerignore)
+status: executing
+last_updated: "2026-06-08T15:49:25Z"
+last_activity: 2026-06-08 -- Phase 08 Plan 01 complete (entities operation)
 progress:
   total_phases: 4
   completed_phases: 3
-  total_plans: 8
-  completed_plans: 17
-  percent: 75
-stopped_at: Phase 7 complete (2/2) — ready to discuss Phase 8
+  total_plans: 10
+  completed_plans: 9
+  percent: 85
 ---
 
 # graphql-mcp — Project State
@@ -20,7 +19,7 @@ stopped_at: Phase 7 complete (2/2) — ready to discuss Phase 8
 
 **Core value**: Generic read-only GraphQL MCP brick — schema discovery, query execution, 3-class error typing, and federation ownership mapping (field → subgraph → serviceName). Library-first: `from graphql_mcp import GraphQLClient` works in pytest without network/MCP/FastAPI. Serves as the v2 hexagonal reference template copied by kafka-mcp and ordering-mcp.
 
-**Investigator contract**: `GraphQLClient` exposes `query`, `raw`, `introspect`, `describe_type`, `list_subgraphs`, `refresh_schema`. The `error_class` field lets investigator distinguish "service down" (transport) from "asked wrong thing" (graphql). `subgraph` on `TypeInfo` is the correlation key to `service_name` in Jaeger/OpenSearch.
+**Investigator contract**: `GraphQLClient` exposes `query`, `raw`, `entities`, `introspect`, `describe_type`, `list_subgraphs`, `refresh_schema`. The `error_class` field lets investigator distinguish "service down" (transport) from "asked wrong thing" (graphql). `subgraph` on `TypeInfo` is the correlation key to `service_name` in Jaeger/OpenSearch.
 
 **Repository**: `/opt/develop/aiqa/mcps/graphql-mcp/`
 **Spec**: `/opt/develop/aiqa/docs/superpowers/specs/2026-06-05-investigation-mcp-suite-design.md` §3
@@ -31,10 +30,10 @@ stopped_at: Phase 7 complete (2/2) — ready to discuss Phase 8
 
 ## Current Position
 
-Phase: 8
-Plan: Not started
-Status: Ready to plan
-Last activity: 2026-06-08
+Phase: 08 (_entities & Ship v1.1) — EXECUTING
+Plan: 2 of 2
+Status: Plan 01 complete, Plan 02 next
+Last activity: 2026-06-08 -- Phase 08 Plan 01 complete (entities operation)
 
 ## Performance Metrics
 
@@ -44,10 +43,10 @@ Last activity: 2026-06-08
 | v1.0 Requirements | 10/10 complete |
 | v1.0 Plans | 9/9 complete |
 | v1.0 Tests | 128 passing |
-| v1.1 Tests | 213 passing |
+| v1.1 Tests | 229 passing |
 | v1.1 Phases | 3/4 complete |
-| v1.1 Plans | 8/8 complete (Phase 05 done, Phase 06 done, Phase 07 done) |
-| v1.1 Requirements | 6/13 complete |
+| v1.1 Plans | 9/10 complete (Phase 05 done, Phase 06 done, Phase 07 done, Phase 08 plan 01 done) |
+| v1.1 Requirements | 7/13 complete |
 
 ---
 
@@ -86,6 +85,8 @@ Last activity: 2026-06-08
 | 2026-06-08 | DNS rebinding protection disabled in test fixtures only | Production security preserved; testserver host fails DNS check |
 | 2026-06-08 | Two-stage pip install in Dockerfile (wheel then extras) | pip doesn't support *.whl[extras] syntax for local file paths |
 | 2026-06-08 | stdlib urllib HEALTHCHECK (no curl) | python:3.12-slim doesn't include curl; urllib always available |
+| 2026-06-08 | _ENTITIES_QUERY uses __typename-only selection set | Gateway resolves entity fields; client just passes representations through |
+| 2026-06-08 | entities() bypasses mutation guard | _entities is a query operation, not a mutation — guard not applicable |
 
 ### Key Constraints
 
@@ -109,10 +110,10 @@ None currently.
 
 ## Session Continuity
 
-**Last session**: 2026-06-08 — Completed Phase 07 Plan 02 (Dockerfile & .dockerignore)
-**Next action**: Execute Phase 08 (_entities & Ship v1.1)
-**Context**: Phase 07 complete — Dockerfile, .dockerignore, /ready, MCP-over-HTTP, serve CLI. 213 tests passing. Ready for Phase 08.
+**Last session**: 2026-06-08 — Completed Phase 08 Plan 01 (entities operation)
+**Next action**: Execute Phase 08 Plan 02 (Ship v1.1)
+**Context**: entities() implemented on both clients, exposed in REST/MCP/CLI. 229 tests passing. Ready for Plan 02.
 
 ## Operator Next Steps
 
-- Execute Phase 08 Plan 01
+- Execute Phase 08 Plan 02

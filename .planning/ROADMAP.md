@@ -41,9 +41,9 @@
     Plans:
     - [x] 07-01-PLAN.md — /ready endpoint, MCP-over-HTTP mount, `serve` CLI command
     - [x] 07-02-PLAN.md — Dockerfile with multi-stage build and health probes
-- [ ] Phase 8: _entities & Ship v1.1 (2 plans)
+- [ ] Phase 8: _entities & Ship v1.1 (2 plans) — 1/2 plans complete
     Plans:
-    - [ ] 08-01-PLAN.md — Add entities() to both clients + all faces (REST, MCP, CLI)
+    - [x] 08-01-PLAN.md — Add entities() to both clients + all faces (REST, MCP, CLI)
     - [ ] 08-02-PLAN.md — CHANGELOG.md, LICENSE, server.json/glama.json/README updates
 
 ---
@@ -134,4 +134,4 @@
 | 5. Tech Debt & Error Hardening | v1.1 | 3/3 | Complete    | 2026-06-08 |
 | 6. Async Transport & Perf Benchmarks | v1.1 | 3/3 | Complete    | 2026-06-08 |
 | 7. MCP-over-HTTP & Serve Infrastructure | v1.1 | 2/2 | Complete    | 2026-06-08 |
-| 8. _entities & Ship v1.1 | v1.1 | — | Not Started | — |
+| 8. _entities & Ship v1.1 | v1.1 | 1/2 | Executing | — |
