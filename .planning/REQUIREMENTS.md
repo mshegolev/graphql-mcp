@@ -16,7 +16,7 @@
 
 ### Async Transport & Performance
 
-- [ ] **PERF-01**: `AsyncHttpTransport` adapter using `httpx.AsyncClient` implementing `GraphQLTransport` protocol (async variant). Passes same behavioral tests as sync transport.
+- [x] **PERF-01**: `AsyncHttpTransport` adapter using `httpx.AsyncClient` implementing `GraphQLTransport` protocol (async variant). Passes same behavioral tests as sync transport.
 - [ ] **PERF-02**: `AsyncGraphQLClient` — separate class with same 6 operations as `GraphQLClient` but async. Uses `AsyncHttpTransport`. Context manager support (`async with`).
 - [ ] **PERF-03**: Perf benchmark suite using pytest-benchmark — 100KB and 1MB JSON payloads. Measures codec encode/decode (native vs fallback) and transport round-trip. `EVALUATION.md` documents thresholds. `evaluation.xml` for structured output.
 
@@ -42,7 +42,7 @@
 | HARD-01 | Phase 5 | Complete |
 | HARD-02 | Phase 5 | Complete |
 | HARD-03 | Phase 5 | Complete |
-| PERF-01 | Phase 6 | Pending |
+| PERF-01 | Phase 6 | Complete |
 | PERF-02 | Phase 6 | Pending |
 | PERF-03 | Phase 6 | Pending |
 | FACE-01 | Phase 7 | Pending |
