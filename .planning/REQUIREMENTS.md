@@ -11,7 +11,7 @@
 ### Tech Debt & Hardening (from v1.0 audit)
 
 - [x] **HARD-01**: Wire `JsonCodec` port into `HttpTransport` via `get_codec()` factory — replace direct `orjson.dumps()`/`orjson.loads()` with codec abstraction so Rust native codec is used in production, not just tests.
-- [ ] **HARD-02**: Handle `SchemaResolutionError` in all inbound adapters — REST returns 503 with structured body, MCP returns structured error dict, CLI prints clean message and exits 1. No unhandled Python tracebacks.
+- [x] **HARD-02**: Handle `SchemaResolutionError` in all inbound adapters — REST returns 503 with structured body, MCP returns structured error dict, CLI prints clean message and exits 1. No unhandled Python tracebacks.
 - [ ] **HARD-03**: Resource lifecycle — `GraphQLClient` implements context manager (`__enter__`/`__exit__`) and `close()` method. `HttpTransport.close()` is called on cleanup. `atexit` handler registered for non-context-manager usage.
 
 ### Async Transport & Performance
@@ -40,7 +40,7 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | HARD-01 | Phase 5 | Complete |
-| HARD-02 | Phase 5 | Pending |
+| HARD-02 | Phase 5 | Complete |
 | HARD-03 | Phase 5 | Pending |
 | PERF-01 | Phase 6 | Pending |
 | PERF-02 | Phase 6 | Pending |

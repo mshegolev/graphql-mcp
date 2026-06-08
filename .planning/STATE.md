@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Production Hardening
 status: executing
-last_updated: "2026-06-08T11:47:23Z"
-last_activity: 2026-06-08 -- Completed 05-01 codec wiring plan
+last_updated: "2026-06-08T12:00:35Z"
+last_activity: 2026-06-08 -- Completed 05-02 SchemaResolutionError adapter handling
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
-  percent: 33
+  completed_plans: 2
+  percent: 66
 ---
 
 # graphql-mcp — Project State
@@ -31,9 +31,9 @@ progress:
 ## Current Position
 
 Phase: 05 (Tech Debt & Error Hardening) — EXECUTING
-Plan: 2 of 3
-Status: Plan 01 complete, advancing to Plan 02
-Last activity: 2026-06-08 -- Completed 05-01 codec wiring plan
+Plan: 3 of 3
+Status: Plan 02 complete, advancing to Plan 03
+Last activity: 2026-06-08 -- Completed 05-02 SchemaResolutionError adapter handling
 
 ## Performance Metrics
 
@@ -43,10 +43,10 @@ Last activity: 2026-06-08 -- Completed 05-01 codec wiring plan
 | v1.0 Requirements | 10/10 complete |
 | v1.0 Plans | 9/9 complete |
 | v1.0 Tests | 128 passing |
-| v1.1 Tests | 133 passing |
+| v1.1 Tests | 144 passing |
 | v1.1 Phases | 0/4 complete |
-| v1.1 Plans | 1/3 complete (Phase 05) |
-| v1.1 Requirements | 1/13 complete |
+| v1.1 Plans | 2/3 complete (Phase 05) |
+| v1.1 Requirements | 2/13 complete |
 
 ---
 
@@ -69,6 +69,7 @@ Last activity: 2026-06-08 -- Completed 05-01 codec wiring plan
 | 2026-06-08 | _entities as pass-through | Send to gateway, return typed result. Full resolution is a separate product (Apollo Router). |
 | 2026-06-08 | v1.1 not v2.0 | _entities is additive (new operation), not breaking. Tech debt + infra hardening is minor version scope. |
 | 2026-06-08 | Codec-agnostic ValueError/TypeError catch in transport | orjson.JSONDecodeError is ValueError subclass; codec-neutral error handling |
+| 2026-06-08 | FastAPI exception_handler (global) for SchemaResolutionError | Single handler catches all endpoints; cleaner than per-endpoint try/except |
 
 ### Key Constraints
 
@@ -80,7 +81,7 @@ Last activity: 2026-06-08 -- Completed 05-01 codec wiring plan
 ### v1.0 Tech Debt (to be resolved in v1.1)
 
 1. ~~Codec dead code — RustJsonCodec/OrjsonCodec never wired into HttpTransport production path~~ ✅ Resolved in 05-01
-2. SchemaResolutionError unhandled in all inbound adapters → 500/traceback
+2. ~~SchemaResolutionError unhandled in all inbound adapters → 500/traceback~~ ✅ Resolved in 05-02
 3. HttpTransport.close() never called — no resource cleanup
 4. MCP-over-HTTP deferred — only stdio transport
 
@@ -92,9 +93,9 @@ None currently.
 
 ## Session Continuity
 
-**Last session**: 2026-06-08 — Completed Phase 05 Plan 01 (codec wiring)
-**Next action**: Execute Phase 05 Plan 02 (SchemaResolutionError handling)
-**Context**: v1.0 shipped with 128 tests, 1310 LOC source, 1302 LOC tests. 4 tech debt items identified in audit. Item #1 (codec dead code) now resolved. 133 tests passing.
+**Last session**: 2026-06-08 — Completed Phase 05 Plan 02 (SchemaResolutionError handling)
+**Next action**: Execute Phase 05 Plan 03 (context manager + close() + atexit)
+**Context**: v1.0 shipped with 128 tests, 1310 LOC source, 1302 LOC tests. 4 tech debt items identified in audit. Items #1 (codec dead code) and #2 (SchemaResolutionError) now resolved. 144 tests passing.
 
 ## Operator Next Steps
 
