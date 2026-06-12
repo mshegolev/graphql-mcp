@@ -98,10 +98,22 @@ class TestAsyncAtexitRegistration:
     """from_env() registers atexit handler."""
 
     def test_from_env_registers_atexit(self) -> None:
-        """from_env() registers a cleanup function with atexit."""
+        """from_env() registers a cleanup function with atexit.
+
+        Asserts on the registered function's identity rather than the call
+        count: unrelated import-time registrations (e.g. certifi's
+        exit_cacert_ctx in CI) can also fire inside the patch window.
+        """
         with patch.object(atexit, "register") as mock_register:
             AsyncGraphQLClient.from_env(endpoint="https://example.com/graphql")
-            mock_register.assert_called_once()
+            registered = [
+                getattr(call.args[0], "__qualname__", repr(call.args[0]))
+                for call in mock_register.call_args_list
+                if call.args
+            ]
+            assert any("_sync_cleanup" in name for name in registered), (
+                f"from_env did not register _sync_cleanup; got: {registered}"
+            )
 
     async def test_atexit_and_context_manager_both_safe(self) -> None:
         """If both atexit and context manager fire, transport closes only once."""
