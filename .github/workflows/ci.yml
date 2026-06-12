@@ -74,7 +74,12 @@ jobs:
           # Rust std requires macOS >= 10.12; without this the wheel is
           # tagged 10.9 and delocate-wheel rejects it (DelocationError).
           CIBW_ENVIRONMENT_MACOS: 'MACOSX_DEPLOYMENT_TARGET=10.12'
-          CIBW_TEST_REQUIRES: "pytest respx"
+          # pytest-benchmark: pyproject addopts has --benchmark-disable;
+          # pytest-asyncio: asyncio_mode=auto — both needed in the test venv.
+          CIBW_TEST_REQUIRES: "pytest pytest-asyncio pytest-benchmark respx"
+          # Full suite imports fastapi/starlette (REST), mcp (stdio), click
+          # (CLI) — install the wheel with those extras in the test venv.
+          CIBW_TEST_EXTRAS: "server,mcp,cli"
           CIBW_TEST_COMMAND: >
             pytest {project}/tests/ -x
             --ignore={project}/tests/test_codec_parity.py
