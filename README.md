@@ -1,6 +1,6 @@
 # graphql-mcp
 
-![CI](https://github.com/OWNER/graphql-mcp/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/mshegolev/graphql-mcp/actions/workflows/ci.yml/badge.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Generic read-only GraphQL MCP brick — schema discovery, query execution, 3-class error typing, federation ownership mapping, and entity resolution.
