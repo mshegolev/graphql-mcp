@@ -71,6 +71,9 @@ jobs:
             curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y &&
             export PATH="$HOME/.cargo/bin:$PATH"
           CIBW_ENVIRONMENT_LINUX: 'PATH=$HOME/.cargo/bin:$PATH'
+          # Rust std requires macOS >= 10.12; without this the wheel is
+          # tagged 10.9 and delocate-wheel rejects it (DelocationError).
+          CIBW_ENVIRONMENT_MACOS: 'MACOSX_DEPLOYMENT_TARGET=10.12'
           CIBW_TEST_REQUIRES: "pytest respx"
           CIBW_TEST_COMMAND: >
             pytest {project}/tests/ -x
