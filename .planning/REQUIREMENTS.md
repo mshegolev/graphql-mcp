@@ -1,37 +1,63 @@
-# graphql-mcp v1.1 — Requirements
+# graphql-mcp v2.0 — Requirements
 
-**Milestone:** v1.1 Production Hardening
-**Scope:** Close v1.0 tech debt, add async transport, perf benchmarks, MCP-over-HTTP, serve infrastructure, _entities operation, and remaining spec artifacts.
-**Predecessor:** v1.0 MVP (shipped 2026-06-08, 10/10 requirements satisfied)
+**Milestone:** v2.0 Production-Grade Platform
+**Scope:** Observability (OpenTelemetry), security hardening (mTLS, token rotation, rate limiting, audit), GraphQL subscriptions (WebSocket + SSE), DX & ecosystem (PyPI publish, integration tests), Copier template extraction.
+**Predecessor:** v1.1 Production Hardening (shipped 2026-06-08, 13/13 requirements satisfied, 229 tests)
 
 ---
 
 ## Requirements
 
-### Tech Debt & Hardening (from v1.0 audit)
+### Observability
 
-- [x] **HARD-01**: Wire `JsonCodec` port into `HttpTransport` via `get_codec()` factory — replace direct `orjson.dumps()`/`orjson.loads()` with codec abstraction so Rust native codec is used in production, not just tests.
-- [x] **HARD-02**: Handle `SchemaResolutionError` in all inbound adapters — REST returns 503 with structured body, MCP returns structured error dict, CLI prints clean message and exits 1. No unhandled Python tracebacks.
-- [x] **HARD-03**: Resource lifecycle — `GraphQLClient` implements context manager (`__enter__`/`__exit__`) and `close()` method. `HttpTransport.close()` is called on cleanup. `atexit` handler registered for non-context-manager usage.
+- [ ] **OTEL-01**: User can see distributed traces for all outbound HTTP calls to the upstream GraphQL endpoint, with W3C traceparent propagation — verified by test that checks span export contains `http.method`, `http.url` attributes.
+- [ ] **OTEL-02**: User can see server spans for all inbound REST/FastAPI requests, with `http.server.duration` and `http.server.active_requests` metrics — verified by test asserting spans from FastAPI middleware.
+- [ ] **OTEL-03**: User can view `graphql_mcp.query.duration` histogram, `graphql_mcp.query.count` counter, and `graphql_mcp.query.errors` counter broken down by `error_class` (transport/graphql/ok) — verified by test recording metrics and asserting counters.
+- [ ] **OTEL-04**: User can correlate structured logs with Jaeger traces via `trace_id` and `span_id` fields injected into every log record — verified by test asserting log records contain `otelTraceID` and `otelSpanID`.
+- [ ] **OTEL-05**: User can configure OTEL export via standard env vars (`OTEL_EXPORTER_OTLP_ENDPOINT`, `OTEL_SERVICE_NAME`) with OTLP HTTP exporter — verified by test that initializes TracerProvider with env-based configuration.
 
-### Async Transport & Performance
+### Security
 
-- [x] **PERF-01**: `AsyncHttpTransport` adapter using `httpx.AsyncClient` implementing `GraphQLTransport` protocol (async variant). Passes same behavioral tests as sync transport.
-- [x] **PERF-02**: `AsyncGraphQLClient` — separate class with same 6 operations as `GraphQLClient` but async. Uses `AsyncHttpTransport`. Context manager support (`async with`).
-- [x] **PERF-03**: Perf benchmark suite using pytest-benchmark — 100KB and 1MB JSON payloads. Measures codec encode/decode (native vs fallback) and transport round-trip. `EVALUATION.md` documents thresholds. `evaluation.xml` for structured output.
+- [ ] **SEC-01**: User can set a maximum query depth limit (`GRAPHQL_MAX_QUERY_DEPTH`, default 10) that rejects deeply nested queries with a 400 error before forwarding to upstream — verified by test with query exceeding depth limit.
+- [ ] **SEC-02**: User can rate-limit REST face requests per caller IP (configurable via `GRAPHQL_RATE_LIMIT`, default `100/minute`) with 429 response and `Retry-After` header — verified by test exceeding limit.
+- [ ] **SEC-03**: User can pass `Authorization`, `X-User-Id`, and `X-Roles` headers from inbound REST request through to upstream GraphQL endpoint — verified by test asserting headers forwarded to mock upstream.
+- [ ] **SEC-04**: User can configure mTLS for outbound connections via `GRAPHQL_CLIENT_CERT`, `GRAPHQL_CLIENT_KEY`, `GRAPHQL_CA_BUNDLE` env vars — verified by test with mock TLS server requiring client certificate.
+- [ ] **SEC-05**: User can configure OAuth2 client_credentials token rotation (`GRAPHQL_OAUTH2_TOKEN_URL`, `GRAPHQL_OAUTH2_CLIENT_ID`, `GRAPHQL_OAUTH2_CLIENT_SECRET`) that automatically refreshes expired tokens — verified by test with mock OAuth2 server.
+- [ ] **SEC-06**: User can enable structured audit logging (`GRAPHQL_AUDIT_LOG=true`) that records caller identity, query hash, error_class, latency_ms, and trace_id per operation — verified by test asserting log output contains required fields.
 
-### Inbound Faces & Infrastructure
+### Subscriptions
 
-- [x] **FACE-01**: `graphql-mcp serve` CLI command — starts FastAPI via uvicorn with configurable host/port (`GRAPHQL_HTTP_HOST`/`GRAPHQL_HTTP_PORT`).
-- [x] **FACE-02**: MCP-over-HTTP (streamable HTTP transport) on FastAPI app — alongside existing REST routes. Uses `mcp` SDK's `StreamableHTTPServerTransport` or equivalent.
-- [x] **FACE-03**: `Dockerfile` — uvicorn default, multi-stage build, health + readiness probes, non-root user.
-- [x] **FACE-04**: `/ready` endpoint — returns 200 only when schema is resolvable (distinguishes from `/health` which always returns 200).
+- [ ] **SUB-01**: User can subscribe to GraphQL subscriptions via WebSocket on `ws://host/graphql/subscribe` using `graphql-transport-ws` sub-protocol, receiving `QueryResult` events as `next` messages — verified by test with mock WS server.
+- [ ] **SUB-02**: User can subscribe via SSE fallback endpoint (`GET /graphql/subscribe?query=...&variables=...`) for environments where WebSocket is unavailable — verified by test reading SSE event stream.
+- [ ] **SUB-03**: User can call `async for result in client.subscribe(query, variables)` on `AsyncGraphQLClient` to get an `AsyncIterator[QueryResult]` for lib-face streaming — verified by test iterating subscription results.
 
-### Federation & Ship
+### DX & Ecosystem
 
-- [x] **ENT-01**: `_entities(representations:)` pass-through operation — sends `_entities` query to federation gateway, returns typed result. 7th operation on `GraphQLClient` and `AsyncGraphQLClient`. Exposed in all faces.
-- [x] **SHIP-01**: `CHANGELOG.md` covering v1.0 and v1.1 changes.
-- [x] **SHIP-02**: `LICENSE` file (MIT).
+- [ ] **DX-01**: User can `pip install graphql-mcp` from PyPI, published automatically via GitHub Actions OIDC Trusted Publishing on `v*` tag push — verified by CI workflow dry-run.
+- [ ] **DX-02**: User can run integration tests via `docker-compose` harness with mock GraphQL server, and find SDK usage examples in `examples/` directory — verified by `docker compose up` + `pytest tests/integration/`.
+
+### Template
+
+- [ ] **TPL-01**: User can run `copier copy <template-repo> <new-brick>` to generate a new MCP brick with parameterized module name, env prefix, and optional features (Rust native, subscriptions, OTEL) — verified by generating a test brick and running its test suite.
+
+---
+
+## Future Requirements (deferred from v2.0 scoping)
+
+_None — all proposed features selected for v2.0._
+
+## Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| GraphQL server/resolver execution | Brick is a client/proxy, not a server |
+| Schema composition / supergraph building | Belongs in gateway build pipeline |
+| Mutation by default | Read-only investigation tool by design |
+| Query result caching (Redis/Memcached) | Upstream gateway responsibility |
+| Multi-endpoint routing / query splitting | Gateway functionality |
+| Built-in Prometheus scrape `/metrics` | Use OTLP push → collector |
+| WebSocket-based MCP transport | No standard MCP-over-WS exists |
+| Python 3.9 support | EOL; project requires >=3.10 |
 
 ---
 
@@ -39,16 +65,20 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| HARD-01 | Phase 5 | Complete |
-| HARD-02 | Phase 5 | Complete |
-| HARD-03 | Phase 5 | Complete |
-| PERF-01 | Phase 6 | Complete |
-| PERF-02 | Phase 6 | Complete |
-| PERF-03 | Phase 6 | Complete |
-| FACE-01 | Phase 7 | Complete |
-| FACE-02 | Phase 7 | Complete |
-| FACE-03 | Phase 7 | Complete |
-| FACE-04 | Phase 7 | Complete |
-| ENT-01 | Phase 8 | Complete |
-| SHIP-01 | Phase 8 | Complete |
-| SHIP-02 | Phase 8 | Complete |
+| OTEL-01 | — | Pending |
+| OTEL-02 | — | Pending |
+| OTEL-03 | — | Pending |
+| OTEL-04 | — | Pending |
+| OTEL-05 | — | Pending |
+| SEC-01 | — | Pending |
+| SEC-02 | — | Pending |
+| SEC-03 | — | Pending |
+| SEC-04 | — | Pending |
+| SEC-05 | — | Pending |
+| SEC-06 | — | Pending |
+| SUB-01 | — | Pending |
+| SUB-02 | — | Pending |
+| SUB-03 | — | Pending |
+| DX-01 | — | Pending |
+| DX-02 | — | Pending |
+| TPL-01 | — | Pending |
