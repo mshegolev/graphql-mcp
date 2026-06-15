@@ -43,7 +43,8 @@ dev `pytest`/`responses`/`ruff`/`pytest-benchmark`.
 - [ ] **GQL-09**: `raw` — произвольное тело (под guard)
 - [ ] **GQL-10**: v2-шаблон (lib+stdio+FastAPI+CLI), pyo3+orjson паритет, CI-wheels, Glama
 
-Anti/out-of-scope: мутации by default, subscriptions, schema composition, `_entities` (v2).
+Anti/out-of-scope: мутации by default, schema composition.
+~~subscriptions~~ → v2.0, ~~`_entities`~~ → shipped v1.1.
 
 ## ⭐ Investigator Contract (что обязан отдавать lib-фасад)
 
@@ -85,5 +86,56 @@ domain → ports → outbound (http/schema sources) → Rust native + orjson fal
 ## Decisions (наследуются от зонтика)
 D1 гибрид C · D2 library-first · D5 Python+Rust · D7 hexagonal · D8 FastAPI+stdio · D9 pyo3+fallback.
 
+## Current Milestone: v2.0 Production-Grade Platform
+
+**Goal:** Transform graphql-mcp from a feature-complete brick into a production-grade, observable, secure platform with real-time capabilities and a reusable template for the suite.
+
+**Target features:**
+- OpenTelemetry tracing/metrics/logs across all operations and transports
+- Security hardening: mTLS, token rotation, RBAC header forwarding, audit logging, rate limiting, input validation
+- DX & Ecosystem: PyPI publish pipeline, GitHub Actions CI, better error messages, SDK examples, integration test harness
+- GraphQL subscriptions via WebSocket (graphql-ws) + SSE fallback, streaming response support
+- Copier template extraction for kafka-mcp/ordering-mcp reuse
+
+## Validated Requirements
+
+### v1.0 MVP (shipped 2026-06-05)
+- [x] GQL-01..GQL-10 (all 10 requirements satisfied)
+
+### v1.1 Production Hardening (shipped 2026-06-08)
+- [x] HARD-01..03, PERF-01..03, FACE-01..04, ENT-01, SHIP-01..02 (all 13 requirements satisfied)
+
+### v2.0 Production-Grade Platform (active)
+- See REQUIREMENTS.md for active requirements
+
+## Key Decisions
+
+| Version | Decision | Rationale |
+|---------|----------|-----------|
+| v1.0 | D1-D9 from umbrella spec | Foundational architecture |
+| v1.1 | Separate AsyncGraphQLClient | Clean API boundary |
+| v1.1 | _entities as pass-through | Gateway resolves; client proxies |
+| v2.0 | OpenTelemetry (not just structlog) | Industry standard; exports to Jaeger/Prometheus already in the suite |
+| v2.0 | WebSocket + SSE for subscriptions | graphql-ws protocol + SSE fallback for simpler consumers |
+| v2.0 | Copier for template extraction | Supports reruns/updates unlike cookiecutter |
+
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+**After each phase transition** (via `/gsd-transition`):
+1. Requirements invalidated? → Move to Out of Scope with reason
+2. Requirements validated? → Move to Validated with phase reference
+3. New requirements emerged? → Add to Active
+4. Decisions to log? → Add to Key Decisions
+5. "What This Is" still accurate? → Update if drifted
+
+**After each milestone** (via `/gsd-complete-milestone`):
+1. Full review of all sections
+2. Core Value check — still the right priority?
+3. Audit Out of Scope — reasons still valid?
+4. Update Context with current state
+
 ---
 *Brick brief — запускай агента в этой репе и реализуй методы из Investigator Contract.*
+*Last updated: 2026-06-16*

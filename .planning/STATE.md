@@ -1,17 +1,17 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.1
-milestone_name: Production Hardening
-status: milestone_complete
-last_updated: 2026-06-08T16:02:20.793Z
-last_activity: 2026-06-08 -- Phase 08 Plan 02 complete (Ship v1.1 artifacts)
+milestone: v2.0
+milestone_name: Production-Grade Platform
+status: planning
+last_updated: 2026-06-16
+last_activity: 2026-06-16 -- Milestone v2.0 started
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 10
-  completed_plans: 19
-  percent: 100
-stopped_at: Milestone complete (Phase 8 was final phase)
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
+stopped_at: null
 ---
 
 # graphql-mcp — Project State
@@ -31,10 +31,10 @@ stopped_at: Milestone complete (Phase 8 was final phase)
 
 ## Current Position
 
-Phase: 8
-Plan: Not started
-Status: Milestone complete
-Last activity: 2026-06-08
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-06-16 — Milestone v2.0 started
 
 ## Performance Metrics
 
@@ -112,11 +112,6 @@ None currently.
 
 ## Session Continuity
 
-**Last session**: 2026-06-08 — Completed Phase 08 Plan 02 (Ship v1.1 artifacts)
-**Next action**: v1.1 milestone complete. Tag release and publish.
-**Context**: All v1.1 requirements shipped. 229 tests passing. CHANGELOG.md, LICENSE, updated server.json/glama.json/README.md. All 4 phases, 10 plans complete.
-
-## Operator Next Steps
-
-- Tag v1.1.0 release
-- Publish to PyPI / container registry
+**Last session**: 2026-06-16 — Started milestone v2.0 Production-Grade Platform
+**Next action**: Define requirements and create roadmap
+**Context**: v1.1 shipped (229 tests, 7 ops, 4 faces). v2.0 adds observability (OTEL), security hardening, DX/CI, subscriptions (WS+SSE), Copier template extraction.
