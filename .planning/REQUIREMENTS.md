@@ -65,20 +65,20 @@ _None — all proposed features selected for v2.0._
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| OTEL-01 | — | Pending |
-| OTEL-02 | — | Pending |
-| OTEL-03 | — | Pending |
-| OTEL-04 | — | Pending |
-| OTEL-05 | — | Pending |
-| SEC-01 | — | Pending |
-| SEC-02 | — | Pending |
-| SEC-03 | — | Pending |
-| SEC-04 | — | Pending |
-| SEC-05 | — | Pending |
-| SEC-06 | — | Pending |
-| SUB-01 | — | Pending |
-| SUB-02 | — | Pending |
-| SUB-03 | — | Pending |
-| DX-01 | — | Pending |
-| DX-02 | — | Pending |
-| TPL-01 | — | Pending |
+| OTEL-01 | Phase 9 | Pending |
+| OTEL-02 | Phase 9 | Pending |
+| OTEL-03 | Phase 9 | Pending |
+| OTEL-04 | Phase 9 | Pending |
+| OTEL-05 | Phase 9 | Pending |
+| SEC-01 | Phase 10 | Pending |
+| SEC-02 | Phase 10 | Pending |
+| SEC-03 | Phase 10 | Pending |
+| SEC-04 | Phase 10 | Pending |
+| SEC-05 | Phase 10 | Pending |
+| SEC-06 | Phase 10 | Pending |
+| SUB-01 | Phase 11 | Pending |
+| SUB-02 | Phase 11 | Pending |
+| SUB-03 | Phase 11 | Pending |
+| DX-01 | Phase 12 | Pending |
+| DX-02 | Phase 12 | Pending |
+| TPL-01 | Phase 13 | Pending |

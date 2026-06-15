@@ -4,9 +4,9 @@ milestone: v2.0
 milestone_name: Production-Grade Platform
 status: planning
 last_updated: 2026-06-16
-last_activity: 2026-06-16 -- Milestone v2.0 started
+last_activity: 2026-06-16 -- Roadmap created (Phases 9-13)
 progress:
-  total_phases: 0
+  total_phases: 5
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -31,10 +31,10 @@ stopped_at: null
 
 ## Current Position
 
-Phase: Not started (defining requirements)
+Phase: 9 — OpenTelemetry Observability (next)
 Plan: —
-Status: Defining requirements
-Last activity: 2026-06-16 — Milestone v2.0 started
+Status: Roadmap created, ready for planning
+Last activity: 2026-06-16 — Roadmap created (Phases 9-13)
 
 ## Performance Metrics
 
@@ -112,6 +112,6 @@ None currently.
 
 ## Session Continuity
 
-**Last session**: 2026-06-16 — Started milestone v2.0 Production-Grade Platform
-**Next action**: Define requirements and create roadmap
-**Context**: v1.1 shipped (229 tests, 7 ops, 4 faces). v2.0 adds observability (OTEL), security hardening, DX/CI, subscriptions (WS+SSE), Copier template extraction.
+**Last session**: 2026-06-16 — Roadmap created for v2.0 (Phases 9-13, 17 requirements)
+**Next action**: `/gsd-plan-phase 9` — Plan OpenTelemetry Observability
+**Context**: v1.1 shipped (229 tests, 7 ops, 4 faces). v2.0 roadmap: Phase 9 OTEL → Phase 10 Security → Phase 11 Subscriptions → Phase 12 DX/CI → Phase 13 Copier Template. Strict dependency chain: observability first so everything else is traced.
