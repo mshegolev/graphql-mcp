@@ -18,6 +18,14 @@ from graphql_mcp.domain.errors import MutationGuardError, SchemaResolutionError
 app = FastAPI(title="graphql-mcp", version="0.1.0")
 app.mount("/mcp", create_mcp_http_app())
 
+# OTEL: auto-instrument FastAPI if opentelemetry is available
+try:
+    from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+
+    FastAPIInstrumentor.instrument_app(app)
+except ImportError:
+    pass  # OTEL not installed — no-op
+
 _client: GraphQLClient | None = None
 
 

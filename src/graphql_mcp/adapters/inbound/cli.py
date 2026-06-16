@@ -134,7 +134,10 @@ def serve(host: str | None, port: int | None) -> None:
     """Start the FastAPI server with REST + MCP-over-HTTP endpoints."""
     import uvicorn
 
+    from graphql_mcp.adapters.outbound.otel_bootstrap import init_otel
     from graphql_mcp.config import GraphQLConfig
+
+    init_otel()  # Configure OTEL from env vars (no-op if packages absent)
 
     config = GraphQLConfig()
     bind_host = host or config.http_host
