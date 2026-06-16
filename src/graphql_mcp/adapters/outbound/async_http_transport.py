@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import ssl
 from typing import TYPE_CHECKING, Any
 
 import httpx
@@ -10,6 +9,8 @@ from graphql_mcp.adapters.outbound.codec_factory import get_codec
 from graphql_mcp.domain.models import ErrorClass, QueryResult
 
 if TYPE_CHECKING:
+    import ssl
+
     from graphql_mcp.adapters.outbound.oauth2 import AsyncOAuth2TokenManager
     from graphql_mcp.ports.json_codec import JsonCodec
 

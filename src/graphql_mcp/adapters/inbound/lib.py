@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import atexit
 import logging
+import ssl
 import time
 from typing import TYPE_CHECKING, Any
 
@@ -9,10 +10,11 @@ from graphql_mcp.adapters.outbound.file_source import FileSdlSource
 from graphql_mcp.adapters.outbound.gitlab_source import GitLabSource
 from graphql_mcp.adapters.outbound.http_transport import HttpTransport
 from graphql_mcp.adapters.outbound.introspection_source import IntrospectionSource
+from graphql_mcp.adapters.outbound.oauth2 import OAuth2TokenManager
+from graphql_mcp.adapters.outbound.otel_metrics import record_query_metrics
 from graphql_mcp.adapters.outbound.query_guard import check_mutation_guard
 from graphql_mcp.adapters.outbound.schema_analyzer import SchemaAnalyzer
 from graphql_mcp.adapters.outbound.service_sdl_source import ServiceSdlSource
-from graphql_mcp.adapters.outbound.otel_metrics import record_query_metrics
 from graphql_mcp.config import GraphQLConfig
 from graphql_mcp.domain.models import ErrorClass, QueryResult
 from graphql_mcp.domain.schema_service import SchemaService
@@ -73,6 +75,24 @@ class GraphQLClient:
         """
         config = GraphQLConfig(**overrides) if overrides else GraphQLConfig()
 
+        # Build ssl_context for mTLS if configured
+        ssl_ctx: ssl.SSLContext | None = None
+        if config.client_cert and config.client_key:
+            ssl_ctx = ssl.create_default_context()
+            if config.ca_bundle:
+                ssl_ctx.load_verify_locations(config.ca_bundle)
+            ssl_ctx.load_cert_chain(certfile=config.client_cert, keyfile=config.client_key)
+
+        # Build OAuth2 token manager if configured
+        oauth2_mgr: OAuth2TokenManager | None = None
+        if config.oauth2_token_url and config.oauth2_client_id and config.oauth2_client_secret:
+            oauth2_mgr = OAuth2TokenManager(
+                token_url=config.oauth2_token_url,
+                client_id=config.oauth2_client_id,
+                client_secret=config.oauth2_client_secret,
+                scopes=config.oauth2_scopes,
+            )
+
         # Build transport (needed by introspection and _service{sdl} sources)
         transport: HttpTransport | None = None
         if config.endpoint:
@@ -81,6 +101,8 @@ class GraphQLClient:
                 bearer_token=config.bearer_token,
                 timeout=float(config.timeout),
                 ssl_verify=config.ssl_verify,
+                ssl_context=ssl_ctx,
+                oauth2=oauth2_mgr,
             )
 
         # Build cascade sources in priority order
