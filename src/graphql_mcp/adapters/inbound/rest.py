@@ -14,6 +14,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import StreamingResponse
 from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from graphql_mcp.adapters.inbound.lib import GraphQLClient
@@ -281,6 +282,103 @@ def graphql_refresh() -> dict[str, str]:
     client = _get_client()
     client.refresh_schema()
     return {"status": "refreshed"}
+
+
+# ---------------------------------------------------------------------------
+# SSE subscription fallback
+# ---------------------------------------------------------------------------
+
+
+@app.get("/graphql/subscribe", response_model=None)
+async def sse_subscribe(request: Request, query: str, variables: str | None = None) -> StreamingResponse | JSONResponse:
+    """SSE fallback for GraphQL subscriptions.
+
+    Streams subscription results as Server-Sent Events for environments
+    where WebSocket connections are unavailable (e.g., behind HTTP/1.1 proxies).
+
+    Query params:
+        query: GraphQL subscription query string
+        variables: Optional JSON-encoded variables object
+    """
+    import json as _json
+
+    parsed_variables: dict[str, Any] | None = None
+    if variables:
+        try:
+            parsed_variables = _json.loads(variables)
+        except (ValueError, TypeError):
+            return JSONResponse(
+                status_code=400,
+                content={"error": "Invalid JSON in variables parameter"},
+            )
+
+    config = GraphQLConfig()
+
+    # Resolve upstream WS endpoint (same logic as WS route)
+    ws_endpoint = config.subscription_endpoint
+    if not ws_endpoint and config.endpoint:
+        ep = config.endpoint
+        if ep.startswith("https://"):
+            ws_endpoint = "wss://" + ep[len("https://") :]
+        elif ep.startswith("http://"):
+            ws_endpoint = "ws://" + ep[len("http://") :]
+
+    if not ws_endpoint:
+        return JSONResponse(
+            status_code=503,
+            content={"error": "No subscription endpoint configured"},
+        )
+
+    # Forward auth headers from the HTTP request
+    extra_headers = _extract_forwarded_headers(request)
+    if config.bearer_token:
+        extra_headers.setdefault("Authorization", f"Bearer {config.bearer_token}")
+
+    async def _event_stream():
+        """Async generator yielding SSE-formatted events."""
+        from graphql_mcp.adapters.outbound.ws_transport import UpstreamWSTransport
+
+        try:
+            async with UpstreamWSTransport(
+                ws_endpoint=ws_endpoint,
+                query=query,
+                variables=parsed_variables,
+                extra_headers=extra_headers or None,
+                queue_size=config.subscription_queue_size,
+                timeout=float(config.timeout),
+            ) as upstream:
+                async for result in upstream:
+                    payload = _json.dumps(
+                        {
+                            "data": result.data,
+                            "errors": result.errors,
+                            "error_class": result.error_class.value,
+                        }
+                    )
+                    yield f"data: {payload}\n\n"
+        except ImportError:
+            error_payload = _json.dumps({"error": "Install graphql-mcp[subscriptions]"})
+            yield f"data: {error_payload}\n\n"
+        except Exception as exc:
+            logger.exception("SSE subscription error: %s", exc)
+            error_payload = _json.dumps(
+                {
+                    "data": None,
+                    "errors": [{"message": "Subscription error"}],
+                    "error_class": "transport",
+                }
+            )
+            yield f"data: {error_payload}\n\n"
+
+    return StreamingResponse(
+        _event_stream(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )
 
 
 # ---------------------------------------------------------------------------
