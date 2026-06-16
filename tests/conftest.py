@@ -86,6 +86,25 @@ SAMPLE_SUPERGRAPH_SDL = (
 )
 
 
+@pytest.fixture(autouse=True)
+def _reset_rate_limiter():
+    """Reset the rate limiter state before each test to prevent cross-test interference."""
+    from graphql_mcp.adapters.inbound.rest import RateLimitMiddleware, app
+
+    middleware_stack = getattr(app, "middleware_stack", None)
+    if middleware_stack is None:
+        yield
+        return
+
+    current = middleware_stack
+    while current is not None:
+        if isinstance(current, RateLimitMiddleware):
+            current._windows.clear()
+            break
+        current = getattr(current, "app", None)
+    yield
+
+
 @pytest.fixture
 def sample_sdl() -> str:
     return SAMPLE_SDL

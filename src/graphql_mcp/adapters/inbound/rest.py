@@ -7,15 +7,17 @@ from __future__ import annotations
 
 import math
 import time as _time
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.types import ASGIApp
 
 from graphql_mcp.adapters.inbound.lib import GraphQLClient
+
+if TYPE_CHECKING:
+    from starlette.types import ASGIApp
 from graphql_mcp.adapters.inbound.mcp_http import create_mcp_http_app
 from graphql_mcp.adapters.outbound.query_guard import check_query_depth
 from graphql_mcp.config import GraphQLConfig
