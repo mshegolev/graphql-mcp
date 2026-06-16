@@ -68,31 +68,31 @@ _None — all proposed features selected for v2.1._
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| COV-01 | TBD | Pending |
-| COV-02 | TBD | Pending |
-| COV-03 | TBD | Pending |
-| CTR-01 | TBD | Pending |
-| CTR-02 | TBD | Pending |
-| CTR-03 | TBD | Pending |
-| MUT-01 | TBD | Pending |
-| MUT-02 | TBD | Pending |
-| MUT-03 | TBD | Pending |
-| PROP-01 | TBD | Pending |
-| PROP-02 | TBD | Pending |
-| PROP-03 | TBD | Pending |
-| SNAP-01 | TBD | Pending |
-| SNAP-02 | TBD | Pending |
-| SNAP-03 | TBD | Pending |
-| CI-01 | TBD | Pending |
-| CI-02 | TBD | Pending |
-| CI-03 | TBD | Pending |
-| CI-04 | TBD | Pending |
+| COV-01 | Phase 14 | Pending |
+| COV-02 | Phase 14 | Pending |
+| COV-03 | Phase 14 | Pending |
+| CTR-01 | Phase 15 | Pending |
+| CTR-02 | Phase 15 | Pending |
+| CTR-03 | Phase 15 | Pending |
+| MUT-01 | Phase 16 | Pending |
+| MUT-02 | Phase 16 | Pending |
+| MUT-03 | Phase 16 | Pending |
+| PROP-01 | Phase 15 | Pending |
+| PROP-02 | Phase 15 | Pending |
+| PROP-03 | Phase 15 | Pending |
+| SNAP-01 | Phase 14 | Pending |
+| SNAP-02 | Phase 14 | Pending |
+| SNAP-03 | Phase 14 | Pending |
+| CI-01 | Phase 16 | Pending |
+| CI-02 | Phase 16 | Pending |
+| CI-03 | Phase 16 | Pending |
+| CI-04 | Phase 16 | Pending |
 
 **Coverage:**
 - v2.1 requirements: 19 total
-- Mapped to phases: 0
-- Unmapped: 19
+- Mapped to phases: 19
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-06-16*
-*Last updated: 2026-06-16 after initial definition*
+*Last updated: 2026-06-16 after roadmap creation (all 19 requirements mapped to phases 14-16)*

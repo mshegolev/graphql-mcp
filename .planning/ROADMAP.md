@@ -11,6 +11,7 @@
 - ✅ **v1.0 MVP** — Phases 1-4 (shipped 2026-06-05) — [details](milestones/v1.0-ROADMAP.md)
 - ✅ **v1.1 Production Hardening** — Phases 5-8 (shipped 2026-06-08)
 - ✅ **v2.0 Production-Grade Platform** — Phases 9-13 (shipped 2026-06-16)
+- 🔄 **v2.1 Testing & Quality** — Phases 14-16 (active)
 
 ## Phases
 
@@ -34,13 +35,22 @@
 
 </details>
 
-### ✅ v2.0 Production-Grade Platform (Phases 9-13) — SHIPPED 2026-06-16
+<details>
+<summary>✅ v2.0 Production-Grade Platform (Phases 9-13) — SHIPPED 2026-06-16</summary>
 
-- [x] **Phase 9: OpenTelemetry Observability** — Distributed tracing, custom metrics, and log correlation across all operations (2/2 plans) — completed 2026-06-16
-- [x] **Phase 10: Security Hardening** — Query depth limits, rate limiting, mTLS, token rotation, header forwarding, audit logging (3/3 plans) — completed 2026-06-16
-- [x] **Phase 11: GraphQL Subscriptions** — WebSocket + SSE subscription proxy with streaming lib-face support (2/2 plans) — completed 2026-06-16
-- [x] **Phase 12: DX & Ecosystem** — PyPI publish pipeline and integration test harness with examples (2/2 plans) — completed 2026-06-16
-- [x] **Phase 13: Copier Template Extraction** — Reusable parameterized brick template for the suite (1/1 plans) — completed 2026-06-16
+- [x] Phase 9: OpenTelemetry Observability (2/2 plans) — completed 2026-06-16
+- [x] Phase 10: Security Hardening (3/3 plans) — completed 2026-06-16
+- [x] Phase 11: GraphQL Subscriptions (2/2 plans) — completed 2026-06-16
+- [x] Phase 12: DX & Ecosystem (2/2 plans) — completed 2026-06-16
+- [x] Phase 13: Copier Template Extraction (1/1 plans) — completed 2026-06-16
+
+</details>
+
+### 🔄 v2.1 Testing & Quality (Phases 14-16)
+
+- [ ] **Phase 14: Coverage & Snapshot Infrastructure** — pytest-cov enforcement with per-module targets and pytest-syrupy snapshot regression detection
+- [ ] **Phase 15: Contract & Property-Based Testing** — Schema contract verification, Pact consumer-driven contracts, and Hypothesis-based fuzz/invariant tests
+- [ ] **Phase 16: Mutation Testing & CI Quality Gates** — mutmut mutation scoring with CI enforcement, GitHub Actions quality gate pipeline, test matrix, and nightly mutation runs
 
 ---
 
@@ -128,7 +138,8 @@ _See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for v1.0 phase det
 
 </details>
 
----
+<details>
+<summary>✅ v2.0 Phase Details (collapsed)</summary>
 
 ### Phase 9: OpenTelemetry Observability
 
@@ -144,12 +155,7 @@ _See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for v1.0 phase det
 4. Every structured log record emitted during a traced request contains `otelTraceID` and `otelSpanID` fields — verified by test capturing log output during a traced operation.
 5. Setting `OTEL_EXPORTER_OTLP_ENDPOINT` and `OTEL_SERVICE_NAME` env vars configures OTLP HTTP export with no code changes — verified by test initializing TracerProvider from env-based config.
 
-**Plans:** 2 plans
-
-Plans:
-- [ ] 09-01-PLAN.md — OTEL bootstrap, outbound tracing, custom metrics (OTEL-01, OTEL-03, OTEL-05)
-- [ ] 09-02-PLAN.md — Inbound FastAPI instrumentation, log correlation, integration wiring (OTEL-02, OTEL-04)
-
+**Plans:** 2/2 complete
 **UI hint**: no
 
 ---
@@ -169,13 +175,7 @@ Plans:
 5. When OAuth2 env vars are configured, the client automatically obtains and refreshes tokens before they expire — verified by test with mock OAuth2 server returning short-lived tokens.
 6. When `GRAPHQL_AUDIT_LOG=true`, every operation produces a structured audit log record containing caller identity, query hash, error_class, latency_ms, and trace_id — verified by test asserting log output fields.
 
-**Plans:** 3 plans
-
-Plans:
-- [ ] 10-01-PLAN.md — Query depth limiting + rate limiting + header forwarding (SEC-01, SEC-02, SEC-03)
-- [ ] 10-02-PLAN.md — mTLS client certificate + OAuth2 token rotation (SEC-04, SEC-05)
-- [ ] 10-03-PLAN.md — Structured audit logging (SEC-06)
-
+**Plans:** 3/3 complete
 **UI hint**: no
 
 ---
@@ -192,12 +192,7 @@ Plans:
 2. An HTTP client can `GET /graphql/subscribe?query=...&variables=...` and receive an SSE event stream with `data:` lines containing JSON `QueryResult` payloads — verified by test reading SSE events from the endpoint.
 3. `async for result in client.subscribe(query, variables)` on `AsyncGraphQLClient` yields `QueryResult` objects as an `AsyncIterator` — verified by test iterating results from a mock subscription source.
 
-**Plans:** 2 plans
-
-Plans:
-- [ ] 11-01-PLAN.md — WebSocket subscription transport + AsyncGraphQLClient.subscribe() (SUB-01, SUB-03)
-- [ ] 11-02-PLAN.md — SSE fallback endpoint on FastAPI (SUB-02)
-
+**Plans:** 2/2 complete
 **UI hint**: no
 
 ---
@@ -214,12 +209,7 @@ Plans:
 2. `docker compose up` starts a mock GraphQL server harness, and `pytest tests/integration/` passes against it — verified by running the harness and integration suite.
 3. `examples/` directory contains runnable SDK usage examples (at minimum: basic query, async query, subscription) with inline documentation — verified by reviewing directory contents.
 
-**Plans:** 2 plans
-
-Plans:
-- [x] 12-01-PLAN.md — GitHub Actions publish workflow + SDK examples (DX-01)
-- [x] 12-02-PLAN.md — Docker compose integration harness + integration tests (DX-02)
-
+**Plans:** 2/2 complete
 **UI hint**: no
 
 ---
@@ -236,12 +226,65 @@ Plans:
 2. The generated project's test suite passes (`pytest` in the generated directory) — verified by generating a test brick and running its tests.
 3. No hardcoded `graphql_mcp` or `graphql-mcp` strings remain in the generated project (all parameterized via Jinja2) — verified by grep in generated output.
 
-**Plans**: 1 plan
-
-Plans:
-- [x] 13-01-PLAN.md — Copier template extraction with parameterized brick generation (TPL-01)
-
+**Plans**: 1/1 complete
 **UI hint**: no
+
+</details>
+
+---
+
+### Phase 14: Coverage & Snapshot Infrastructure
+
+**Goal**: Every test run produces branch-level coverage reports with per-module breakdown and enforced thresholds, and response/schema/error snapshots catch regressions automatically — a developer knows exactly what's uncovered and sees clear diffs when behavior changes.
+**Depends on**: Phase 13 (v2.0 complete — stable codebase with 341 tests to measure coverage against)
+**Requirements**: COV-01, COV-02, COV-03, SNAP-01, SNAP-02, SNAP-03
+
+**Success Criteria** (what must be TRUE):
+
+1. Running `pytest --cov --cov-branch --cov-fail-under=85` fails the test suite if branch coverage drops below 85%, and the threshold is configurable via `pyproject.toml` — verified by intentionally reducing coverage and observing failure.
+2. Coverage report breaks down by package (domain/, adapters/, ports/) with per-package percentages visible in terminal output — verified by running coverage and checking per-module sections.
+3. README displays a coverage badge that updates automatically after CI runs — verified by badge URL rendering a current percentage.
+4. pytest-syrupy snapshot tests capture and compare response payloads; `--snapshot-update` regenerates snapshots and mismatches produce clear diffs — verified by changing a mock response and observing test failure with diff output.
+5. Schema introspection snapshots and error response snapshots (transport, graphql, schema_unavailable) detect regressions — verified by snapshot tests for introspection results and all three error class response shapes.
+
+**Plans**: TBD
+
+---
+
+### Phase 15: Contract & Property-Based Testing
+
+**Goal**: Upstream schema changes are caught before they break production, and domain models hold their invariants under thousands of randomly generated inputs — the brick's external contract and internal correctness are both continuously verified.
+**Depends on**: Phase 14 (coverage infrastructure in place — new contract and property tests contribute to measured coverage)
+**Requirements**: CTR-01, CTR-02, CTR-03, PROP-01, PROP-02, PROP-03
+
+**Success Criteria** (what must be TRUE):
+
+1. A stored GraphQL schema snapshot is compared on every test run; when the upstream schema drifts (field added/removed/type changed), the test fails with a clear diff — verified by modifying the stored snapshot and observing failure.
+2. Response shape contracts validate that upstream responses match expected structure (field presence, nesting, types) — verified by test that fails when an unexpected field is added or a required field is removed from a mock response.
+3. Pact consumer-driven contract tests generate contract JSON files defining the brick-upstream interaction — verified by running pact tests and inspecting the generated contract artifacts.
+4. Hypothesis custom strategies generate valid GraphQL queries, malformed queries (invalid syntax, deeply nested, oversized), and random domain model inputs — verified by `@given(graphql_query())` producing syntactically varied inputs across 100+ examples with no unhandled exceptions.
+5. Domain model invariant tests verify that `QueryResult.error_class` is always in `{transport, graphql, ok}`, `TypeInfo` fields are consistent, and `Subgraph` contracts hold — verified by Hypothesis tests with model strategies that generate random inputs.
+
+**Plans**: TBD
+
+---
+
+### Phase 16: Mutation Testing & CI Quality Gates
+
+**Goal**: The test suite is proven to catch real bugs (not just pass on correct code), and every PR is automatically gated on lint, type check, tests, coverage, and multi-version compatibility — merging broken code requires deliberate override.
+**Depends on**: Phase 15 (all test methodologies in place — CI gates enforce the complete quality stack)
+**Requirements**: MUT-01, MUT-02, MUT-03, CI-01, CI-02, CI-03, CI-04
+
+**Success Criteria** (what must be TRUE):
+
+1. `mutmut run --paths-to-mutate=src/graphql_mcp/domain/,src/graphql_mcp/domain/query_service.py` produces a mutation score percentage, and adapters/config modules are excluded — verified by mutmut output showing only domain/ mutations.
+2. CI blocks PR merge when mutation score drops below the configured threshold — verified by CI workflow step that runs mutmut and checks the score.
+3. GitHub Actions workflow runs ruff lint, type check (mypy or pyright), full test suite, and coverage check on every PR push — verified by workflow YAML and a successful CI run.
+4. Branch protection rules require all quality gate status checks to pass before merge — verified by attempting to merge a PR with a failing check.
+5. Test matrix runs across Python 3.10, 3.11, 3.12 — verified by matrix configuration in workflow YAML showing all three versions and passing runs.
+6. Nightly scheduled workflow runs full mutation testing and uploads the report as a CI artifact — verified by cron schedule in workflow YAML and mutation report artifact in CI.
+
+**Plans**: TBD
 
 ---
 
@@ -262,3 +305,6 @@ Plans:
 | 11. GraphQL Subscriptions | v2.0 | 2/2 | Complete | 2026-06-16 |
 | 12. DX & Ecosystem | v2.0 | 2/2 | Complete | 2026-06-16 |
 | 13. Copier Template Extraction | v2.0 | 1/1 | Complete | 2026-06-16 |
+| 14. Coverage & Snapshot Infrastructure | v2.1 | 0/? | Not started | - |
+| 15. Contract & Property-Based Testing | v2.1 | 0/? | Not started | - |
+| 16. Mutation Testing & CI Quality Gates | v2.1 | 0/? | Not started | - |
