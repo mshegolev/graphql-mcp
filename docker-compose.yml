@@ -1,0 +1,35 @@
+# Docker Compose integration test harness for graphql-mcp.
+#
+# Usage:
+#   docker compose up --build --abort-on-container-exit
+#
+# This starts a mock GraphQL server and runs integration tests against it.
+# The mock server uses only graphql-core (no external services needed).
+
+services:
+  mock-graphql:
+    build:
+      context: .
+      dockerfile: tests/integration/Dockerfile.mock
+    ports:
+      - "4000:4000"
+    environment:
+      MOCK_SERVER_HOST: "0.0.0.0"
+      MOCK_SERVER_PORT: "4000"
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:4000/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+  integration-tests:
+    build:
+      context: .
+      dockerfile: tests/integration/Dockerfile.tests
+    depends_on:
+      mock-graphql:
+        condition: service_healthy
+    environment:
+      GRAPHQL_ENDPOINT: "http://mock-graphql:4000/graphql"
+      GRAPHQL_SCHEMA_SOURCE: "introspection"
