@@ -38,7 +38,7 @@
 
 - [x] **Phase 9: OpenTelemetry Observability** — Distributed tracing, custom metrics, and log correlation across all operations (2/2 plans) — completed 2026-06-16
 - [x] **Phase 10: Security Hardening** — Query depth limits, rate limiting, mTLS, token rotation, header forwarding, audit logging (3/3 plans) — completed 2026-06-16
-- [ ] **Phase 11: GraphQL Subscriptions** — WebSocket + SSE subscription proxy with streaming lib-face support
+- [x] **Phase 11: GraphQL Subscriptions** — WebSocket + SSE subscription proxy with streaming lib-face support (2/2 plans) — completed 2026-06-16
 - [ ] **Phase 12: DX & Ecosystem** — PyPI publish pipeline and integration test harness with examples
 - [ ] **Phase 13: Copier Template Extraction** — Reusable parameterized brick template for the suite
 
@@ -250,6 +250,6 @@ Plans:
 | 8. _entities & Ship v1.1 | v1.1 | 2/2 | Complete | 2026-06-08 |
 | 9. OpenTelemetry Observability | v2.0 | 2/2 | Complete | 2026-06-16 |
 | 10. Security Hardening | v2.0 | 3/3 | Complete | 2026-06-16 |
-| 11. GraphQL Subscriptions | v2.0 | 0/2 | Not started | - |
+| 11. GraphQL Subscriptions | v2.0 | 2/2 | Complete | 2026-06-16 |
 | 12. DX & Ecosystem | v2.0 | 0/? | Not started | - |
 | 13. Copier Template Extraction | v2.0 | 0/? | Not started | - |

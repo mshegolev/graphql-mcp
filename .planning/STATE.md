@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: Production-Grade Platform
 status: executing
 last_updated: 2026-06-16
-last_activity: 2026-06-16 -- Phase 10 complete (291 tests, SEC-01 through SEC-06 satisfied)
+last_activity: 2026-06-16 -- Phase 11 complete (310 tests, SUB-01 through SUB-03 satisfied)
 progress:
   total_phases: 5
-  completed_phases: 2
-  total_plans: 5
-  completed_plans: 5
-  percent: 40
+  completed_phases: 3
+  total_plans: 7
+  completed_plans: 7
+  percent: 60
 stopped_at: null
 ---
 
@@ -31,10 +31,10 @@ stopped_at: null
 
 ## Current Position
 
-Phase: 11 — GraphQL Subscriptions (next)
+Phase: 12 — DX & Ecosystem (next)
 Plan: —
-Status: Phase 10 complete, proceeding to Phase 11
-Last activity: 2026-06-16 — Phase 10 complete (291 tests, all security requirements satisfied)
+Status: Phase 11 complete, proceeding to Phase 12
+Last activity: 2026-06-16 — Phase 11 complete (310 tests, all subscription requirements satisfied)
 
 ## Performance Metrics
 
@@ -48,10 +48,10 @@ Last activity: 2026-06-16 — Phase 10 complete (291 tests, all security require
 | v1.1 Phases | 4/4 complete |
 | v1.1 Plans | 10/10 complete (Phase 05 done, Phase 06 done, Phase 07 done, Phase 08 done) |
 | v1.1 Requirements | 9/13 complete |
-| v2.0 Tests | 291 passing |
-| v2.0 Phases | 2/5 complete |
-| v2.0 Plans | 5/5 complete (Phase 09 done, Phase 10 done) |
-| v2.0 Requirements | 11/17 complete (OTEL-01–05, SEC-01–06) |
+| v2.0 Tests | 310 passing |
+| v2.0 Phases | 3/5 complete |
+| v2.0 Plans | 7/7 complete (Phase 09 done, Phase 10 done, Phase 11 done) |
+| v2.0 Requirements | 14/17 complete (OTEL-01–05, SEC-01–06, SUB-01–03) |
 
 ---
 
@@ -81,6 +81,9 @@ Last activity: 2026-06-16 — Phase 10 complete (291 tests, all security require
 | 2026-06-16 | mTLS via stdlib ssl.SSLContext | Zero new deps; httpx verify= param accepts SSLContext |
 | 2026-06-16 | OAuth2TokenManager with thread-safe cache | Token refreshed before expiry; Bearer injected per-request |
 | 2026-06-16 | Audit logging gated by GRAPHQL_AUDIT_LOG=true | Zero overhead when disabled; SHA-256 query hash (raw queries never logged) |
+| 2026-06-16 | UpstreamWSTransport with graphql-transport-ws | Full sub-protocol lifecycle; bounded asyncio.Queue for backpressure |
+| 2026-06-16 | websockets as [subscriptions] optional extra | Zero deps when not needed; clear ImportError message |
+| 2026-06-16 | SSE as StreamingResponse fallback | Works where WebSocket unavailable; X-Accel-Buffering: no for nginx |
 
 ### v1.1 Decisions
 
@@ -132,6 +135,6 @@ None currently.
 
 ## Session Continuity
 
-**Last session**: 2026-06-16 — Phase 10 complete (291 tests, SEC-01 through SEC-06 satisfied)
-**Next action**: Phase 11 — GraphQL Subscriptions (discuss → plan → execute)
-**Context**: v2.0 Phases 9-10 complete. Phase 9: OTEL (tracing, metrics, log correlation). Phase 10: Security (depth limits, rate limiting, header forwarding, mTLS, OAuth2, audit logging). 291 tests passing. Next: Phase 11 GraphQL Subscriptions (SUB-01 through SUB-03).
+**Last session**: 2026-06-16 — Phase 11 complete (310 tests, SUB-01 through SUB-03 satisfied)
+**Next action**: Phase 12 — DX & Ecosystem (discuss → plan → execute)
+**Context**: v2.0 Phases 9-11 complete. Phase 9: OTEL. Phase 10: Security. Phase 11: Subscriptions (WS + SSE + AsyncIterator). 310 tests passing. Next: Phase 12 DX & Ecosystem (DX-01, DX-02), then Phase 13 Copier Template.
