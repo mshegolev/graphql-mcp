@@ -74,8 +74,11 @@ def main() -> None:
         try:
             summary = client.introspect()
             print(f"\nSchema has {len(summary.query_fields)} query fields:")
-            for field in summary.query_fields[:10]:
-                print(f"  - {field.name}: {field.type_str}")
+            for field_name in summary.query_fields[:10]:
+                print(f"  - {field_name}")
+            print(f"\nSchema has {len(summary.types)} types:")
+            for t in summary.types[:5]:
+                print(f"  - {t.name} ({t.kind})")
         except Exception as e:
             print(f"\nIntrospection not available: {e}")
 
