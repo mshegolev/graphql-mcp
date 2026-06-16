@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import ssl
 from typing import TYPE_CHECKING, Any
 
 import httpx
@@ -9,6 +10,7 @@ from graphql_mcp.adapters.outbound.codec_factory import get_codec
 from graphql_mcp.domain.models import ErrorClass, QueryResult
 
 if TYPE_CHECKING:
+    from graphql_mcp.adapters.outbound.oauth2 import AsyncOAuth2TokenManager
     from graphql_mcp.ports.json_codec import JsonCodec
 
 logger = logging.getLogger(__name__)
@@ -25,6 +27,8 @@ class AsyncHttpTransport:
         ssl_verify: bool = True,
         headers: dict[str, str] | None = None,
         codec: JsonCodec | None = None,
+        ssl_context: ssl.SSLContext | None = None,
+        oauth2: AsyncOAuth2TokenManager | None = None,
     ) -> None:
         h: dict[str, str] = {"Content-Type": "application/json"}
         if bearer_token:
@@ -33,12 +37,16 @@ class AsyncHttpTransport:
             h.update(headers)
 
         self._codec = codec or get_codec()
+        self._oauth2 = oauth2
+
+        # ssl_context takes precedence over ssl_verify when provided
+        verify: ssl.SSLContext | bool = ssl_context if ssl_context is not None else ssl_verify
 
         self._client = httpx.AsyncClient(
             base_url=endpoint,
             headers=h,
             timeout=httpx.Timeout(timeout, connect=min(timeout, 10.0)),
-            verify=ssl_verify,
+            verify=verify,
         )
 
     async def execute(
@@ -53,8 +61,11 @@ class AsyncHttpTransport:
         return await self.post_raw(body, extra_headers=extra_headers)
 
     async def post_raw(self, body: dict[str, Any], extra_headers: dict[str, str] | None = None) -> QueryResult:
+        merged_headers = dict(extra_headers) if extra_headers else {}
+        if self._oauth2 is not None:
+            merged_headers["Authorization"] = f"Bearer {await self._oauth2.get_token()}"
         try:
-            response = await self._client.post("", content=self._codec.encode(body), headers=extra_headers)
+            response = await self._client.post("", content=self._codec.encode(body), headers=merged_headers or None)
         except (httpx.HTTPError, httpx.StreamError, OSError) as exc:
             logger.warning("Transport error: %s", exc)
             return QueryResult(
@@ -87,3 +98,5 @@ class AsyncHttpTransport:
 
     async def close(self) -> None:
         await self._client.aclose()
+        if self._oauth2 is not None:
+            await self._oauth2.close()

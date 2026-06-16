@@ -48,3 +48,14 @@ class GraphQLConfig(BaseSettings):
     max_query_depth: int = 10  # GRAPHQL_MAX_QUERY_DEPTH
     rate_limit: str = "100/minute"  # GRAPHQL_RATE_LIMIT — "{count}/{window}" where window ∈ {second, minute, hour}
     audit_log: bool = False  # GRAPHQL_AUDIT_LOG — used by Plan 03
+
+    # mTLS
+    client_cert: str = ""  # GRAPHQL_CLIENT_CERT — path to client certificate PEM
+    client_key: str = ""  # GRAPHQL_CLIENT_KEY — path to client private key PEM
+    ca_bundle: str = ""  # GRAPHQL_CA_BUNDLE — path to CA bundle PEM
+
+    # OAuth2 client_credentials
+    oauth2_token_url: str = ""  # GRAPHQL_OAUTH2_TOKEN_URL
+    oauth2_client_id: str = ""  # GRAPHQL_OAUTH2_CLIENT_ID
+    oauth2_client_secret: str = ""  # GRAPHQL_OAUTH2_CLIENT_SECRET
+    oauth2_scopes: str = ""  # GRAPHQL_OAUTH2_SCOPES — space-separated
