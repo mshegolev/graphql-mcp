@@ -33,8 +33,8 @@
 
 ### DX & Ecosystem
 
-- [ ] **DX-01**: User can `pip install graphql-mcp` from PyPI, published automatically via GitHub Actions OIDC Trusted Publishing on `v*` tag push — verified by CI workflow dry-run.
-- [ ] **DX-02**: User can run integration tests via `docker-compose` harness with mock GraphQL server, and find SDK usage examples in `examples/` directory — verified by `docker compose up` + `pytest tests/integration/`.
+- [x] **DX-01**: User can `pip install graphql-mcp` from PyPI, published automatically via GitHub Actions OIDC Trusted Publishing on `v*` tag push — verified by CI workflow dry-run.
+- [x] **DX-02**: User can run integration tests via `docker-compose` harness with mock GraphQL server, and find SDK usage examples in `examples/` directory — verified by `docker compose up` + `pytest tests/integration/`.
 
 ### Template
 
@@ -79,6 +79,6 @@ _None — all proposed features selected for v2.0._
 | SUB-01 | Phase 11 | Pending |
 | SUB-02 | Phase 11 | Pending |
 | SUB-03 | Phase 11 | Pending |
-| DX-01 | Phase 12 | Pending |
-| DX-02 | Phase 12 | Pending |
+| DX-01 | Phase 12 | Complete |
+| DX-02 | Phase 12 | Complete |
 | TPL-01 | Phase 13 | Pending |

@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: Production-Grade Platform
 status: executing
 last_updated: 2026-06-16
-last_activity: 2026-06-16 -- Phase 11 complete (310 tests, SUB-01 through SUB-03 satisfied)
+last_activity: 2026-06-16 -- Phase 12 complete (321 tests, DX-01 and DX-02 satisfied)
 progress:
   total_phases: 5
-  completed_phases: 3
-  total_plans: 7
-  completed_plans: 7
-  percent: 60
+  completed_phases: 4
+  total_plans: 9
+  completed_plans: 9
+  percent: 80
 stopped_at: null
 ---
 
@@ -31,10 +31,10 @@ stopped_at: null
 
 ## Current Position
 
-Phase: 12 — DX & Ecosystem (next)
+Phase: 13 — Copier Template Extraction (next)
 Plan: —
-Status: Phase 11 complete, proceeding to Phase 12
-Last activity: 2026-06-16 — Phase 11 complete (310 tests, all subscription requirements satisfied)
+Status: Phase 12 complete, proceeding to Phase 13
+Last activity: 2026-06-16 — Phase 12 complete (321 tests, DX-01 and DX-02 satisfied)
 
 ## Performance Metrics
 
@@ -48,10 +48,10 @@ Last activity: 2026-06-16 — Phase 11 complete (310 tests, all subscription req
 | v1.1 Phases | 4/4 complete |
 | v1.1 Plans | 10/10 complete (Phase 05 done, Phase 06 done, Phase 07 done, Phase 08 done) |
 | v1.1 Requirements | 9/13 complete |
-| v2.0 Tests | 310 passing |
-| v2.0 Phases | 3/5 complete |
-| v2.0 Plans | 7/7 complete (Phase 09 done, Phase 10 done, Phase 11 done) |
-| v2.0 Requirements | 14/17 complete (OTEL-01–05, SEC-01–06, SUB-01–03) |
+| v2.0 Tests | 321 passing (310 unit + 11 integration) |
+| v2.0 Phases | 4/5 complete |
+| v2.0 Plans | 9/9 complete (Phase 09 done, Phase 10 done, Phase 11 done, Phase 12 done) |
+| v2.0 Requirements | 16/17 complete (OTEL-01–05, SEC-01–06, SUB-01–03, DX-01, DX-02) |
 
 ---
 
@@ -84,6 +84,9 @@ Last activity: 2026-06-16 — Phase 11 complete (310 tests, all subscription req
 | 2026-06-16 | UpstreamWSTransport with graphql-transport-ws | Full sub-protocol lifecycle; bounded asyncio.Queue for backpressure |
 | 2026-06-16 | websockets as [subscriptions] optional extra | Zero deps when not needed; clear ImportError message |
 | 2026-06-16 | SSE as StreamingResponse fallback | Works where WebSocket unavailable; X-Accel-Buffering: no for nginx |
+| 2026-06-16 | OIDC Trusted Publishing over API tokens | No secrets to rotate; GitHub identity verified by PyPI |
+| 2026-06-16 | stdlib HTTPServer + graphql-core for mock server | Zero external deps beyond graphql-core for integration test harness |
+| 2026-06-16 | Session-scoped mock server subprocess | Auto-starts in local dev mode; GRAPHQL_ENDPOINT switches to docker compose mode |
 
 ### v1.1 Decisions
 
@@ -135,6 +138,6 @@ None currently.
 
 ## Session Continuity
 
-**Last session**: 2026-06-16 — Phase 11 complete (310 tests, SUB-01 through SUB-03 satisfied)
-**Next action**: Phase 12 — DX & Ecosystem (discuss → plan → execute)
-**Context**: v2.0 Phases 9-11 complete. Phase 9: OTEL. Phase 10: Security. Phase 11: Subscriptions (WS + SSE + AsyncIterator). 310 tests passing. Next: Phase 12 DX & Ecosystem (DX-01, DX-02), then Phase 13 Copier Template.
+**Last session**: 2026-06-16 — Phase 12 complete (321 tests, DX-01 and DX-02 satisfied)
+**Next action**: Phase 13 — Copier Template Extraction (discuss → plan → execute)
+**Context**: v2.0 Phases 9-12 complete. Phase 9: OTEL. Phase 10: Security. Phase 11: Subscriptions. Phase 12: DX & Ecosystem (PyPI publish workflow, docker compose harness, SDK examples, 11 integration tests). 321 tests passing. Next: Phase 13 Copier Template Extraction (TPL-01).

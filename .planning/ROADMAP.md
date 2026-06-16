@@ -39,7 +39,7 @@
 - [x] **Phase 9: OpenTelemetry Observability** — Distributed tracing, custom metrics, and log correlation across all operations (2/2 plans) — completed 2026-06-16
 - [x] **Phase 10: Security Hardening** — Query depth limits, rate limiting, mTLS, token rotation, header forwarding, audit logging (3/3 plans) — completed 2026-06-16
 - [x] **Phase 11: GraphQL Subscriptions** — WebSocket + SSE subscription proxy with streaming lib-face support (2/2 plans) — completed 2026-06-16
-- [ ] **Phase 12: DX & Ecosystem** — PyPI publish pipeline and integration test harness with examples
+- [x] **Phase 12: DX & Ecosystem** — PyPI publish pipeline and integration test harness with examples (2/2 plans) — completed 2026-06-16
 - [ ] **Phase 13: Copier Template Extraction** — Reusable parameterized brick template for the suite
 
 ---
@@ -214,7 +214,12 @@ Plans:
 2. `docker compose up` starts a mock GraphQL server harness, and `pytest tests/integration/` passes against it — verified by running the harness and integration suite.
 3. `examples/` directory contains runnable SDK usage examples (at minimum: basic query, async query, subscription) with inline documentation — verified by reviewing directory contents.
 
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [x] 12-01-PLAN.md — GitHub Actions publish workflow + SDK examples (DX-01)
+- [x] 12-02-PLAN.md — Docker compose integration harness + integration tests (DX-02)
+
 **UI hint**: no
 
 ---
@@ -251,5 +256,5 @@ Plans:
 | 9. OpenTelemetry Observability | v2.0 | 2/2 | Complete | 2026-06-16 |
 | 10. Security Hardening | v2.0 | 3/3 | Complete | 2026-06-16 |
 | 11. GraphQL Subscriptions | v2.0 | 2/2 | Complete | 2026-06-16 |
-| 12. DX & Ecosystem | v2.0 | 0/? | Not started | - |
+| 12. DX & Ecosystem | v2.0 | 2/2 | Complete | 2026-06-16 |
 | 13. Copier Template Extraction | v2.0 | 0/? | Not started | - |
