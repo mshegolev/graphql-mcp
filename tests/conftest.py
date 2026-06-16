@@ -7,6 +7,14 @@ from graphql_mcp.config import GraphQLConfig
 from graphql_mcp.domain.models import SchemaGraph
 from graphql_mcp.domain.schema_service import SchemaService
 
+# OTEL test infrastructure
+from opentelemetry import metrics, trace
+from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.metrics.export import InMemoryMetricReader
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+
 SAMPLE_SDL = """\
 type Query {
   hello: String
@@ -105,3 +113,61 @@ def simple_client(sample_sdl: str) -> GraphQLClient:
     service = SchemaService(sources=[source], ttl_seconds=0)
     config = GraphQLConfig(allow_mutations=False)
     return GraphQLClient(schema_service=service, transport=None, config=config)
+
+
+@pytest.fixture
+def otel_setup():
+    """Set up in-memory OTEL exporters for testing.
+
+    Yields a dict with ``span_exporter``, ``metric_reader``,
+    ``tracer_provider``, and ``meter_provider`` for assertions.
+    Tears down instrumentation after each test.
+    """
+    from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
+
+    # Reset global providers so each test gets a fresh state.
+    # The OTEL API caches the first set_*_provider call and warns on
+    # subsequent overrides — resetting the internal proxy forces a clean slate.
+    _reset_trace_provider()
+    _reset_meter_provider()
+
+    span_exporter = InMemorySpanExporter()
+    tracer_provider = TracerProvider()
+    tracer_provider.add_span_processor(SimpleSpanProcessor(span_exporter))
+    trace.set_tracer_provider(tracer_provider)
+
+    metric_reader = InMemoryMetricReader()
+    meter_provider = MeterProvider(metric_readers=[metric_reader])
+    metrics.set_meter_provider(meter_provider)
+
+    HTTPXClientInstrumentor().instrument()
+
+    yield {
+        "span_exporter": span_exporter,
+        "metric_reader": metric_reader,
+        "tracer_provider": tracer_provider,
+        "meter_provider": meter_provider,
+    }
+
+    HTTPXClientInstrumentor().uninstrument()
+    tracer_provider.shutdown()
+    meter_provider.shutdown()
+    _reset_trace_provider()
+    _reset_meter_provider()
+
+
+def _reset_trace_provider() -> None:
+    """Reset the global TracerProvider so tests can set a fresh one."""
+    import opentelemetry.trace as _trace_mod
+
+    # Reset the Once guard and the global provider reference
+    _trace_mod._TRACER_PROVIDER_SET_ONCE = _trace_mod.Once()
+    _trace_mod._TRACER_PROVIDER = None
+
+
+def _reset_meter_provider() -> None:
+    """Reset the global MeterProvider so tests can set a fresh one."""
+    import opentelemetry.metrics._internal as _metrics_mod
+
+    _metrics_mod._METER_PROVIDER_SET_ONCE = _metrics_mod.Once()
+    _metrics_mod._METER_PROVIDER = None

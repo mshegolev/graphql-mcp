@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import atexit
 import logging
+import time
 from typing import TYPE_CHECKING, Any
 
 from graphql_mcp.adapters.outbound.file_source import FileSdlSource
@@ -11,6 +12,7 @@ from graphql_mcp.adapters.outbound.introspection_source import IntrospectionSour
 from graphql_mcp.adapters.outbound.query_guard import check_mutation_guard
 from graphql_mcp.adapters.outbound.schema_analyzer import SchemaAnalyzer
 from graphql_mcp.adapters.outbound.service_sdl_source import ServiceSdlSource
+from graphql_mcp.adapters.outbound.otel_metrics import record_query_metrics
 from graphql_mcp.config import GraphQLConfig
 from graphql_mcp.domain.models import ErrorClass, QueryResult
 from graphql_mcp.domain.schema_service import SchemaService
@@ -143,7 +145,10 @@ class GraphQLClient:
                 errors=[{"message": "No endpoint configured"}],
                 error_class=ErrorClass.TRANSPORT,
             )
-        return self._transport.execute(query, variables)
+        start = time.monotonic()
+        result = self._transport.execute(query, variables)
+        record_query_metrics(result, time.monotonic() - start, operation="query")
+        return result
 
     def raw(self, body: dict[str, Any]) -> QueryResult:
         """Send arbitrary POST body and return typed result.
@@ -160,7 +165,10 @@ class GraphQLClient:
                 errors=[{"message": "No endpoint configured"}],
                 error_class=ErrorClass.TRANSPORT,
             )
-        return self._transport.post_raw(body)
+        start = time.monotonic()
+        result = self._transport.post_raw(body)
+        record_query_metrics(result, time.monotonic() - start, operation="raw")
+        return result
 
     def entities(self, representations: list[dict[str, Any]]) -> QueryResult:
         """Resolve federation entities via _entities(representations:) pass-through.
@@ -174,10 +182,13 @@ class GraphQLClient:
                 errors=[{"message": "No endpoint configured"}],
                 error_class=ErrorClass.TRANSPORT,
             )
-        return self._transport.execute(
+        start = time.monotonic()
+        result = self._transport.execute(
             _ENTITIES_QUERY,
             {"representations": representations},
         )
+        record_query_metrics(result, time.monotonic() - start, operation="entities")
+        return result
 
     def introspect(self) -> SchemaSummary:
         """Return a summary of Query fields and types from the active schema."""

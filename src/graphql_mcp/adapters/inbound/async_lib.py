@@ -3,6 +3,7 @@ from __future__ import annotations
 import atexit
 import contextlib
 import logging
+import time
 from typing import TYPE_CHECKING, Any
 
 from graphql_mcp.adapters.outbound.async_http_transport import AsyncHttpTransport
@@ -10,6 +11,7 @@ from graphql_mcp.adapters.outbound.file_source import FileSdlSource
 from graphql_mcp.adapters.outbound.gitlab_source import GitLabSource
 from graphql_mcp.adapters.outbound.query_guard import check_mutation_guard
 from graphql_mcp.adapters.outbound.schema_analyzer import SchemaAnalyzer
+from graphql_mcp.adapters.outbound.otel_metrics import record_query_metrics
 from graphql_mcp.config import GraphQLConfig
 from graphql_mcp.domain.models import ErrorClass, QueryResult
 from graphql_mcp.domain.schema_service import SchemaService
@@ -161,7 +163,10 @@ class AsyncGraphQLClient:
                 errors=[{"message": "No endpoint configured"}],
                 error_class=ErrorClass.TRANSPORT,
             )
-        return await self._transport.execute(query, variables)
+        start = time.monotonic()
+        result = await self._transport.execute(query, variables)
+        record_query_metrics(result, time.monotonic() - start, operation="query")
+        return result
 
     async def raw(self, body: dict[str, Any]) -> QueryResult:
         """Send arbitrary POST body and return typed result.
@@ -178,7 +183,10 @@ class AsyncGraphQLClient:
                 errors=[{"message": "No endpoint configured"}],
                 error_class=ErrorClass.TRANSPORT,
             )
-        return await self._transport.post_raw(body)
+        start = time.monotonic()
+        result = await self._transport.post_raw(body)
+        record_query_metrics(result, time.monotonic() - start, operation="raw")
+        return result
 
     async def entities(self, representations: list[dict[str, Any]]) -> QueryResult:
         """Resolve federation entities via _entities(representations:) pass-through.
@@ -192,10 +200,13 @@ class AsyncGraphQLClient:
                 errors=[{"message": "No endpoint configured"}],
                 error_class=ErrorClass.TRANSPORT,
             )
-        return await self._transport.execute(
+        start = time.monotonic()
+        result = await self._transport.execute(
             _ENTITIES_QUERY,
             {"representations": representations},
         )
+        record_query_metrics(result, time.monotonic() - start, operation="entities")
+        return result
 
     def introspect(self) -> SchemaSummary:
         """Return a summary of Query fields and types from the active schema."""
