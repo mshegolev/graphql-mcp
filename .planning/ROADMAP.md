@@ -36,7 +36,7 @@
 
 ### 🔵 v2.0 Production-Grade Platform (Phases 9-13) — ACTIVE
 
-- [ ] **Phase 9: OpenTelemetry Observability** — Distributed tracing, custom metrics, and log correlation across all operations
+- [x] **Phase 9: OpenTelemetry Observability** — Distributed tracing, custom metrics, and log correlation across all operations (2/2 plans) — completed 2026-06-16
 - [ ] **Phase 10: Security Hardening** — Query depth limits, rate limiting, mTLS, token rotation, header forwarding, audit logging
 - [ ] **Phase 11: GraphQL Subscriptions** — WebSocket + SSE subscription proxy with streaming lib-face support
 - [ ] **Phase 12: DX & Ecosystem** — PyPI publish pipeline and integration test harness with examples
@@ -144,7 +144,12 @@ _See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for v1.0 phase det
 4. Every structured log record emitted during a traced request contains `otelTraceID` and `otelSpanID` fields — verified by test capturing log output during a traced operation.
 5. Setting `OTEL_EXPORTER_OTLP_ENDPOINT` and `OTEL_SERVICE_NAME` env vars configures OTLP HTTP export with no code changes — verified by test initializing TracerProvider from env-based config.
 
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 09-01-PLAN.md — OTEL bootstrap, outbound tracing, custom metrics (OTEL-01, OTEL-03, OTEL-05)
+- [ ] 09-02-PLAN.md — Inbound FastAPI instrumentation, log correlation, integration wiring (OTEL-02, OTEL-04)
+
 **UI hint**: no
 
 ---
@@ -232,7 +237,7 @@ _See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for v1.0 phase det
 | 6. Async Transport & Perf Benchmarks | v1.1 | 3/3 | Complete | 2026-06-08 |
 | 7. MCP-over-HTTP & Serve Infrastructure | v1.1 | 2/2 | Complete | 2026-06-08 |
 | 8. _entities & Ship v1.1 | v1.1 | 2/2 | Complete | 2026-06-08 |
-| 9. OpenTelemetry Observability | v2.0 | 0/? | Not started | - |
+| 9. OpenTelemetry Observability | v2.0 | 2/2 | Complete | 2026-06-16 |
 | 10. Security Hardening | v2.0 | 0/? | Not started | - |
 | 11. GraphQL Subscriptions | v2.0 | 0/? | Not started | - |
 | 12. DX & Ecosystem | v2.0 | 0/? | Not started | - |

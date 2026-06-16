@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Production-Grade Platform
-status: planning
+status: executing
 last_updated: 2026-06-16
-last_activity: 2026-06-16 -- Roadmap created (Phases 9-13)
+last_activity: 2026-06-16 -- Phase 9 complete (245 tests, OTEL-01 through OTEL-05 satisfied)
 progress:
   total_phases: 5
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  completed_phases: 1
+  total_plans: 2
+  completed_plans: 2
+  percent: 20
 stopped_at: null
 ---
 
@@ -31,10 +31,10 @@ stopped_at: null
 
 ## Current Position
 
-Phase: 9 — OpenTelemetry Observability (next)
+Phase: 10 — Security Hardening (next)
 Plan: —
-Status: Roadmap created, ready for planning
-Last activity: 2026-06-16 — Roadmap created (Phases 9-13)
+Status: Phase 9 complete, proceeding to Phase 10
+Last activity: 2026-06-16 — Phase 9 complete (245 tests, all OTEL requirements satisfied)
 
 ## Performance Metrics
 
@@ -48,6 +48,10 @@ Last activity: 2026-06-16 — Roadmap created (Phases 9-13)
 | v1.1 Phases | 4/4 complete |
 | v1.1 Plans | 10/10 complete (Phase 05 done, Phase 06 done, Phase 07 done, Phase 08 done) |
 | v1.1 Requirements | 9/13 complete |
+| v2.0 Tests | 245 passing |
+| v2.0 Phases | 1/5 complete |
+| v2.0 Plans | 2/2 complete (Phase 09 done) |
+| v2.0 Requirements | 5/17 complete (OTEL-01 through OTEL-05) |
 
 ---
 
@@ -61,6 +65,16 @@ Last activity: 2026-06-16 — Roadmap created (Phases 9-13)
 - D7: Hexagonal architecture — domain has zero I/O or framework imports
 - D8: FastAPI primary face (k8s/team sharing); stdio second (Glama + local agent)
 - D9: Rust JsonCodec via pyo3; orjson fallback; parity under test; maturin CI
+
+### v2.0 Decisions
+
+| Date | Decision | Rationale |
+|------|----------|-----------|
+| 2026-06-16 | OTEL as opt-in [otel] extra | OTEL packages are heavy; graceful no-op via import guards when absent |
+| 2026-06-16 | HTTPXClientInstrumentor global patch | Auto-instruments all httpx clients; no transport constructor changes needed |
+| 2026-06-16 | Custom metrics in lib facade (not transport) | Facade is where error_class is known and all faces converge |
+| 2026-06-16 | LoggingInstrumentor with set_logging_format=True | Injects otelTraceID/otelSpanID into every log record during traced requests |
+| 2026-06-16 | init_otel() in serve command only | Library users call init_otel() themselves; serve command auto-initializes |
 
 ### v1.1 Decisions
 
@@ -112,6 +126,6 @@ None currently.
 
 ## Session Continuity
 
-**Last session**: 2026-06-16 — Roadmap created for v2.0 (Phases 9-13, 17 requirements)
-**Next action**: `/gsd-plan-phase 9` — Plan OpenTelemetry Observability
-**Context**: v1.1 shipped (229 tests, 7 ops, 4 faces). v2.0 roadmap: Phase 9 OTEL → Phase 10 Security → Phase 11 Subscriptions → Phase 12 DX/CI → Phase 13 Copier Template. Strict dependency chain: observability first so everything else is traced.
+**Last session**: 2026-06-16 — Phase 9 complete (245 tests, OTEL-01 through OTEL-05 satisfied)
+**Next action**: Phase 10 — Security Hardening (discuss → plan → execute)
+**Context**: v2.0 Phase 9 complete: OTEL bootstrap, outbound tracing, custom metrics, inbound FastAPI instrumentation, log correlation. 245 tests passing. Next: Phase 10 Security Hardening (SEC-01 through SEC-06).
