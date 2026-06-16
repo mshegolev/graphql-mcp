@@ -150,7 +150,12 @@ class AsyncGraphQLClient:
         """Resolve and return the current schema (cached within TTL)."""
         return self._schema_service.resolve()
 
-    async def query(self, query: str, variables: dict[str, Any] | None = None) -> QueryResult:
+    async def query(
+        self,
+        query: str,
+        variables: dict[str, Any] | None = None,
+        extra_headers: dict[str, str] | None = None,
+    ) -> QueryResult:
         """Execute a GraphQL query and return typed result.
 
         Raises MutationGuardError if query contains a mutation and
@@ -164,11 +169,15 @@ class AsyncGraphQLClient:
                 error_class=ErrorClass.TRANSPORT,
             )
         start = time.monotonic()
-        result = await self._transport.execute(query, variables)
+        result = await self._transport.execute(query, variables, extra_headers=extra_headers)
         record_query_metrics(result, time.monotonic() - start, operation="query")
         return result
 
-    async def raw(self, body: dict[str, Any]) -> QueryResult:
+    async def raw(
+        self,
+        body: dict[str, Any],
+        extra_headers: dict[str, str] | None = None,
+    ) -> QueryResult:
         """Send arbitrary POST body and return typed result.
 
         If body contains a 'query' key, mutation guard applies.
@@ -184,11 +193,15 @@ class AsyncGraphQLClient:
                 error_class=ErrorClass.TRANSPORT,
             )
         start = time.monotonic()
-        result = await self._transport.post_raw(body)
+        result = await self._transport.post_raw(body, extra_headers=extra_headers)
         record_query_metrics(result, time.monotonic() - start, operation="raw")
         return result
 
-    async def entities(self, representations: list[dict[str, Any]]) -> QueryResult:
+    async def entities(
+        self,
+        representations: list[dict[str, Any]],
+        extra_headers: dict[str, str] | None = None,
+    ) -> QueryResult:
         """Resolve federation entities via _entities(representations:) pass-through.
 
         Sends the representations to the federation gateway's _entities query
@@ -204,6 +217,7 @@ class AsyncGraphQLClient:
         result = await self._transport.execute(
             _ENTITIES_QUERY,
             {"representations": representations},
+            extra_headers=extra_headers,
         )
         record_query_metrics(result, time.monotonic() - start, operation="entities")
         return result

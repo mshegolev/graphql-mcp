@@ -132,7 +132,12 @@ class GraphQLClient:
         """Resolve and return the current schema (cached within TTL)."""
         return self._schema_service.resolve()
 
-    def query(self, query: str, variables: dict[str, Any] | None = None) -> QueryResult:
+    def query(
+        self,
+        query: str,
+        variables: dict[str, Any] | None = None,
+        extra_headers: dict[str, str] | None = None,
+    ) -> QueryResult:
         """Execute a GraphQL query and return typed result.
 
         Raises MutationGuardError if query contains a mutation and
@@ -146,11 +151,15 @@ class GraphQLClient:
                 error_class=ErrorClass.TRANSPORT,
             )
         start = time.monotonic()
-        result = self._transport.execute(query, variables)
+        result = self._transport.execute(query, variables, extra_headers=extra_headers)
         record_query_metrics(result, time.monotonic() - start, operation="query")
         return result
 
-    def raw(self, body: dict[str, Any]) -> QueryResult:
+    def raw(
+        self,
+        body: dict[str, Any],
+        extra_headers: dict[str, str] | None = None,
+    ) -> QueryResult:
         """Send arbitrary POST body and return typed result.
 
         If body contains a 'query' key, mutation guard applies.
@@ -166,11 +175,15 @@ class GraphQLClient:
                 error_class=ErrorClass.TRANSPORT,
             )
         start = time.monotonic()
-        result = self._transport.post_raw(body)
+        result = self._transport.post_raw(body, extra_headers=extra_headers)
         record_query_metrics(result, time.monotonic() - start, operation="raw")
         return result
 
-    def entities(self, representations: list[dict[str, Any]]) -> QueryResult:
+    def entities(
+        self,
+        representations: list[dict[str, Any]],
+        extra_headers: dict[str, str] | None = None,
+    ) -> QueryResult:
         """Resolve federation entities via _entities(representations:) pass-through.
 
         Sends the representations to the federation gateway's _entities query
@@ -186,6 +199,7 @@ class GraphQLClient:
         result = self._transport.execute(
             _ENTITIES_QUERY,
             {"representations": representations},
+            extra_headers=extra_headers,
         )
         record_query_metrics(result, time.monotonic() - start, operation="entities")
         return result

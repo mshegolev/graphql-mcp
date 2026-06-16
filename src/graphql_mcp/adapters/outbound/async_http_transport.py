@@ -45,15 +45,16 @@ class AsyncHttpTransport:
         self,
         query: str,
         variables: dict[str, Any] | None = None,
+        extra_headers: dict[str, str] | None = None,
     ) -> QueryResult:
         body: dict[str, Any] = {"query": query}
         if variables:
             body["variables"] = variables
-        return await self.post_raw(body)
+        return await self.post_raw(body, extra_headers=extra_headers)
 
-    async def post_raw(self, body: dict[str, Any]) -> QueryResult:
+    async def post_raw(self, body: dict[str, Any], extra_headers: dict[str, str] | None = None) -> QueryResult:
         try:
-            response = await self._client.post("", content=self._codec.encode(body))
+            response = await self._client.post("", content=self._codec.encode(body), headers=extra_headers)
         except (httpx.HTTPError, httpx.StreamError, OSError) as exc:
             logger.warning("Transport error: %s", exc)
             return QueryResult(
