@@ -37,7 +37,7 @@
 ### 🔵 v2.0 Production-Grade Platform (Phases 9-13) — ACTIVE
 
 - [x] **Phase 9: OpenTelemetry Observability** — Distributed tracing, custom metrics, and log correlation across all operations (2/2 plans) — completed 2026-06-16
-- [ ] **Phase 10: Security Hardening** — Query depth limits, rate limiting, mTLS, token rotation, header forwarding, audit logging
+- [x] **Phase 10: Security Hardening** — Query depth limits, rate limiting, mTLS, token rotation, header forwarding, audit logging (3/3 plans) — completed 2026-06-16
 - [ ] **Phase 11: GraphQL Subscriptions** — WebSocket + SSE subscription proxy with streaming lib-face support
 - [ ] **Phase 12: DX & Ecosystem** — PyPI publish pipeline and integration test harness with examples
 - [ ] **Phase 13: Copier Template Extraction** — Reusable parameterized brick template for the suite
@@ -169,7 +169,13 @@ Plans:
 5. When OAuth2 env vars are configured, the client automatically obtains and refreshes tokens before they expire — verified by test with mock OAuth2 server returning short-lived tokens.
 6. When `GRAPHQL_AUDIT_LOG=true`, every operation produces a structured audit log record containing caller identity, query hash, error_class, latency_ms, and trace_id — verified by test asserting log output fields.
 
-**Plans**: TBD
+**Plans:** 3 plans
+
+Plans:
+- [ ] 10-01-PLAN.md — Query depth limiting + rate limiting + header forwarding (SEC-01, SEC-02, SEC-03)
+- [ ] 10-02-PLAN.md — mTLS client certificate + OAuth2 token rotation (SEC-04, SEC-05)
+- [ ] 10-03-PLAN.md — Structured audit logging (SEC-06)
+
 **UI hint**: no
 
 ---
@@ -238,7 +244,7 @@ Plans:
 | 7. MCP-over-HTTP & Serve Infrastructure | v1.1 | 2/2 | Complete | 2026-06-08 |
 | 8. _entities & Ship v1.1 | v1.1 | 2/2 | Complete | 2026-06-08 |
 | 9. OpenTelemetry Observability | v2.0 | 2/2 | Complete | 2026-06-16 |
-| 10. Security Hardening | v2.0 | 0/? | Not started | - |
+| 10. Security Hardening | v2.0 | 3/3 | Complete | 2026-06-16 |
 | 11. GraphQL Subscriptions | v2.0 | 0/? | Not started | - |
 | 12. DX & Ecosystem | v2.0 | 0/? | Not started | - |
 | 13. Copier Template Extraction | v2.0 | 0/? | Not started | - |

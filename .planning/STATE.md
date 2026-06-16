@@ -4,13 +4,13 @@ milestone: v2.0
 milestone_name: Production-Grade Platform
 status: executing
 last_updated: 2026-06-16
-last_activity: 2026-06-16 -- Phase 9 complete (245 tests, OTEL-01 through OTEL-05 satisfied)
+last_activity: 2026-06-16 -- Phase 10 complete (291 tests, SEC-01 through SEC-06 satisfied)
 progress:
   total_phases: 5
-  completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
-  percent: 20
+  completed_phases: 2
+  total_plans: 5
+  completed_plans: 5
+  percent: 40
 stopped_at: null
 ---
 
@@ -31,10 +31,10 @@ stopped_at: null
 
 ## Current Position
 
-Phase: 10 — Security Hardening (next)
+Phase: 11 — GraphQL Subscriptions (next)
 Plan: —
-Status: Phase 9 complete, proceeding to Phase 10
-Last activity: 2026-06-16 — Phase 9 complete (245 tests, all OTEL requirements satisfied)
+Status: Phase 10 complete, proceeding to Phase 11
+Last activity: 2026-06-16 — Phase 10 complete (291 tests, all security requirements satisfied)
 
 ## Performance Metrics
 
@@ -48,10 +48,10 @@ Last activity: 2026-06-16 — Phase 9 complete (245 tests, all OTEL requirements
 | v1.1 Phases | 4/4 complete |
 | v1.1 Plans | 10/10 complete (Phase 05 done, Phase 06 done, Phase 07 done, Phase 08 done) |
 | v1.1 Requirements | 9/13 complete |
-| v2.0 Tests | 245 passing |
-| v2.0 Phases | 1/5 complete |
-| v2.0 Plans | 2/2 complete (Phase 09 done) |
-| v2.0 Requirements | 5/17 complete (OTEL-01 through OTEL-05) |
+| v2.0 Tests | 291 passing |
+| v2.0 Phases | 2/5 complete |
+| v2.0 Plans | 5/5 complete (Phase 09 done, Phase 10 done) |
+| v2.0 Requirements | 11/17 complete (OTEL-01–05, SEC-01–06) |
 
 ---
 
@@ -75,6 +75,12 @@ Last activity: 2026-06-16 — Phase 9 complete (245 tests, all OTEL requirements
 | 2026-06-16 | Custom metrics in lib facade (not transport) | Facade is where error_class is known and all faces converge |
 | 2026-06-16 | LoggingInstrumentor with set_logging_format=True | Injects otelTraceID/otelSpanID into every log record during traced requests |
 | 2026-06-16 | init_otel() in serve command only | Library users call init_otel() themselves; serve command auto-initializes |
+| 2026-06-16 | In-memory sliding window rate limiter (no Redis) | Zero external dependencies; suitable for single-process deployments |
+| 2026-06-16 | Query depth via graphql-core AST visitor | Reuses existing dependency; checks before upstream call |
+| 2026-06-16 | Header forwarding explicit whitelist | Authorization, X-User-Id, X-Roles only; prevents header injection |
+| 2026-06-16 | mTLS via stdlib ssl.SSLContext | Zero new deps; httpx verify= param accepts SSLContext |
+| 2026-06-16 | OAuth2TokenManager with thread-safe cache | Token refreshed before expiry; Bearer injected per-request |
+| 2026-06-16 | Audit logging gated by GRAPHQL_AUDIT_LOG=true | Zero overhead when disabled; SHA-256 query hash (raw queries never logged) |
 
 ### v1.1 Decisions
 
@@ -126,6 +132,6 @@ None currently.
 
 ## Session Continuity
 
-**Last session**: 2026-06-16 — Phase 9 complete (245 tests, OTEL-01 through OTEL-05 satisfied)
-**Next action**: Phase 10 — Security Hardening (discuss → plan → execute)
-**Context**: v2.0 Phase 9 complete: OTEL bootstrap, outbound tracing, custom metrics, inbound FastAPI instrumentation, log correlation. 245 tests passing. Next: Phase 10 Security Hardening (SEC-01 through SEC-06).
+**Last session**: 2026-06-16 — Phase 10 complete (291 tests, SEC-01 through SEC-06 satisfied)
+**Next action**: Phase 11 — GraphQL Subscriptions (discuss → plan → execute)
+**Context**: v2.0 Phases 9-10 complete. Phase 9: OTEL (tracing, metrics, log correlation). Phase 10: Security (depth limits, rate limiting, header forwarding, mTLS, OAuth2, audit logging). 291 tests passing. Next: Phase 11 GraphQL Subscriptions (SUB-01 through SUB-03).
