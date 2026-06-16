@@ -192,7 +192,12 @@ Plans:
 2. An HTTP client can `GET /graphql/subscribe?query=...&variables=...` and receive an SSE event stream with `data:` lines containing JSON `QueryResult` payloads — verified by test reading SSE events from the endpoint.
 3. `async for result in client.subscribe(query, variables)` on `AsyncGraphQLClient` yields `QueryResult` objects as an `AsyncIterator` — verified by test iterating results from a mock subscription source.
 
-**Plans**: TBD
+**Plans:** 2 plans
+
+Plans:
+- [ ] 11-01-PLAN.md — WebSocket subscription transport + AsyncGraphQLClient.subscribe() (SUB-01, SUB-03)
+- [ ] 11-02-PLAN.md — SSE fallback endpoint on FastAPI (SUB-02)
+
 **UI hint**: no
 
 ---
@@ -245,6 +250,6 @@ Plans:
 | 8. _entities & Ship v1.1 | v1.1 | 2/2 | Complete | 2026-06-08 |
 | 9. OpenTelemetry Observability | v2.0 | 2/2 | Complete | 2026-06-16 |
 | 10. Security Hardening | v2.0 | 3/3 | Complete | 2026-06-16 |
-| 11. GraphQL Subscriptions | v2.0 | 0/? | Not started | - |
+| 11. GraphQL Subscriptions | v2.0 | 0/2 | Not started | - |
 | 12. DX & Ecosystem | v2.0 | 0/? | Not started | - |
 | 13. Copier Template Extraction | v2.0 | 0/? | Not started | - |
