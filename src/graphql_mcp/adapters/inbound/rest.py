@@ -196,6 +196,9 @@ def graphql_query(req: QueryRequest, request: Request) -> dict[str, Any]:
     config = GraphQLConfig()
     check_query_depth(req.query, config.max_query_depth)
     client = _get_client()
+    # Set audit context for this request
+    client._audit_caller_ip = request.client.host if request.client else "unknown"
+    client._audit_caller_identity = request.headers.get("x-user-id", "anonymous")
     forwarded = _extract_forwarded_headers(request)
     try:
         result = client.query(req.query, req.variables, extra_headers=forwarded or None)
@@ -238,6 +241,9 @@ def graphql_raw(body: dict[str, Any], request: Request) -> dict[str, Any]:
     if isinstance(query_str, str):
         check_query_depth(query_str, config.max_query_depth)
     client = _get_client()
+    # Set audit context for this request
+    client._audit_caller_ip = request.client.host if request.client else "unknown"
+    client._audit_caller_identity = request.headers.get("x-user-id", "anonymous")
     forwarded = _extract_forwarded_headers(request)
     try:
         result = client.raw(body, extra_headers=forwarded or None)
@@ -254,6 +260,9 @@ def graphql_raw(body: dict[str, Any], request: Request) -> dict[str, Any]:
 def graphql_entities(req: EntitiesRequest, request: Request) -> dict[str, Any]:
     """Resolve federation entities via _entities pass-through."""
     client = _get_client()
+    # Set audit context for this request
+    client._audit_caller_ip = request.client.host if request.client else "unknown"
+    client._audit_caller_identity = request.headers.get("x-user-id", "anonymous")
     forwarded = _extract_forwarded_headers(request)
     result = client.entities(req.representations, extra_headers=forwarded or None)
     return {

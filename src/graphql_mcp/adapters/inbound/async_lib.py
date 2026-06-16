@@ -8,6 +8,7 @@ import time
 from typing import TYPE_CHECKING, Any
 
 from graphql_mcp.adapters.outbound.async_http_transport import AsyncHttpTransport
+from graphql_mcp.adapters.outbound.audit import emit_audit_log
 from graphql_mcp.adapters.outbound.file_source import FileSdlSource
 from graphql_mcp.adapters.outbound.gitlab_source import GitLabSource
 from graphql_mcp.adapters.outbound.oauth2 import AsyncOAuth2TokenManager
@@ -67,6 +68,9 @@ class AsyncGraphQLClient:
         self._supergraph_source = config.supergraph_source if config else "auto"
         self._analyzer = SchemaAnalyzer()
         self._closed = False
+        # Audit context — set per-request by REST adapter, defaults for lib usage
+        self._audit_caller_ip: str = "local"
+        self._audit_caller_identity: str = "anonymous"
 
     @classmethod
     def from_env(cls, **overrides: Any) -> AsyncGraphQLClient:
@@ -185,14 +189,25 @@ class AsyncGraphQLClient:
         """
         if not self._allow_mutations:
             check_mutation_guard(query)
+        start = time.monotonic()
         if self._transport is None:
-            return QueryResult(
+            result = QueryResult(
                 errors=[{"message": "No endpoint configured"}],
                 error_class=ErrorClass.TRANSPORT,
             )
-        start = time.monotonic()
-        result = await self._transport.execute(query, variables, extra_headers=extra_headers)
-        record_query_metrics(result, time.monotonic() - start, operation="query")
+        else:
+            result = await self._transport.execute(query, variables, extra_headers=extra_headers)
+        elapsed = time.monotonic() - start
+        record_query_metrics(result, elapsed, operation="query")
+        if self._config and self._config.audit_log:
+            emit_audit_log(
+                operation="query",
+                query_str=query,
+                error_class=result.error_class.value,
+                latency_s=elapsed,
+                caller_ip=self._audit_caller_ip,
+                caller_identity=self._audit_caller_identity,
+            )
         return result
 
     async def raw(
@@ -209,14 +224,25 @@ class AsyncGraphQLClient:
             query_str = body.get("query")
             if isinstance(query_str, str):
                 check_mutation_guard(query_str)
+        start = time.monotonic()
         if self._transport is None:
-            return QueryResult(
+            result = QueryResult(
                 errors=[{"message": "No endpoint configured"}],
                 error_class=ErrorClass.TRANSPORT,
             )
-        start = time.monotonic()
-        result = await self._transport.post_raw(body, extra_headers=extra_headers)
-        record_query_metrics(result, time.monotonic() - start, operation="raw")
+        else:
+            result = await self._transport.post_raw(body, extra_headers=extra_headers)
+        elapsed = time.monotonic() - start
+        record_query_metrics(result, elapsed, operation="raw")
+        if self._config and self._config.audit_log:
+            emit_audit_log(
+                operation="raw",
+                query_str=body.get("query", ""),
+                error_class=result.error_class.value,
+                latency_s=elapsed,
+                caller_ip=self._audit_caller_ip,
+                caller_identity=self._audit_caller_identity,
+            )
         return result
 
     async def entities(
@@ -230,18 +256,29 @@ class AsyncGraphQLClient:
         and returns the raw result. This is a query (not a mutation), so the
         mutation guard does not apply.
         """
+        start = time.monotonic()
         if self._transport is None:
-            return QueryResult(
+            result = QueryResult(
                 errors=[{"message": "No endpoint configured"}],
                 error_class=ErrorClass.TRANSPORT,
             )
-        start = time.monotonic()
-        result = await self._transport.execute(
-            _ENTITIES_QUERY,
-            {"representations": representations},
-            extra_headers=extra_headers,
-        )
-        record_query_metrics(result, time.monotonic() - start, operation="entities")
+        else:
+            result = await self._transport.execute(
+                _ENTITIES_QUERY,
+                {"representations": representations},
+                extra_headers=extra_headers,
+            )
+        elapsed = time.monotonic() - start
+        record_query_metrics(result, elapsed, operation="entities")
+        if self._config and self._config.audit_log:
+            emit_audit_log(
+                operation="entities",
+                query_str="_entities",
+                error_class=result.error_class.value,
+                latency_s=elapsed,
+                caller_ip=self._audit_caller_ip,
+                caller_identity=self._audit_caller_identity,
+            )
         return result
 
     def introspect(self) -> SchemaSummary:
