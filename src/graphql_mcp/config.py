@@ -59,3 +59,7 @@ class GraphQLConfig(BaseSettings):
     oauth2_client_id: str = ""  # GRAPHQL_OAUTH2_CLIENT_ID
     oauth2_client_secret: str = ""  # GRAPHQL_OAUTH2_CLIENT_SECRET
     oauth2_scopes: str = ""  # GRAPHQL_OAUTH2_SCOPES — space-separated
+
+    # Subscriptions
+    subscription_endpoint: str = ""  # GRAPHQL_SUBSCRIPTION_ENDPOINT — ws:// or wss:// URL for upstream subscription WS
+    subscription_queue_size: int = 128  # GRAPHQL_SUBSCRIPTION_QUEUE_SIZE — bounded async queue for backpressure

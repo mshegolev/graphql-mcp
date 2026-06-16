@@ -25,6 +25,7 @@ dev = [
     "ruff>=0.15",
     "pytest-cov>=5",
     "httpx[cli]>=0.28",
+    "websockets>=12,<14",
     "graphql-mcp[otel]",
 ]
 server = [
@@ -45,8 +46,11 @@ otel = [
     "opentelemetry-instrumentation-fastapi>=0.44b0",
     "opentelemetry-instrumentation-logging>=0.44b0",
 ]
+subscriptions = [
+    "websockets>=12,<14",
+]
 all = [
-    "graphql-mcp[server,mcp,cli,otel]",
+    "graphql-mcp[server,mcp,cli,otel,subscriptions]",
 ]
 
 [project.scripts]

@@ -5,6 +5,7 @@ Run: uvicorn graphql_mcp.adapters.inbound.rest:app --host 0.0.0.0 --port 8000
 
 from __future__ import annotations
 
+import logging
 import math
 import time as _time
 from typing import TYPE_CHECKING, Any
@@ -13,6 +14,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from graphql_mcp.adapters.inbound.lib import GraphQLClient
 
@@ -22,6 +24,8 @@ from graphql_mcp.adapters.inbound.mcp_http import create_mcp_http_app
 from graphql_mcp.adapters.outbound.query_guard import check_query_depth
 from graphql_mcp.config import GraphQLConfig
 from graphql_mcp.domain.errors import MutationGuardError, QueryDepthError, SchemaResolutionError
+
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Header forwarding
@@ -277,3 +281,117 @@ def graphql_refresh() -> dict[str, str]:
     client = _get_client()
     client.refresh_schema()
     return {"status": "refreshed"}
+
+
+# ---------------------------------------------------------------------------
+# WebSocket subscription proxy
+# ---------------------------------------------------------------------------
+
+
+@app.websocket("/graphql/subscribe")
+async def websocket_subscribe(ws: WebSocket) -> None:
+    """WebSocket subscription proxy using graphql-transport-ws sub-protocol.
+
+    Acts as a protocol-level proxy: accepts graphql-transport-ws from the
+    downstream client, opens an upstream subscription via UpstreamWSTransport,
+    and forwards next/complete/error messages.
+    """
+    # Only accept graphql-transport-ws sub-protocol
+    subprotocol = None
+    for proto in ws.scope.get("subprotocols", []):
+        if proto == "graphql-transport-ws":
+            subprotocol = proto
+            break
+
+    await ws.accept(subprotocol=subprotocol or "graphql-transport-ws")
+
+    try:
+        # 1. Wait for connection_init from client
+        init_msg = await ws.receive_json()
+        if init_msg.get("type") != "connection_init":
+            await ws.send_json({"type": "error", "payload": [{"message": "Expected connection_init"}]})
+            await ws.close()
+            return
+
+        await ws.send_json({"type": "connection_ack"})
+
+        # 2. Wait for subscribe message from client
+        sub_msg = await ws.receive_json()
+        if sub_msg.get("type") != "subscribe":
+            await ws.send_json({"type": "error", "payload": [{"message": "Expected subscribe"}]})
+            await ws.close()
+            return
+
+        sub_id = sub_msg.get("id", "1")
+        payload = sub_msg.get("payload", {})
+        query = payload.get("query", "")
+        variables = payload.get("variables")
+
+        # 3. Build upstream connection
+        from graphql_mcp.adapters.outbound.ws_transport import UpstreamWSTransport
+
+        config = GraphQLConfig()
+        ws_endpoint = config.subscription_endpoint
+        if not ws_endpoint and config.endpoint:
+            ep = config.endpoint
+            if ep.startswith("https://"):
+                ws_endpoint = "wss://" + ep[len("https://") :]
+            elif ep.startswith("http://"):
+                ws_endpoint = "ws://" + ep[len("http://") :]
+
+        if not ws_endpoint:
+            await ws.send_json(
+                {
+                    "type": "error",
+                    "id": sub_id,
+                    "payload": [{"message": "No subscription endpoint configured"}],
+                }
+            )
+            await ws.send_json({"type": "complete", "id": sub_id})
+            await ws.close()
+            return
+
+        # Forward auth headers from WS connection init payload
+        extra_headers: dict[str, str] = {}
+        if isinstance(init_msg.get("payload"), dict):
+            for k, v in init_msg["payload"].items():
+                if k.lower() in _FORWARDED_HEADERS:
+                    extra_headers[k] = v
+        if config.bearer_token:
+            extra_headers.setdefault("Authorization", f"Bearer {config.bearer_token}")
+
+        # 4. Proxy upstream subscription to downstream client
+        async with UpstreamWSTransport(
+            ws_endpoint=ws_endpoint,
+            query=query,
+            variables=variables,
+            extra_headers=extra_headers or None,
+            queue_size=config.subscription_queue_size,
+            timeout=float(config.timeout),
+        ) as upstream:
+            async for result in upstream:
+                await ws.send_json(
+                    {
+                        "type": "next",
+                        "id": sub_id,
+                        "payload": {
+                            "data": result.data,
+                            "errors": result.errors or None,
+                        },
+                    }
+                )
+
+        # Stream complete
+        await ws.send_json({"type": "complete", "id": sub_id})
+
+    except WebSocketDisconnect:
+        pass  # Client disconnected — clean up silently
+    except ImportError:
+        await ws.send_json({"type": "error", "payload": [{"message": "Install graphql-mcp[subscriptions]"}]})
+        await ws.close()
+    except Exception as exc:
+        logger.exception("WebSocket subscription error: %s", exc)
+        try:
+            await ws.close(code=1011)
+        except Exception:
+            pass
