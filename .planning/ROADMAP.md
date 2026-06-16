@@ -40,7 +40,7 @@
 - [x] **Phase 10: Security Hardening** — Query depth limits, rate limiting, mTLS, token rotation, header forwarding, audit logging (3/3 plans) — completed 2026-06-16
 - [x] **Phase 11: GraphQL Subscriptions** — WebSocket + SSE subscription proxy with streaming lib-face support (2/2 plans) — completed 2026-06-16
 - [x] **Phase 12: DX & Ecosystem** — PyPI publish pipeline and integration test harness with examples (2/2 plans) — completed 2026-06-16
-- [ ] **Phase 13: Copier Template Extraction** — Reusable parameterized brick template for the suite
+- [x] **Phase 13: Copier Template Extraction** — Reusable parameterized brick template for the suite (1/1 plans) — completed 2026-06-16
 
 ---
 
@@ -236,7 +236,11 @@ Plans:
 2. The generated project's test suite passes (`pytest` in the generated directory) — verified by generating a test brick and running its tests.
 3. No hardcoded `graphql_mcp` or `graphql-mcp` strings remain in the generated project (all parameterized via Jinja2) — verified by grep in generated output.
 
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [x] 13-01-PLAN.md — Copier template extraction with parameterized brick generation (TPL-01)
+
 **UI hint**: no
 
 ---
@@ -257,4 +261,4 @@ Plans:
 | 10. Security Hardening | v2.0 | 3/3 | Complete | 2026-06-16 |
 | 11. GraphQL Subscriptions | v2.0 | 2/2 | Complete | 2026-06-16 |
 | 12. DX & Ecosystem | v2.0 | 2/2 | Complete | 2026-06-16 |
-| 13. Copier Template Extraction | v2.0 | 0/? | Not started | - |
+| 13. Copier Template Extraction | v2.0 | 1/1 | Complete | 2026-06-16 |

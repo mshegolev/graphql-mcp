@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Production-Grade Platform
-status: executing
+status: complete
 last_updated: 2026-06-16
-last_activity: 2026-06-16 -- Phase 12 complete (321 tests, DX-01 and DX-02 satisfied)
+last_activity: 2026-06-16 -- Phase 13 complete (341 tests, TPL-01 satisfied, v2.0 milestone complete)
 progress:
   total_phases: 5
-  completed_phases: 4
-  total_plans: 9
-  completed_plans: 9
-  percent: 80
+  completed_phases: 5
+  total_plans: 10
+  completed_plans: 10
+  percent: 100
 stopped_at: null
 ---
 
@@ -31,10 +31,10 @@ stopped_at: null
 
 ## Current Position
 
-Phase: 13 — Copier Template Extraction (next)
-Plan: —
-Status: Phase 12 complete, proceeding to Phase 13
-Last activity: 2026-06-16 — Phase 12 complete (321 tests, DX-01 and DX-02 satisfied)
+Phase: 13 — Copier Template Extraction (complete)
+Plan: 01/01 complete
+Status: v2.0 milestone complete — all 5 phases, 10 plans, 17 requirements satisfied
+Last activity: 2026-06-16 — Phase 13 complete (341 tests, TPL-01 satisfied)
 
 ## Performance Metrics
 
@@ -48,10 +48,10 @@ Last activity: 2026-06-16 — Phase 12 complete (321 tests, DX-01 and DX-02 sati
 | v1.1 Phases | 4/4 complete |
 | v1.1 Plans | 10/10 complete (Phase 05 done, Phase 06 done, Phase 07 done, Phase 08 done) |
 | v1.1 Requirements | 9/13 complete |
-| v2.0 Tests | 321 passing (310 unit + 11 integration) |
-| v2.0 Phases | 4/5 complete |
-| v2.0 Plans | 9/9 complete (Phase 09 done, Phase 10 done, Phase 11 done, Phase 12 done) |
-| v2.0 Requirements | 16/17 complete (OTEL-01–05, SEC-01–06, SUB-01–03, DX-01, DX-02) |
+| v2.0 Tests | 341 passing (330 unit + 11 integration) |
+| v2.0 Phases | 5/5 complete |
+| v2.0 Plans | 10/10 complete (Phase 09 done, Phase 10 done, Phase 11 done, Phase 12 done, Phase 13 done) |
+| v2.0 Requirements | 17/17 complete (OTEL-01–05, SEC-01–06, SUB-01–03, DX-01, DX-02, TPL-01) |
 
 ---
 
@@ -87,6 +87,10 @@ Last activity: 2026-06-16 — Phase 12 complete (321 tests, DX-01 and DX-02 sati
 | 2026-06-16 | OIDC Trusted Publishing over API tokens | No secrets to rotate; GitHub identity verified by PyPI |
 | 2026-06-16 | stdlib HTTPServer + graphql-core for mock server | Zero external deps beyond graphql-core for integration test harness |
 | 2026-06-16 | Session-scoped mock server subprocess | Auto-starts in local dev mode; GRAPHQL_ENDPOINT switches to docker compose mode |
+| 2026-06-16 | Copier _subdirectory: project | Separates template config from template content |
+| 2026-06-16 | hatchling default, maturin opt-in | Simpler build for non-Rust projects; maturin only when rust_native=true |
+| 2026-06-16 | Domain files not Jinja2-templated | models.py, errors.py have no module_name refs; stay as plain Python |
+| 2026-06-16 | Config class name derived from env_prefix | KafkaConfig, OrderingConfig — derived via Jinja2 title() filter |
 
 ### v1.1 Decisions
 
@@ -138,6 +142,6 @@ None currently.
 
 ## Session Continuity
 
-**Last session**: 2026-06-16 — Phase 12 complete (321 tests, DX-01 and DX-02 satisfied)
-**Next action**: Phase 13 — Copier Template Extraction (discuss → plan → execute)
-**Context**: v2.0 Phases 9-12 complete. Phase 9: OTEL. Phase 10: Security. Phase 11: Subscriptions. Phase 12: DX & Ecosystem (PyPI publish workflow, docker compose harness, SDK examples, 11 integration tests). 321 tests passing. Next: Phase 13 Copier Template Extraction (TPL-01).
+**Last session**: 2026-06-16 — Phase 13 complete (341 tests, TPL-01 satisfied, v2.0 milestone complete)
+**Next action**: v2.0 milestone complete — all requirements satisfied
+**Context**: v2.0 all 5 phases complete (9-13). Phase 9: OTEL. Phase 10: Security. Phase 11: Subscriptions. Phase 12: DX & Ecosystem. Phase 13: Copier template extraction (20 template tests, 9 generated project tests). 341 tests total. TPL-01 satisfied.

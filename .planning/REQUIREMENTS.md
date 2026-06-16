@@ -38,7 +38,7 @@
 
 ### Template
 
-- [ ] **TPL-01**: User can run `copier copy <template-repo> <new-brick>` to generate a new MCP brick with parameterized module name, env prefix, and optional features (Rust native, subscriptions, OTEL) — verified by generating a test brick and running its test suite.
+- [x] **TPL-01**: User can run `copier copy <template-repo> <new-brick>` to generate a new MCP brick with parameterized module name, env prefix, and optional features (Rust native, subscriptions, OTEL) — verified by generating a test brick and running its test suite.
 
 ---
 
@@ -81,4 +81,4 @@ _None — all proposed features selected for v2.0._
 | SUB-03 | Phase 11 | Pending |
 | DX-01 | Phase 12 | Complete |
 | DX-02 | Phase 12 | Complete |
-| TPL-01 | Phase 13 | Pending |
+| TPL-01 | Phase 13 | Complete |
