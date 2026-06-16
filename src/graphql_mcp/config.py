@@ -43,3 +43,8 @@ class GraphQLConfig(BaseSettings):
 
     # Federation
     supergraph_source: str = "auto"  # auto|off — controls list_subgraphs behavior
+
+    # Security
+    max_query_depth: int = 10  # GRAPHQL_MAX_QUERY_DEPTH
+    rate_limit: str = "100/minute"  # GRAPHQL_RATE_LIMIT — "{count}/{window}" where window ∈ {second, minute, hour}
+    audit_log: bool = False  # GRAPHQL_AUDIT_LOG — used by Plan 03
