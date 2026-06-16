@@ -86,16 +86,17 @@ domain → ports → outbound (http/schema sources) → Rust native + orjson fal
 ## Decisions (наследуются от зонтика)
 D1 гибрид C · D2 library-first · D5 Python+Rust · D7 hexagonal · D8 FastAPI+stdio · D9 pyo3+fallback.
 
-## Current Milestone: v2.0 Production-Grade Platform
+## Current Milestone: v2.1 Testing & Quality
 
-**Goal:** Transform graphql-mcp from a feature-complete brick into a production-grade, observable, secure platform with real-time capabilities and a reusable template for the suite.
+**Goal:** Transform the test infrastructure from basic unit coverage into a comprehensive quality assurance system with coverage enforcement, contract tests, mutation testing, property-based testing, snapshot regression detection, and CI quality gates.
 
 **Target features:**
-- OpenTelemetry tracing/metrics/logs across all operations and transports
-- Security hardening: mTLS, token rotation, RBAC header forwarding, audit logging, rate limiting, input validation
-- DX & Ecosystem: PyPI publish pipeline, GitHub Actions CI, better error messages, SDK examples, integration test harness
-- GraphQL subscriptions via WebSocket (graphql-ws) + SSE fallback, streaming response support
-- Copier template extraction for kafka-mcp/ordering-mcp reuse
+- Coverage enforcement: pytest-cov with branch coverage, minimum thresholds, uncovered path reports
+- Contract testing: schema-based contracts between brick and upstream GraphQL services
+- Mutation testing: mutmut/cosmic-ray to verify tests catch real bugs
+- Property-based testing: Hypothesis for fuzzing queries, error paths, edge cases
+- Snapshot testing: response snapshots for regression detection across refactors
+- CI quality gates: GitHub Actions checks enforcing coverage, lint, type check, test pass for merges
 
 ## Validated Requirements
 
@@ -105,7 +106,10 @@ D1 гибрид C · D2 library-first · D5 Python+Rust · D7 hexagonal · D8 Fa
 ### v1.1 Production Hardening (shipped 2026-06-08)
 - [x] HARD-01..03, PERF-01..03, FACE-01..04, ENT-01, SHIP-01..02 (all 13 requirements satisfied)
 
-### v2.0 Production-Grade Platform (active)
+### v2.0 Production-Grade Platform (shipped 2026-06-16)
+- [x] OTEL-01..05, SEC-01..06, SUB-01..03, DX-01, DX-02, TPL-01 (all 17 requirements satisfied)
+
+### v2.1 Testing & Quality (active)
 - See REQUIREMENTS.md for active requirements
 
 ## Key Decisions
@@ -138,4 +142,4 @@ This document evolves at phase transitions and milestone boundaries.
 
 ---
 *Brick brief — запускай агента в этой репе и реализуй методы из Investigator Contract.*
-*Last updated: 2026-06-16*
+*Last updated: 2026-06-16 after milestone v2.1 start*
