@@ -10,7 +10,7 @@
 
 - ✅ **v1.0 MVP** — Phases 1-4 (shipped 2026-06-05) — [details](milestones/v1.0-ROADMAP.md)
 - ✅ **v1.1 Production Hardening** — Phases 5-8 (shipped 2026-06-08)
-- 🔵 **v2.0 Production-Grade Platform** — Phases 9-13 (active)
+- ✅ **v2.0 Production-Grade Platform** — Phases 9-13 (shipped 2026-06-16)
 
 ## Phases
 
@@ -34,7 +34,7 @@
 
 </details>
 
-### 🔵 v2.0 Production-Grade Platform (Phases 9-13) — ACTIVE
+### ✅ v2.0 Production-Grade Platform (Phases 9-13) — SHIPPED 2026-06-16
 
 - [x] **Phase 9: OpenTelemetry Observability** — Distributed tracing, custom metrics, and log correlation across all operations (2/2 plans) — completed 2026-06-16
 - [x] **Phase 10: Security Hardening** — Query depth limits, rate limiting, mTLS, token rotation, header forwarding, audit logging (3/3 plans) — completed 2026-06-16
