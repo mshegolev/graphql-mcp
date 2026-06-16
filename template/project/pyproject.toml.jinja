@@ -1,0 +1,94 @@
+{%- if rust_native %}
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+{%- else %}
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+{%- endif %}
+
+[project]
+name = "{{ package_name }}"
+{%- if rust_native %}
+dynamic = ["version"]
+{%- else %}
+version = "0.1.0"
+{%- endif %}
+description = "{{ description }}"
+requires-python = ">={{ python_version }}"
+license = { text = "MIT" }
+dependencies = [
+    "graphql-core~=3.2.11",
+    "pydantic>=2.13,<3",
+    "pydantic-settings>=2.14,<3",
+    "httpx>=0.28,<1",
+    "orjson>=3.11,<4",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-asyncio>=0.24",
+    "respx>=0.22",
+    "ruff>=0.15",
+    "pytest-cov>=5",
+{%- if otel %}
+    "{{ package_name }}[otel]",
+{%- endif %}
+]
+server = [
+    "fastapi>=0.100,<1",
+    "uvicorn>=0.20,<1",
+]
+mcp = [
+    "mcp>=1.0,<2",
+]
+cli = [
+    "click>=8,<9",
+]
+{%- if otel %}
+otel = [
+    "opentelemetry-api>=1.20,<2",
+    "opentelemetry-sdk>=1.20,<2",
+    "opentelemetry-exporter-otlp-proto-http>=1.20,<2",
+    "opentelemetry-instrumentation-httpx>=0.44b0",
+    "opentelemetry-instrumentation-fastapi>=0.44b0",
+    "opentelemetry-instrumentation-logging>=0.44b0",
+]
+{%- endif %}
+{%- if subscriptions %}
+subscriptions = [
+    "websockets>=12,<14",
+]
+{%- endif %}
+all = [
+    "{{ package_name }}[server,mcp,cli{{ ',otel' if otel }}{{ ',subscriptions' if subscriptions }}]",
+]
+
+[project.scripts]
+{{ package_name }} = "{{ module_name }}.adapters.inbound.cli:main"
+{%- if rust_native %}
+
+[tool.maturin]
+python-source = "src"
+module-name = "{{ module_name }}._native"
+manifest-path = "native/Cargo.toml"
+features = ["pyo3/extension-module"]
+{%- else %}
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/{{ module_name }}"]
+{%- endif %}
+
+[tool.ruff]
+target-version = "py{{ python_version | replace('.', '') }}"
+line-length = 120
+src = ["src"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "TCH"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"

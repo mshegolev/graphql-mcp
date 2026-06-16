@@ -1,0 +1,62 @@
+_min_copier_version: "9.0.0"
+
+_subdirectory: "project"
+
+# ── User-facing questions ──────────────────────────────────────────
+
+module_name:
+  type: str
+  help: >
+    Python module name (snake_case, e.g. 'kafka_mcp').
+    Will be used as the importable package name.
+  validator: "{% if not module_name | regex_search('^[a-z][a-z0-9_]*$') %}Must be a valid Python identifier (lowercase, underscores only){% endif %}"
+
+package_name:
+  type: str
+  help: >
+    PyPI package name (kebab-case, e.g. 'kafka-mcp').
+    Used in pyproject.toml [project] name.
+  default: "{{ module_name | replace('_', '-') }}"
+  validator: "{% if not package_name | regex_search('^[a-z][a-z0-9-]*$') %}Must be lowercase with hyphens only{% endif %}"
+
+description:
+  type: str
+  help: One-line project description.
+  default: "Generic read-only GraphQL MCP brick"
+
+env_prefix:
+  type: str
+  help: >
+    Environment variable prefix (UPPER_CASE, e.g. 'KAFKA').
+    Config variables will be prefixed as {ENV_PREFIX}_ENDPOINT, etc.
+  default: "{{ module_name | upper | replace('_MCP', '') }}"
+  validator: "{% if not env_prefix | regex_search('^[A-Z][A-Z0-9_]*$') %}Must be UPPER_CASE with underscores{% endif %}"
+
+python_version:
+  type: str
+  help: Minimum Python version.
+  default: "3.10"
+  choices:
+    - "3.10"
+    - "3.11"
+    - "3.12"
+
+# ── Optional features ─────────────────────────────────────────────
+
+rust_native:
+  type: bool
+  help: >
+    Include Rust native extension (pyo3/maturin) for high-performance JSON codec?
+  default: false
+
+subscriptions:
+  type: bool
+  help: >
+    Include GraphQL subscriptions support (WebSocket + SSE)?
+  default: false
+
+otel:
+  type: bool
+  help: >
+    Include OpenTelemetry observability (tracing, metrics, log correlation)?
+  default: false

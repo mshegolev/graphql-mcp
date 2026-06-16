@@ -1,0 +1,44 @@
+"""Basic tests for domain models."""
+
+from __future__ import annotations
+
+from {{ module_name }}.domain.models import ErrorClass, QueryResult, SchemaGraph, TypeSummary
+
+
+def test_query_result_defaults() -> None:
+    """QueryResult defaults to OK with no data/errors."""
+    result = QueryResult()
+    assert result.error_class == ErrorClass.OK
+    assert result.data is None
+    assert result.errors == []
+
+
+def test_query_result_with_data() -> None:
+    """QueryResult stores data and keeps OK class."""
+    result = QueryResult(data={"hello": "world"})
+    assert result.data == {"hello": "world"}
+    assert result.error_class == ErrorClass.OK
+
+
+def test_query_result_with_errors() -> None:
+    """QueryResult can hold GraphQL errors."""
+    result = QueryResult(
+        errors=[{"message": "field not found"}],
+        error_class=ErrorClass.GRAPHQL,
+    )
+    assert result.error_class == ErrorClass.GRAPHQL
+    assert len(result.errors) == 1
+
+
+def test_schema_graph_creation() -> None:
+    """SchemaGraph stores SDL and metadata."""
+    schema = SchemaGraph(sdl="type Query { hello: String }")
+    assert "Query" in schema.sdl
+    assert schema.query_type_name == "Query"
+
+
+def test_type_summary() -> None:
+    """TypeSummary stores type metadata."""
+    ts = TypeSummary(name="User", kind="OBJECT")
+    assert ts.name == "User"
+    assert ts.kind == "OBJECT"

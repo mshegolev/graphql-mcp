@@ -1,0 +1,37 @@
+"""Tests for SchemaService cascade resolution."""
+
+from __future__ import annotations
+
+import pytest
+
+from {{ module_name }}.domain.errors import SchemaResolutionError
+from {{ module_name }}.domain.schema_service import SchemaService
+from tests.conftest import MockSchemaSource, SAMPLE_SDL
+
+
+def test_schema_resolve_from_source() -> None:
+    """SchemaService resolves schema from first successful source."""
+    source = MockSchemaSource("test", sdl=SAMPLE_SDL)
+    service = SchemaService(sources=[source], ttl_seconds=0)
+    schema = service.resolve()
+    assert "Query" in schema.sdl
+    assert source.call_count == 1
+
+
+def test_schema_resolution_error_when_all_fail() -> None:
+    """SchemaService raises SchemaResolutionError when all sources fail."""
+    source = MockSchemaSource("failing", should_raise=True)
+    service = SchemaService(sources=[source], ttl_seconds=0)
+    with pytest.raises(SchemaResolutionError):
+        service.resolve()
+
+
+def test_schema_cache_invalidation() -> None:
+    """SchemaService.invalidate() forces re-fetch."""
+    source = MockSchemaSource("test", sdl=SAMPLE_SDL)
+    service = SchemaService(sources=[source], ttl_seconds=300)
+    service.resolve()
+    assert source.call_count == 1
+    service.invalidate()
+    service.resolve()
+    assert source.call_count == 2

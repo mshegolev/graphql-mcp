@@ -1,0 +1,22 @@
+"""Codec factory — selects the best available JSON codec."""
+
+from __future__ import annotations
+
+from {{ module_name }}.ports.json_codec import JsonCodec
+
+
+class OrjsonCodec:
+    """JSON codec using orjson (always available — listed in dependencies)."""
+
+    def encode(self, obj: object) -> bytes:
+        import orjson
+        return orjson.dumps(obj)
+
+    def decode(self, data: bytes) -> object:
+        import orjson
+        return orjson.loads(data)
+
+
+def get_codec() -> JsonCodec:
+    """Return the best available codec."""
+    return OrjsonCodec()

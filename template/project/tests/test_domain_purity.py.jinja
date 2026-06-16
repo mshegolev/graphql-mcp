@@ -1,0 +1,27 @@
+"""Verify the domain layer has no I/O or framework imports."""
+
+from __future__ import annotations
+
+import ast
+import pathlib
+
+DOMAIN_DIR = pathlib.Path("src/{{ module_name }}/domain")
+FORBIDDEN_IMPORTS = {"httpx", "fastapi", "uvicorn", "requests", "mcp", "click"}
+
+
+def test_domain_no_forbidden_imports() -> None:
+    """Domain modules must not import I/O or framework libraries."""
+    violations: list[str] = []
+    for py_file in DOMAIN_DIR.glob("*.py"):
+        tree = ast.parse(py_file.read_text())
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                for alias in node.names:
+                    root = alias.name.split(".")[0]
+                    if root in FORBIDDEN_IMPORTS:
+                        violations.append(f"{py_file.name}: import {alias.name}")
+            elif isinstance(node, ast.ImportFrom) and node.module:
+                root = node.module.split(".")[0]
+                if root in FORBIDDEN_IMPORTS:
+                    violations.append(f"{py_file.name}: from {node.module}")
+    assert not violations, f"Domain purity violations:\n" + "\n".join(violations)
