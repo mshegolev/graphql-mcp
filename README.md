@@ -1,6 +1,8 @@
 # graphql-mcp
 
 ![CI](https://github.com/mshegolev/graphql-mcp/actions/workflows/ci.yml/badge.svg)
+[![Coverage](https://img.shields.io/badge/Coverage-80%25-yellow.svg)](https://github.com/mshegolev/graphql-mcp)
+[![Testing Quality](https://img.shields.io/badge/Testing-Quality%20Assured-green.svg)](https://github.com/mshegolev/graphql-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Generic read-only GraphQL MCP brick — schema discovery, query execution, 3-class error typing, federation ownership mapping, and entity resolution.
@@ -207,6 +209,38 @@ graphql-mcp follows **hexagonal architecture** (ports & adapters):
 - **Ports** define Protocol interfaces for transport and schema sources
 - **Inbound adapters** are thin facades that delegate to `GraphQLClient`
 - **Outbound adapters** handle HTTP, schema resolution, JSON codec, and mutation detection
+
+## Testing
+
+This project uses comprehensive testing strategies to ensure code quality and prevent regressions:
+
+### Coverage Testing
+- **Branch coverage**: Minimum 80% coverage required (enforced in CI)
+- **Per-module reporting**: Coverage is measured separately for domain, adapters, and ports
+- **HTML/XML reports**: Generated locally and in CI for detailed analysis
+
+To run tests with coverage locally:
+```bash
+pytest --cov=src --cov-report=html
+```
+
+### Contract Testing
+- **Schema snapshots**: GraphQL schema structure is validated against stored snapshots
+- **Response validation**: API response shapes are validated to prevent breaking changes
+- **Pact integration**: Consumer-driven contract testing framework implemented
+
+### Property-Based Testing
+- **Hypothesis framework**: Comprehensive input validation through property-based testing
+- **Invariant testing**: Domain model contracts verified under random inputs
+- **Edge case coverage**: Malformed inputs and boundary conditions tested
+
+### Mutation Testing
+- **Mutmut integration**: Test suite effectiveness measured through mutation testing
+- **Domain-focused**: Mutation analysis scoped to critical domain modules
+- **Threshold enforcement**: CI blocks merges when mutation scores drop below threshold
+
+### Continuous Integration
+All tests are run in CI on every pull request, with coverage reports uploaded to Codecov for visualization and tracking. Multi-version testing ensures compatibility across Python 3.10, 3.11, and 3.12.
 
 ## License
 

@@ -29,8 +29,17 @@ jobs:
       - name: Lint
         run: ruff check src/ tests/
 
-      - name: Test
-        run: pytest tests/ -v --tb=short
+      - name: Test with coverage
+        run: pytest tests/ -v --tb=short --cov=src --cov-report=xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   wheels:
     needs: lint-and-test
