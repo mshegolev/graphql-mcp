@@ -11,7 +11,7 @@
 - ✅ **v1.0 MVP** — Phases 1-4 (shipped 2026-06-05) — [details](milestones/v1.0-ROADMAP.md)
 - ✅ **v1.1 Production Hardening** — Phases 5-8 (shipped 2026-06-08)
 - ✅ **v2.0 Production-Grade Platform** — Phases 9-13 (shipped 2026-06-16)
-- 🔄 **v2.1 Testing & Quality** — Phases 14-16 (active)
+- ✅ **v2.1 Testing & Quality** — Phases 14-16 (complete 2026-06-18)
 
 ## Phases
 
@@ -46,11 +46,11 @@
 
 </details>
 
-### 🔄 v2.1 Testing & Quality (Phases 14-16)
+### ✅ v2.1 Testing & Quality (Phases 14-16) — COMPLETED 2026-06-18
 
-- [x] **Phase 14: Coverage & Snapshot Infrastructure** — pytest-cov enforcement with per-module targets and pytest-syrupy snapshot regression detection (complete)
-- [x] **Phase 15: Contract & Property-Based Testing** — Schema contract verification, Pact consumer-driven contracts, and Hypothesis-based fuzz/invariant tests (complete)
-- [x] **Phase 16: Mutation Testing & CI Quality Gates** — mutmut mutation scoring with CI enforcement, GitHub Actions quality gate pipeline, test matrix, and nightly mutation runs (complete)
+- [x] **Phase 14: Coverage & Snapshot Infrastructure** — pytest-cov enforcement with per-module targets and pytest-syrupy snapshot regression detection (complete 2026-06-18)
+- [x] **Phase 15: Contract & Property-Based Testing** — Schema contract verification, Pact consumer-driven contracts, and Hypothesis-based fuzz/invariant tests (complete 2026-06-18)
+- [x] **Phase 16: Mutation Testing & CI Quality Gates** — mutmut mutation scoring with CI enforcement, GitHub Actions quality gate pipeline, test matrix, and nightly mutation runs (complete 2026-06-18)
 
 ---
 
