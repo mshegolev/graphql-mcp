@@ -288,6 +288,79 @@ class GraphQLClient:
         """Clear schema cache, forcing next access to re-fetch."""
         self._schema_service.invalidate()
 
+    def _resolve_ws_endpoint(self) -> str:
+        """Determine the WebSocket endpoint for subscriptions.
+
+        Uses GRAPHQL_SUBSCRIPTION_ENDPOINT if set, otherwise converts
+        GRAPHQL_ENDPOINT from http(s):// to ws(s)://.
+        """
+        if self._config and self._config.subscription_endpoint:
+            return self._config.subscription_endpoint
+        if self._config and self._config.endpoint:
+            ep = self._config.endpoint
+            if ep.startswith("https://"):
+                return "wss://" + ep[len("https://") :]
+            if ep.startswith("http://"):
+                return "ws://" + ep[len("http://") :]
+            return ep
+        return ""
+
+    def subscribe(
+        self,
+        query: str,
+        variables: dict[str, Any] | None = None,
+        extra_headers: dict[str, str] | None = None,
+    ) -> Any:
+        """Subscribe to a GraphQL subscription and yield results.
+
+        Connects to the upstream subscription endpoint via WebSocket using the
+        graphql-transport-ws sub-protocol. Yields QueryResult objects for each
+        ``next`` message. Iteration ends when the upstream sends ``complete``.
+
+        Usage::
+
+            for result in client.subscribe("subscription { events { id } }"):
+                print(result.data)
+
+        Raises ImportError if websockets is not installed
+        (``pip install graphql-mcp[subscriptions]``).
+        """
+        from graphql_mcp.adapters.outbound.sync_ws_transport import SyncWSTransport
+
+        ws_endpoint = self._resolve_ws_endpoint()
+        if not ws_endpoint:
+            yield QueryResult(
+                errors=[{"message": "No subscription endpoint configured"}],
+                error_class=ErrorClass.TRANSPORT,
+            )
+            return
+
+        merged_headers = dict(extra_headers) if extra_headers else {}
+        if self._config and self._config.bearer_token:
+            merged_headers.setdefault("Authorization", f"Bearer {self._config.bearer_token}")
+
+        queue_size = self._config.subscription_queue_size if self._config else 128
+
+        with SyncWSTransport(
+            ws_endpoint=ws_endpoint,
+            query=query,
+            variables=variables,
+            extra_headers=merged_headers or None,
+            queue_size=queue_size,
+            timeout=float(self._config.timeout) if self._config else 30.0,
+        ) as transport:
+            for result in transport:
+                if self._config and self._config.audit_log:
+                    emit_audit_log(
+                        operation="subscribe",
+                        query_str=query,
+                        error_class=result.error_class.value,
+                        latency_s=0.0,
+                        caller_ip=self._audit_caller_ip,
+                        caller_identity=self._audit_caller_identity,
+                    )
+                yield result
+
     def close(self) -> None:
         """Release transport resources. Safe to call multiple times."""
         if self._closed:

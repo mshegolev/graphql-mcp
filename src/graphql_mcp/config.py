@@ -63,3 +63,9 @@ class GraphQLConfig(BaseSettings):
     # Subscriptions
     subscription_endpoint: str = ""  # GRAPHQL_SUBSCRIPTION_ENDPOINT — ws:// or wss:// URL for upstream subscription WS
     subscription_queue_size: int = 128  # GRAPHQL_SUBSCRIPTION_QUEUE_SIZE — bounded async queue for backpressure
+    subscription_rate_limit: str = (
+        "10/minute"  # GRAPHQL_SUBSCRIPTION_RATE_LIMIT — "{count}/{window}" for subscription connections per IP
+    )
+    max_concurrent_subscriptions: int = (
+        100  # GRAPHQL_MAX_CONCURRENT_SUBSCRIPTIONS — max concurrent subscription connections per IP
+    )

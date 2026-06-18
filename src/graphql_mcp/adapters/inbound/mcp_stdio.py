@@ -92,5 +92,35 @@ def refresh_schema() -> dict:
     return {"status": "refreshed"}
 
 
+@mcp.tool()
+def subscribe(query: str, variables: dict | None = None) -> dict:
+    """Subscribe to a GraphQL subscription and return stream of results.
+
+    Returns a stream of results where each result has data, errors, and error_class.
+    """
+    try:
+        from graphql_mcp import GraphQLClient
+    except ImportError:
+        return {
+            "error": "websockets is required for subscription support. Install with: pip install graphql-mcp[subscriptions]"
+        }
+
+    client = _get_client()
+    try:
+        # For MCP, we'll collect a few results and return them as a list
+        # In a real implementation, this would be a streaming response
+        results = []
+        count = 0
+        for result in client.subscribe(query, variables):
+            results.append(result.model_dump())
+            count += 1
+            # Limit to first 10 results for MCP tool call
+            if count >= 10:
+                break
+        return {"results": results, "truncated": count >= 10}
+    except Exception as exc:
+        return {"error": str(exc), "error_class": "subscription_error"}
+
+
 if __name__ == "__main__":
     mcp.run(transport="stdio")

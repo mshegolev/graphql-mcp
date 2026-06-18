@@ -5,6 +5,7 @@ Usage: graphql-mcp query '{ __typename }'
        graphql-mcp describe-type User
        graphql-mcp list-subgraphs
        graphql-mcp refresh
+       graphql-mcp subscribe 'subscription { events { id } }'
        graphql-mcp serve [--host HOST] [--port PORT]
 """
 
@@ -115,6 +116,52 @@ def entities(representations_json: str) -> None:
     reps = json.loads(representations_json)
     result = client.entities(reps)
     click.echo(json.dumps(result.model_dump(), indent=2, default=str))
+
+
+@main.command()
+@click.argument("query_string")
+@click.option("--variables", "-v", default=None, help="JSON string of variables")
+@click.option("--format", "-f", default="json", type=click.Choice(["json", "table"]), help="Output format")
+def subscribe(query_string: str, variables: str | None, format: str) -> None:
+    """Subscribe to a GraphQL subscription and stream results."""
+    try:
+        from graphql_mcp import GraphQLClient
+        from graphql_mcp.domain.errors import MutationGuardError
+    except ImportError:
+        click.echo(
+            "Error: websockets is required for subscription support. Install with: pip install graphql-mcp[subscriptions]",
+            err=True,
+        )
+        sys.exit(1)
+
+    client = GraphQLClient.from_env()
+    vars_dict = json.loads(variables) if variables else None
+
+    try:
+        for result in client.subscribe(query_string, vars_dict):
+            if format == "table":
+                # Simple table format for common case
+                if result.data:
+                    for key, value in result.data.items():
+                        click.echo(f"{key}: {json.dumps(value, default=str)}")
+                if result.errors:
+                    click.echo(f"Errors: {result.errors}")
+            else:
+                # JSON format
+                click.echo(json.dumps(result.model_dump(), default=str))
+
+            # Flush output to ensure it's visible immediately
+            sys.stdout.flush()
+
+    except MutationGuardError as exc:
+        click.echo(f"Error: {exc}", err=True)
+        sys.exit(1)
+    except KeyboardInterrupt:
+        click.echo("\nSubscription stopped.", err=True)
+        sys.exit(0)
+    except Exception as exc:
+        click.echo(f"Error: {exc}", err=True)
+        sys.exit(1)
 
 
 @main.command()

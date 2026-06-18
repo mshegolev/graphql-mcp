@@ -9,7 +9,7 @@ Generic read-only GraphQL MCP brick — schema discovery, query execution, 3-cla
 
 ## Features
 
-- **7 operations**: `query`, `raw`, `introspect`, `describe_type`, `list_subgraphs`, `refresh_schema`, `entities`
+- **8 operations**: `query`, `raw`, `introspect`, `describe_type`, `list_subgraphs`, `refresh_schema`, `entities`, `subscribe`
 - **3-class error typing**: `ok` (success), `graphql` (response contains errors), `transport` (HTTP / network failure)
 - **Mutation guard**: blocks mutations by default; opt-in via `GRAPHQL_ALLOW_MUTATIONS=true`
 - **Schema cascade**: GitLab (pinned SDL) → introspection (live) → `_service{sdl}` (federation) → local SDL file
@@ -17,6 +17,7 @@ Generic read-only GraphQL MCP brick — schema discovery, query execution, 3-cla
 - **Rust-native JSON codec**: pyo3 extension for high-throughput JSON processing, with automatic orjson fallback
 - **Async support**: `AsyncGraphQLClient` with full behavioral parity for FastAPI and async workflows
 - **Library-first**: `from graphql_mcp import GraphQLClient` works in pytest without network, MCP, or FastAPI
+- **Real-time subscriptions**: Server-Sent Events (SSE) and WebSocket support for real-time GraphQL subscriptions
 
 ## Installation
 
@@ -32,6 +33,9 @@ pip install graphql-mcp[mcp]
 
 # With Click CLI
 pip install graphql-mcp[cli]
+
+# With WebSocket subscription support
+pip install graphql-mcp[subscriptions]
 
 # Everything
 pip install graphql-mcp[all]
@@ -73,6 +77,14 @@ result = client.entities([
     {"__typename": "User", "id": "456"},
 ])
 print(result.data)  # {"_entities": [{"__typename": "Product", ...}, ...]}
+
+# Subscribe to real-time events (requires websockets extra)
+for result in client.subscribe("subscription { events { id type payload } }"):
+    if result.data:
+        print(f"Event: {result.data}")
+    if result.errors:
+        print(f"Errors: {result.errors}")
+    break  # Just show one event for example
 ```
 
 ### Async Usage
@@ -83,6 +95,14 @@ from graphql_mcp import AsyncGraphQLClient
 async with AsyncGraphQLClient.from_env() as client:
     result = await client.query("{ users { id } }")
     entities = await client.entities([{"__typename": "User", "id": "1"}])
+    
+    # Subscribe to real-time events
+    async for result in client.subscribe("subscription { events { id type payload } }"):
+        if result.data:
+            print(f"Event: {result.data}")
+        if result.errors:
+            print(f"Errors: {result.errors}")
+        break  # Just show one event for example
 ```
 
 ## Configuration
@@ -106,8 +126,16 @@ All settings are read from environment variables with the `GRAPHQL_` prefix.
 | `GRAPHQL_GITLAB_TOKEN` | `""` | GitLab personal access token |
 | `GRAPHQL_ALLOW_MUTATIONS` | `false` | Allow mutation queries (guard disabled when `true`) |
 | `GRAPHQL_SUPERGRAPH_SOURCE` | `auto` | Supergraph parsing: `auto` (detect from SDL) or `off` |
+| `GRAPHQL_SUBSCRIPTION_ENDPOINT` | `""` | WebSocket endpoint for upstream subscription connections |
+| `GRAPHQL_SUBSCRIPTION_QUEUE_SIZE` | `128` | Bounded async queue size for subscription backpressure |
+| `GRAPHQL_SUBSCRIPTION_RATE_LIMIT` | `"10/minute"` | Rate limit for subscription connections per IP (`"{count}/{window}"`) |
+| `GRAPHQL_MAX_CONCURRENT_SUBSCRIPTIONS` | `100` | Maximum concurrent subscription connections per IP |
 
-## Adapters
+## API Documentation
+
+Detailed API documentation is available in the [OpenAPI specification](./openapi/openapi.yaml) which describes all REST endpoints exposed by the service.
+
+### Adapters
 
 ### Library (Python)
 
@@ -136,7 +164,11 @@ Endpoints:
 - `GET /graphql/subgraphs` — list federation subgraphs
 - `POST /graphql/refresh` — clear schema cache
 - `POST /graphql/entities` — resolve federation entities
+- `GET /graphql/subscribe` — subscribe to GraphQL events via Server-Sent Events (query params: `query`, `variables`)
 - `GET /ready` — readiness probe (200 when schema resolvable, 503 otherwise)
+
+WebSocket endpoints:
+- `GET /graphql/subscribe` — subscribe to GraphQL events via WebSocket (graphql-transport-ws protocol)
 
 ### MCP stdio
 
@@ -147,7 +179,7 @@ pip install graphql-mcp[mcp]
 python -m graphql_mcp.adapters.inbound.mcp_stdio
 ```
 
-Exposes 7 MCP tools: `query`, `raw`, `introspect`, `describe_type`, `list_subgraphs`, `refresh_schema`, `entities`.
+Exposes 8 MCP tools: `query`, `raw`, `introspect`, `describe_type`, `list_subgraphs`, `refresh_schema`, `entities`, `subscribe`.
 
 ### CLI
 
@@ -162,6 +194,7 @@ graphql-mcp describe-type User
 graphql-mcp list-subgraphs
 graphql-mcp refresh
 graphql-mcp entities '[{"__typename": "Product", "id": "123"}]'
+graphql-mcp subscribe 'subscription { events { id type payload } }'
 ```
 
 ### Serve (REST + MCP-over-HTTP)

@@ -25,6 +25,7 @@ from graphql_mcp.adapters.inbound.mcp_http import create_mcp_http_app
 from graphql_mcp.adapters.outbound.query_guard import check_query_depth
 from graphql_mcp.config import GraphQLConfig
 from graphql_mcp.domain.errors import MutationGuardError, QueryDepthError, SchemaResolutionError
+from graphql_mcp.domain.subscription_limiter import SubscriptionRateLimiter
 
 logger = logging.getLogger(__name__)
 
@@ -117,6 +118,7 @@ except ImportError:
     pass  # OTEL not installed — no-op
 
 _client: GraphQLClient | None = None
+_subscription_limiter = SubscriptionRateLimiter()
 
 
 def _get_client() -> GraphQLClient:
@@ -302,6 +304,16 @@ async def sse_subscribe(request: Request, query: str, variables: str | None = No
     """
     import json as _json
 
+    # Check subscription rate limit
+    client_ip = request.client.host if request.client else "unknown"
+    allowed, retry_after = _subscription_limiter.check_rate_limit(client_ip)
+    if not allowed:
+        return JSONResponse(
+            status_code=429,
+            content={"error": "subscription rate limit exceeded"},
+            headers={"Retry-After": str(retry_after)},
+        )
+
     parsed_variables: dict[str, Any] | None = None
     if variables:
         try:
@@ -333,6 +345,9 @@ async def sse_subscribe(request: Request, query: str, variables: str | None = No
     extra_headers = _extract_forwarded_headers(request)
     if config.bearer_token:
         extra_headers.setdefault("Authorization", f"Bearer {config.bearer_token}")
+
+    # Increment connection count
+    _subscription_limiter.increment_connection(client_ip)
 
     async def _event_stream():
         """Async generator yielding SSE-formatted events."""
@@ -369,6 +384,9 @@ async def sse_subscribe(request: Request, query: str, variables: str | None = No
                 }
             )
             yield f"data: {error_payload}\n\n"
+        finally:
+            # Decrement connection count when stream ends
+            _subscription_limiter.decrement_connection(client_ip)
 
     return StreamingResponse(
         _event_stream(),
@@ -394,6 +412,13 @@ async def websocket_subscribe(ws: WebSocket) -> None:
     downstream client, opens an upstream subscription via UpstreamWSTransport,
     and forwards next/complete/error messages.
     """
+    # Check subscription rate limit before accepting connection
+    client_ip = ws.client.host if ws.client else "unknown"
+    allowed, retry_after = _subscription_limiter.check_rate_limit(client_ip)
+    if not allowed:
+        await ws.close(code=429)
+        return
+
     # Only accept graphql-transport-ws sub-protocol
     subprotocol = None
     for proto in ws.scope.get("subprotocols", []):
@@ -402,6 +427,9 @@ async def websocket_subscribe(ws: WebSocket) -> None:
             break
 
     await ws.accept(subprotocol=subprotocol or "graphql-transport-ws")
+
+    # Increment connection count
+    _subscription_limiter.increment_connection(client_ip)
 
     try:
         # 1. Wait for connection_init from client
@@ -493,3 +521,6 @@ async def websocket_subscribe(ws: WebSocket) -> None:
             await ws.close(code=1011)
         except Exception:
             pass
+    finally:
+        # Decrement connection count when connection ends
+        _subscription_limiter.decrement_connection(client_ip)

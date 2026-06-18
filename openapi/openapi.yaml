@@ -1,0 +1,623 @@
+openapi: 3.0.3
+info:
+  title: GraphQL MCP Service
+  description: |
+    A generic read-only GraphQL MCP brick that provides schema discovery, query execution, 
+    3-class error typing, and federation ownership mapping. This service exposes a REST API
+    for team sharing and Kubernetes deployments, along with MCP-over-HTTP transport.
+    
+    Features:
+    - 8 operations: query, raw, introspect, describe_type, list_subgraphs, refresh_schema, entities, subscribe
+    - 3-class error typing: ok (success), graphql (response contains errors), transport (HTTP/network failure)
+    - Mutation guard: blocks mutations by default; opt-in via GRAPHQL_ALLOW_MUTATIONS=true
+    - Schema cascade: GitLab (pinned SDL) → introspection (live) → _service{sdl} (federation) → local SDL file
+    - Federation ownership: maps types and fields to subgraphs via supergraph SDL parsing
+    - Rust-native JSON codec: pyo3 extension for high-throughput JSON processing, with automatic orjson fallback
+    - Async support: AsyncGraphQLClient with full behavioral parity for FastAPI and async workflows
+    - Real-time subscriptions: Server-Sent Events (SSE) and WebSocket support for real-time GraphQL subscriptions
+    - Rate limiting: IP-based rate limiting for subscription connections to prevent resource exhaustion
+  version: 2.3.0
+  contact:
+    name: GraphQL MCP Team
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+  - url: https://api.example.com
+    description: Production server
+
+tags:
+  - name: Health
+    description: Health and readiness checks
+  - name: GraphQL Operations
+    description: Core GraphQL operations
+  - name: Schema Management
+    description: Schema introspection and management
+  - name: Federation
+    description: Federation-related operations
+  - name: Subscriptions
+    description: GraphQL subscription support
+
+paths:
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      description: Simple health check endpoint to verify service is running
+      operationId: health
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                required:
+                  - status
+
+  /ready:
+    get:
+      tags:
+        - Health
+      summary: Readiness check
+      description: Readiness probe that checks if schema source is resolvable
+      operationId: ready
+      responses:
+        '200':
+          description: Service is ready
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ready
+                required:
+                  - status
+        '503':
+          description: Service is not ready
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: unavailable
+                  detail:
+                    type: string
+                    example: schema resolution failed
+                required:
+                  - status
+
+  /graphql/query:
+    post:
+      tags:
+        - GraphQL Operations
+      summary: Execute GraphQL query
+      description: Execute a GraphQL query with optional variables
+      operationId: graphqlQuery
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueryRequest'
+      responses:
+        '200':
+          description: Query executed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResponse'
+        '400':
+          description: Invalid query (e.g., exceeds depth limit)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '403':
+          description: Mutation detected and blocked by guard
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '503':
+          description: Schema unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+  /graphql/subscribe:
+    get:
+      tags:
+        - Subscriptions
+      summary: Subscribe to GraphQL events via Server-Sent Events
+      description: |
+        Subscribe to GraphQL subscription events via Server-Sent Events (SSE).
+        This endpoint is useful when WebSocket connections are not available,
+        such as behind HTTP/1.1 proxies or in environments that don't support
+        persistent WebSocket connections.
+        
+        The endpoint streams subscription results as text/event-stream with
+        data lines containing JSON QueryResult payloads. Each event has the format:
+        
+        ```
+        data: {"data": {...}, "errors": [...], "error_class": "ok"}
+        ```
+        
+        The stream continues until the upstream GraphQL service sends a complete
+        message or the connection is terminated.
+      operationId: graphqlSubscribeSSE
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+          description: GraphQL subscription query string
+        - name: variables
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Optional JSON-encoded variables object
+      responses:
+        '200':
+          description: Subscription stream established
+          content:
+            text/event-stream:
+              schema:
+                type: string
+                description: Stream of Server-Sent Events with JSON payloads
+        '400':
+          description: Invalid query or variables
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '403':
+          description: Mutation detected and blocked by guard
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+              headers:
+                Retry-After:
+                  description: Number of seconds to wait before retrying
+                  schema:
+                    type: integer
+        '503':
+          description: Subscription endpoint not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+    websocket:
+      tags:
+        - Subscriptions
+      summary: Subscribe to GraphQL events via WebSocket
+      description: |
+        Subscribe to GraphQL subscription events using WebSocket with the
+        graphql-transport-ws sub-protocol. This is the preferred method for
+        real-time subscriptions as it provides full duplex communication.
+        
+        The WebSocket connection follows the graphql-transport-ws protocol:
+        
+        1. Client sends `connection_init` message
+        2. Server responds with `connection_ack`
+        3. Client sends `subscribe` message with query and variables
+        4. Server sends `next` messages with subscription results
+        5. Server sends `complete` message when subscription ends
+        
+        Messages are JSON objects with a `type` field indicating the message type.
+      operationId: graphqlSubscribeWebSocket
+      responses:
+        '101':
+          description: WebSocket connection established with graphql-transport-ws sub-protocol
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+              headers:
+                Retry-After:
+                  description: Number of seconds to wait before retrying
+                  schema:
+                    type: integer
+
+  /graphql/raw:
+    post:
+      tags:
+        - GraphQL Operations
+      summary: Execute raw GraphQL operation
+      description: Send an arbitrary GraphQL POST body and return typed result
+      operationId: graphqlRaw
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Arbitrary GraphQL request body
+      responses:
+        '200':
+          description: Raw query executed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResponse'
+        '400':
+          description: Invalid query (e.g., exceeds depth limit)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '403':
+          description: Mutation detected and blocked by guard
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+        '503':
+          description: Schema unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+  /graphql/introspect:
+    get:
+      tags:
+        - Schema Management
+      summary: Introspect schema
+      description: Get schema summary including query fields, mutation fields, and types
+      operationId: graphqlIntrospect
+      responses:
+        '200':
+          description: Schema introspection successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaSummary'
+
+  /graphql/type/{typeName}:
+    get:
+      tags:
+        - Schema Management
+      summary: Describe type
+      description: Get detailed information about a specific GraphQL type
+      operationId: graphqlDescribeType
+      parameters:
+        - name: typeName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Name of the GraphQL type to describe
+      responses:
+        '200':
+          description: Type description retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypeDescription'
+        '404':
+          description: Type not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorDetail'
+
+  /graphql/subgraphs:
+    get:
+      tags:
+        - Federation
+      summary: List subgraphs
+      description: List all federation subgraphs with their names, URLs, and owned types
+      operationId: graphqlListSubgraphs
+      responses:
+        '200':
+          description: Subgraphs listed successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubgraphInfo'
+
+  /graphql/entities:
+    post:
+      tags:
+        - Federation
+      summary: Resolve federation entities
+      description: Resolve federation entities via _entities pass-through
+      operationId: graphqlEntities
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntitiesRequest'
+      responses:
+        '200':
+          description: Entities resolved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResponse'
+
+  /graphql/refresh:
+    post:
+      tags:
+        - Schema Management
+      summary: Refresh schema
+      description: Force refresh of the cached schema
+      operationId: graphqlRefresh
+      responses:
+        '200':
+          description: Schema refreshed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: refreshed
+                required:
+                  - status
+
+  /mcp:
+    post:
+      tags:
+        - MCP
+      summary: MCP-over-HTTP transport
+      description: |
+        Model Context Protocol transport over HTTP. Exposes 7 MCP tools:
+        query, raw, introspect, describe_type, list_subgraphs, refresh_schema, entities
+      operationId: mcpHttp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MCPRequest'
+      responses:
+        '200':
+          description: MCP operation completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MCPResponse'
+
+components:
+  schemas:
+    QueryRequest:
+      type: object
+      properties:
+        query:
+          type: string
+          description: GraphQL query string
+        variables:
+          type: object
+          nullable: true
+          description: Variables for the GraphQL query
+      required:
+        - query
+
+    EntitiesRequest:
+      type: object
+      properties:
+        representations:
+          type: array
+          items:
+            type: object
+            description: Entity representation objects
+          description: Array of entity representations to resolve
+      required:
+        - representations
+
+    QueryResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          nullable: true
+          description: Query result data
+        errors:
+          type: array
+          items:
+            type: object
+          nullable: true
+          description: Array of error objects
+        error_class:
+          type: string
+          enum:
+            - ok
+            - graphql
+            - transport
+          description: Classification of the result
+      required:
+        - data
+        - error_class
+
+    SchemaSummary:
+      type: object
+      properties:
+        query_fields:
+          type: array
+          items:
+            type: string
+          description: List of query root fields
+        mutation_fields:
+          type: array
+          items:
+            type: string
+          description: List of mutation root fields
+        subscription_fields:
+          type: array
+          items:
+            type: string
+          description: List of subscription root fields
+        types:
+          type: array
+          items:
+            type: string
+          description: List of all type names
+        directives:
+          type: array
+          items:
+            type: string
+          description: List of directive names
+
+    TypeDescription:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Type name
+        kind:
+          type: string
+          description: Type kind (OBJECT, INTERFACE, UNION, ENUM, etc.)
+        fields:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+              description:
+                type: string
+              args:
+                type: array
+                items:
+                  type: object
+            description: Type fields
+        interfaces:
+          type: array
+          items:
+            type: string
+          description: Implemented interfaces
+        possible_types:
+          type: array
+          items:
+            type: string
+          description: Possible types (for unions/interfaces)
+        enum_values:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+            description: Enum values
+        input_fields:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+              description:
+                type: string
+            description: Input fields
+        description:
+          type: string
+          nullable: true
+          description: Type description
+        subgraph:
+          type: string
+          nullable: true
+          description: Owning subgraph name (for federation)
+
+    SubgraphInfo:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Subgraph name
+        url:
+          type: string
+          description: Subgraph URL
+        owned_types:
+          type: array
+          items:
+            type: string
+          description: Types owned by this subgraph
+
+    ErrorDetail:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+        detail:
+          type: string
+          description: Additional error details
+        depth:
+          type: integer
+          description: Query depth (when applicable)
+        max_depth:
+          type: integer
+          description: Maximum allowed depth (when applicable)
+      required:
+        - error
+
+    MCPRequest:
+      type: object
+      description: MCP request payload
+      properties:
+        method:
+          type: string
+          description: MCP method name
+        params:
+          type: object
+          description: Method parameters
+
+    MCPResponse:
+      type: object
+      description: MCP response payload
+      properties:
+        result:
+          type: object
+          description: Method result
+        error:
+          type: object
+          description: Error information if method failed
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer token for authentication
+
+security:
+  - BearerAuth: []
+
+externalDocs:
+  description: Find out more about GraphQL MCP
+  url: https://github.com/mshegolev/graphql-mcp
