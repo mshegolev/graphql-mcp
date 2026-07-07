@@ -83,15 +83,15 @@ jobs:
           # Rust std requires macOS >= 10.12; without this the wheel is
           # tagged 10.9 and delocate-wheel rejects it (DelocationError).
           CIBW_ENVIRONMENT_MACOS: 'MACOSX_DEPLOYMENT_TARGET=10.12'
-          # pytest-benchmark: pyproject addopts has --benchmark-disable;
-          # pytest-asyncio: asyncio_mode=auto — both needed in the test venv.
-          CIBW_TEST_REQUIRES: "pytest pytest-asyncio pytest-benchmark respx"
-          # Full suite imports fastapi/starlette (REST), mcp (stdio), click
-          # (CLI) — install the wheel with those extras in the test venv.
-          CIBW_TEST_EXTRAS: "server,mcp,cli"
+          # Wheel test is a SMOKE test of the built artifact — the full suite
+          # (which needs otel/hypothesis/syrupy/copier/pact extras) already runs
+          # in the lint-and-test job. Here we only verify the wheel imports and
+          # the native Rust codec works across the build matrix. No extras needed.
           CIBW_TEST_COMMAND: >
-            pytest {project}/tests/ -x
-            --ignore={project}/tests/test_codec_parity.py
+            python -c "import generic_graphql_mcp;
+            from generic_graphql_mcp._native import encode, decode;
+            assert decode(encode({'ok': True})) == {'ok': True};
+            print('wheel smoke OK')"
 
       - uses: actions/upload-artifact@v4
         with:
