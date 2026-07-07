@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import pathlib
 import subprocess
+import sys
 
 import pytest
 
@@ -141,7 +142,7 @@ class TestGeneratedTestSuite:
         """Install the generated project and run its tests."""
         # Install the generated project in editable mode
         install_result = subprocess.run(
-            ["pip3.10", "install", "-e", ".[dev]"],
+            [sys.executable, "-m", "pip", "install", "-e", ".[dev]"],
             capture_output=True,
             text=True,
             cwd=str(generated_project),
@@ -151,7 +152,7 @@ class TestGeneratedTestSuite:
 
         # Run the generated project's tests
         test_result = subprocess.run(
-            ["python3.10", "-m", "pytest", "tests/", "-x", "-v"],
+            [sys.executable, "-m", "pytest", "tests/", "-x", "-v"],
             capture_output=True,
             text=True,
             cwd=str(generated_project),
