@@ -86,17 +86,14 @@ domain → ports → outbound (http/schema sources) → Rust native + orjson fal
 ## Decisions (наследуются от зонтика)
 D1 гибрид C · D2 library-first · D5 Python+Rust · D7 hexagonal · D8 FastAPI+stdio · D9 pyo3+fallback.
 
-## Current Milestone: v2.1 Testing & Quality
+## Current Milestone: v2.3 Release & Staging Enablement
 
-**Goal:** Transform the test infrastructure from basic unit coverage into a comprehensive quality assurance system with coverage enforcement, contract tests, mutation testing, property-based testing, snapshot regression detection, and CI quality gates.
+**Goal:** Take generic-graphql-mcp from "builds locally" to "shipped and connectable" — a green PyPI publish via OIDC Trusted Publishing, a working local deployment wired to the EORD staging federation gateway, and a green CI.
 
 **Target features:**
-- Coverage enforcement: pytest-cov with branch coverage, minimum thresholds, uncovered path reports
-- Contract testing: schema-based contracts between brick and upstream GraphQL services
-- Mutation testing: mutmut/cosmic-ray to verify tests catch real bugs
-- Property-based testing: Hypothesis for fuzzing queries, error paths, edge cases
-- Snapshot testing: response snapshots for regression detection across refactors
-- CI quality gates: GitHub Actions checks enforcing coverage, lint, type check, test pass for merges
+- PyPI release: GitHub Actions OIDC Trusted Publishing configured so the release tag publishes `generic-graphql-mcp` cleanly (no `invalid-publisher`)
+- Staging enablement: local MCP server (`serve`/`stdio`) connected to `https://gql.enp-stage.mts-corp.ru/` with ISSO (Keycloak) password-grant bearer auth, config sourced from integration-tests/pytest.ini
+- CI hardening: fix broken dev dependency `pytest-syrupy` → `syrupy` and `pytest.ini` section header `[tool:pytest]` → `[pytest]` so `asyncio_mode=auto` applies and async tests run green
 
 ## Validated Requirements
 
@@ -109,7 +106,13 @@ D1 гибрид C · D2 library-first · D5 Python+Rust · D7 hexagonal · D8 Fa
 ### v2.0 Production-Grade Platform (shipped 2026-06-16)
 - [x] OTEL-01..05, SEC-01..06, SUB-01..03, DX-01, DX-02, TPL-01 (all 17 requirements satisfied)
 
-### v2.1 Testing & Quality (active)
+### v2.1 Testing & Quality (shipped 2026-06-18)
+- [x] Coverage, contract, property-based, mutation testing & CI quality gates (phases 14-16)
+
+### v2.2 Performance Excellence (shipped 2026-06-18)
+- [x] Performance monitoring, scalability, resource efficiency (phases 17-19)
+
+### v2.3 Release & Staging Enablement (active)
 - See REQUIREMENTS.md for active requirements
 
 ## Key Decisions
@@ -122,6 +125,8 @@ D1 гибрид C · D2 library-first · D5 Python+Rust · D7 hexagonal · D8 Fa
 | v2.0 | OpenTelemetry (not just structlog) | Industry standard; exports to Jaeger/Prometheus already in the suite |
 | v2.0 | WebSocket + SSE for subscriptions | graphql-ws protocol + SSE fallback for simpler consumers |
 | v2.0 | Copier for template extraction | Supports reruns/updates unlike cookiecutter |
+| v2.3 | Renamed dist graphql-mcp → generic-graphql-mcp | PyPI name graphql-mcp taken; blocked Trusted Publishing |
+| v2.3 | OIDC Trusted Publishing over API token | No long-lived PyPI secret in CI; per-repo pending publisher |
 
 ## Evolution
 
@@ -142,4 +147,4 @@ This document evolves at phase transitions and milestone boundaries.
 
 ---
 *Brick brief — запускай агента в этой репе и реализуй методы из Investigator Contract.*
-*Last updated: 2026-06-16 after milestone v2.1 start*
+*Last updated: 2026-07-08 after milestone v2.3 start*
