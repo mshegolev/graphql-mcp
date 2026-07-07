@@ -10,6 +10,7 @@ from unittest.mock import patch
 import pytest
 from click.testing import CliRunner
 from fastapi.testclient import TestClient
+from mcp.server.fastmcp.exceptions import ToolError
 
 from graphql_mcp.adapters.inbound.cli import main
 from graphql_mcp.adapters.inbound.lib import GraphQLClient
@@ -67,32 +68,37 @@ class TestRESTSchemaError:
 
 
 class TestMCPSchemaError:
-    """MCP adapter returns structured error dict when schema unavailable."""
+    """MCP adapter raises an actionable ToolError (isError) when schema unavailable."""
 
-    def test_introspect_returns_error_dict(self) -> None:
+    def test_introspect_raises_tool_error(self) -> None:
         import graphql_mcp.adapters.inbound.mcp_stdio as mod
 
-        with patch.object(mod, "_get_client", return_value=_failing_client()):
-            result = mod.introspect()
-        assert isinstance(result, dict)
-        assert result["error_class"] == "schema_unavailable"
-        assert "error" in result
+        with (
+            patch.object(mod, "_get_client", return_value=_failing_client()),
+            pytest.raises(ToolError) as exc_info,
+        ):
+            mod.introspect()
+        assert "Schema unavailable" in str(exc_info.value)
 
-    def test_describe_type_returns_error_dict(self) -> None:
+    def test_describe_type_raises_tool_error(self) -> None:
         import graphql_mcp.adapters.inbound.mcp_stdio as mod
 
-        with patch.object(mod, "_get_client", return_value=_failing_client()):
-            result = mod.describe_type("User")
-        assert isinstance(result, dict)
-        assert result["error_class"] == "schema_unavailable"
+        with (
+            patch.object(mod, "_get_client", return_value=_failing_client()),
+            pytest.raises(ToolError) as exc_info,
+        ):
+            mod.describe_type("User")
+        assert "Schema unavailable" in str(exc_info.value)
 
-    def test_list_subgraphs_returns_error_dict(self) -> None:
+    def test_list_subgraphs_raises_tool_error(self) -> None:
         import graphql_mcp.adapters.inbound.mcp_stdio as mod
 
-        with patch.object(mod, "_get_client", return_value=_failing_client()):
-            result = mod.list_subgraphs()
-        assert isinstance(result, dict)
-        assert result["error_class"] == "schema_unavailable"
+        with (
+            patch.object(mod, "_get_client", return_value=_failing_client()),
+            pytest.raises(ToolError) as exc_info,
+        ):
+            mod.list_subgraphs()
+        assert "Schema unavailable" in str(exc_info.value)
 
 
 # --- CLI adapter ---

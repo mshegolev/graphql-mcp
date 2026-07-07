@@ -136,7 +136,7 @@ class TestMCPHTTPInitialize:
 
 class TestMCPHTTPToolsList:
     def test_mcp_tools_list_returns_all_tools(self, mcp_client: TestClient) -> None:
-        """After initializing a session, tools/list returns all 6 registered tools."""
+        """After initializing a session, tools/list returns all 8 registered tools."""
         session_id = _initialize(mcp_client)
 
         resp = mcp_client.post(
@@ -156,5 +156,14 @@ class TestMCPHTTPToolsList:
         assert resp.status_code == 200
         data = _parse_sse_data(resp.text)
         tool_names = {t["name"] for t in data["result"]["tools"]}
-        expected = {"query", "raw", "introspect", "describe_type", "list_subgraphs", "refresh_schema", "entities"}
+        expected = {
+            "query",
+            "raw",
+            "introspect",
+            "describe_type",
+            "list_subgraphs",
+            "refresh_schema",
+            "entities",
+            "subscribe",
+        }
         assert tool_names == expected

@@ -27,3 +27,6 @@ venv/
 
 # Lock files
 uv.lock
+
+# Serena MCP
+.serena/
