@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/).
 
+## [1.2.0] - 2026-07-07
+
+### Changed
+- MCP stdio tools return domain Pydantic models directly, so FastMCP derives an `outputSchema` and emits `structuredContent`
+- MCP stdio tools annotated with `readOnlyHint`/`openWorldHint` (and `idempotentHint` for `refresh_schema`)
+- Blocked mutations and unavailable schemas now surface as MCP tool errors (`ToolError` / `isError`) with actionable hints, instead of success results carrying an `error` field
+- Synced package version to the crate manifest (`native/Cargo.toml`) so the built wheel version matches the release tag
+
 ## [1.1.0] - 2026-06-08
 
 ### Added
