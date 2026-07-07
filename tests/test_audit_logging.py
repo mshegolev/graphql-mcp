@@ -2,8 +2,6 @@
 
 import logging
 
-import pytest
-
 from generic_graphql_mcp.adapters.outbound.audit import _query_hash, emit_audit_log
 
 
@@ -90,7 +88,7 @@ class TestAuditViaLibFacade:
         client = GraphQLClient(schema_service=service, transport=None, config=config)
 
         with caplog.at_level(logging.INFO, logger="generic_graphql_mcp.audit"):
-            result = client.query("{ hello }")
+            client.query("{ hello }")
 
         # Should have one audit record (transport error — no transport configured)
         audit_records = [r for r in caplog.records if r.name == "generic_graphql_mcp.audit"]
@@ -111,7 +109,7 @@ class TestAuditViaLibFacade:
         client = GraphQLClient(schema_service=service, transport=None, config=config)
 
         with caplog.at_level(logging.INFO, logger="generic_graphql_mcp.audit"):
-            result = client.query("{ hello }")
+            client.query("{ hello }")
 
         audit_records = [r for r in caplog.records if r.name == "generic_graphql_mcp.audit"]
         assert len(audit_records) == 0
@@ -129,7 +127,7 @@ class TestAuditViaLibFacade:
         client = GraphQLClient(schema_service=service, transport=None, config=config)
 
         with caplog.at_level(logging.INFO, logger="generic_graphql_mcp.audit"):
-            result = client.raw({"query": "{ hello }"})
+            client.raw({"query": "{ hello }"})
 
         audit_records = [r for r in caplog.records if r.name == "generic_graphql_mcp.audit"]
         assert len(audit_records) == 1
@@ -148,7 +146,7 @@ class TestAuditViaLibFacade:
         client = GraphQLClient(schema_service=service, transport=None, config=config)
 
         with caplog.at_level(logging.INFO, logger="generic_graphql_mcp.audit"):
-            result = client.entities([{"__typename": "User", "id": "1"}])
+            client.entities([{"__typename": "User", "id": "1"}])
 
         audit_records = [r for r in caplog.records if r.name == "generic_graphql_mcp.audit"]
         assert len(audit_records) == 1
@@ -174,7 +172,7 @@ class TestAuditViaREST:
         tc = TestClient(app)
 
         with caplog.at_level(logging.INFO, logger="generic_graphql_mcp.audit"):
-            resp = tc.post("/graphql/query", json={"query": "{ hello }"})
+            tc.post("/graphql/query", json={"query": "{ hello }"})
 
         audit_records = [r for r in caplog.records if r.name == "generic_graphql_mcp.audit"]
         assert len(audit_records) == 1
@@ -199,7 +197,7 @@ class TestAuditViaREST:
         tc = TestClient(app)
 
         with caplog.at_level(logging.INFO, logger="generic_graphql_mcp.audit"):
-            resp = tc.post(
+            tc.post(
                 "/graphql/query",
                 json={"query": "{ hello }"},
                 headers={"X-User-Id": "testuser-99"},
@@ -216,14 +214,16 @@ class TestAuditWithOTEL:
         from opentelemetry import trace
 
         tracer = trace.get_tracer("test")
-        with tracer.start_as_current_span("test-span"):
-            with caplog.at_level(logging.INFO, logger="generic_graphql_mcp.audit"):
-                emit_audit_log(
-                    operation="query",
-                    query_str="{ hello }",
-                    error_class="ok",
-                    latency_s=0.01,
-                )
+        with (
+            tracer.start_as_current_span("test-span"),
+            caplog.at_level(logging.INFO, logger="generic_graphql_mcp.audit"),
+        ):
+            emit_audit_log(
+                operation="query",
+                query_str="{ hello }",
+                error_class="ok",
+                latency_s=0.01,
+            )
         audit_records = [r for r in caplog.records if r.name == "generic_graphql_mcp.audit"]
         assert len(audit_records) == 1
         assert audit_records[0].trace_id != "none"

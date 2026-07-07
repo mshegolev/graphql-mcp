@@ -10,11 +10,15 @@ Requires the ``websockets`` library (``pip install generic-graphql-mcp[subscript
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import json
 import logging
-from typing import Any, AsyncIterator
+from typing import TYPE_CHECKING, Any
 
 from generic_graphql_mcp.domain.models import ErrorClass, QueryResult
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncIterator
 
 logger = logging.getLogger(__name__)
 
@@ -155,20 +159,14 @@ class UpstreamWSTransport:
 
         if self._reader_task is not None and not self._reader_task.done():
             self._reader_task.cancel()
-            try:
+            with contextlib.suppress(asyncio.CancelledError):
                 await self._reader_task
-            except asyncio.CancelledError:
-                pass
 
         if self._ws is not None:
-            try:
+            with contextlib.suppress(Exception):  # WS may already be closed
                 await self._ws.send(json.dumps({"type": "complete", "id": "1"}))
-            except Exception:
-                pass  # WS may already be closed
-            try:
+            with contextlib.suppress(Exception):
                 await self._ws.close()
-            except Exception:
-                pass
 
     async def __aenter__(self) -> UpstreamWSTransport:
         await self._connect()

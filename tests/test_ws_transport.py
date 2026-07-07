@@ -5,17 +5,13 @@ Uses a real in-process websockets server to validate the full protocol lifecycle
 
 from __future__ import annotations
 
-import asyncio
 import json
-import sys
 from typing import Any
-from unittest.mock import patch
 
 import pytest
 from websockets.asyncio.server import serve as ws_serve
 
 from generic_graphql_mcp.domain.models import ErrorClass
-
 
 # ---------------------------------------------------------------------------
 # Mock WS server handlers

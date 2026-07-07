@@ -6,8 +6,8 @@ import ssl
 
 import pytest
 
-from generic_graphql_mcp.adapters.outbound.http_transport import HttpTransport
 from generic_graphql_mcp.adapters.outbound.async_http_transport import AsyncHttpTransport
+from generic_graphql_mcp.adapters.outbound.http_transport import HttpTransport
 from generic_graphql_mcp.config import GraphQLConfig
 
 
@@ -66,7 +66,7 @@ class TestMtlsTransport:
     def test_async_transport_accepts_ssl_context(self) -> None:
         """AsyncHttpTransport constructor accepts ssl_context parameter."""
         ctx = ssl.create_default_context()
-        transport = AsyncHttpTransport(
+        AsyncHttpTransport(
             endpoint="https://example.com",
             ssl_context=ctx,
         )

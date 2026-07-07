@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import asyncio
 import json
-import os
 from typing import Any
 
 import pytest
@@ -18,8 +17,7 @@ from generic_graphql_mcp.adapters.inbound.async_lib import AsyncGraphQLClient
 from generic_graphql_mcp.config import GraphQLConfig
 from generic_graphql_mcp.domain.models import ErrorClass
 from generic_graphql_mcp.domain.schema_service import SchemaService
-from tests.conftest import MockSchemaSource, SAMPLE_SDL
-
+from tests.conftest import SAMPLE_SDL, MockSchemaSource
 
 # ---------------------------------------------------------------------------
 # Mock WS server handler (shared)
@@ -162,6 +160,7 @@ class TestWSEndpoint:
         monkeypatch.setenv("GRAPHQL_SUBSCRIPTION_ENDPOINT", f"ws://127.0.0.1:{port}")
 
         from starlette.testclient import TestClient
+
         from generic_graphql_mcp.adapters.inbound.rest import app
 
         client = TestClient(app)
@@ -205,6 +204,7 @@ class TestWSEndpoint:
         monkeypatch.setenv("GRAPHQL_SUBSCRIPTION_ENDPOINT", "ws://localhost:9999")
 
         from starlette.testclient import TestClient
+
         from generic_graphql_mcp.adapters.inbound.rest import app
 
         client = TestClient(app)

@@ -5,11 +5,9 @@ Covers SEC-01 (depth), SEC-02 (rate limit), SEC-03 (header forwarding).
 
 from __future__ import annotations
 
-import json
-
+import httpx
 import pytest
 import respx
-import httpx
 from fastapi.testclient import TestClient
 
 from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
@@ -18,7 +16,6 @@ from generic_graphql_mcp.adapters.outbound.http_transport import HttpTransport
 from generic_graphql_mcp.config import GraphQLConfig
 from generic_graphql_mcp.domain.schema_service import SchemaService
 from tests.conftest import SAMPLE_SDL, MockSchemaSource
-
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -330,7 +327,6 @@ class TestHeaderForwarding:
 
 def _get_rate_limit_middleware() -> RateLimitMiddleware | None:
     """Walk the ASGI app middleware stack to find the RateLimitMiddleware instance."""
-    inner_app = app
     # FastAPI wraps middleware in a chain. The middleware instances are accessible
     # via app.middleware_stack which is built lazily by Starlette.
     # For TestClient, middleware_stack is built on first request.

@@ -7,12 +7,16 @@ a background thread and queue.
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import logging
 import queue
 import threading
-from typing import Any, Iterator
+from typing import TYPE_CHECKING, Any
 
 from generic_graphql_mcp.domain.models import ErrorClass, QueryResult
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 logger = logging.getLogger(__name__)
 
@@ -71,16 +75,12 @@ class SyncWSTransport:
                 errors=[{"message": f"Subscription transport error: {exc}"}],
                 error_class=ErrorClass.TRANSPORT,
             )
-            try:
+            with contextlib.suppress(queue.Full):
                 self._result_queue.put_nowait(error_result)
-            except queue.Full:
-                pass
         finally:
             # Signal end of stream
-            try:
+            with contextlib.suppress(queue.Full):
                 self._result_queue.put_nowait(None)
-            except queue.Full:
-                pass
 
     async def _async_worker(self) -> None:
         """Async worker that runs the UpstreamWSTransport."""

@@ -5,7 +5,6 @@ import contextlib
 import logging
 import ssl
 import time
-from collections.abc import AsyncIterator
 from typing import TYPE_CHECKING, Any
 
 from generic_graphql_mcp.adapters.outbound.async_http_transport import AsyncHttpTransport
@@ -21,6 +20,8 @@ from generic_graphql_mcp.domain.models import ErrorClass, QueryResult
 from generic_graphql_mcp.domain.schema_service import SchemaService
 
 if TYPE_CHECKING:
+    from collections.abc import AsyncIterator
+
     from generic_graphql_mcp.domain.models import (
         SchemaGraph,
         SchemaSummary,

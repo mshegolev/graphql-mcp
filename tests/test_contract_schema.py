@@ -1,8 +1,5 @@
 """Contract tests for GraphQL schema snapshots."""
 
-import pytest
-from generic_graphql_mcp.domain.schema_service import SchemaService
-from generic_graphql_mcp.adapters.outbound.http_transport import HttpTransport
 
 
 def test_schema_introspection_structure():

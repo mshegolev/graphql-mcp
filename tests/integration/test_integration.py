@@ -6,8 +6,6 @@ They verify that the library works end-to-end as a consumer would use it.
 
 from __future__ import annotations
 
-import os
-
 import pytest
 
 from generic_graphql_mcp import AsyncGraphQLClient, GraphQLClient

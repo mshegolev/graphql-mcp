@@ -13,7 +13,7 @@ import os
 logger = logging.getLogger(__name__)
 
 try:
-    from opentelemetry import metrics, trace
+    from opentelemetry import metrics, trace  # noqa: F401  — import IS the availability probe
 
     _OTEL_AVAILABLE = True
 except ImportError:  # pragma: no cover
@@ -87,7 +87,6 @@ def get_tracer(name: str):  # noqa: ANN201
     """Return an OpenTelemetry Tracer (NoOpTracer when SDK absent)."""
     if not _OTEL_AVAILABLE:
         # Return a minimal no-op object when OTEL is unavailable
-        from contextlib import contextmanager
 
         class _NoOpSpan:
             def set_attribute(self, key, value):  # noqa: ANN001, ANN201, ARG002

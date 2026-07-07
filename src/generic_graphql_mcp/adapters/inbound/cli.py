@@ -129,7 +129,8 @@ def subscribe(query_string: str, variables: str | None, format: str) -> None:
         from generic_graphql_mcp.domain.errors import MutationGuardError
     except ImportError:
         click.echo(
-            "Error: websockets is required for subscription support. Install with: pip install generic-graphql-mcp[subscriptions]",
+            "Error: websockets is required for subscription support. "
+            "Install with: pip install generic-graphql-mcp[subscriptions]",
             err=True,
         )
         sys.exit(1)

@@ -11,11 +11,9 @@ import json
 import threading
 from typing import Any
 
-import pytest
 from websockets.asyncio.server import serve as ws_serve
 
 from generic_graphql_mcp.adapters.inbound.rest import app
-
 
 # ---------------------------------------------------------------------------
 # Mock WS server handler

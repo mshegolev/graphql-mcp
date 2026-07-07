@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import math
 import time as _time
-from typing import Dict, List
 
 from generic_graphql_mcp.config import GraphQLConfig
 
@@ -39,8 +38,8 @@ class SubscriptionRateLimiter:
         config = GraphQLConfig()
         self._max_connections, self._window_seconds = _parse_rate_limit(config.subscription_rate_limit)
         self._max_concurrent = config.max_concurrent_subscriptions
-        self._connection_windows: Dict[str, List[float]] = {}  # IP -> timestamps
-        self._concurrent_counts: Dict[str, int] = {}  # IP -> current connections
+        self._connection_windows: dict[str, list[float]] = {}  # IP -> timestamps
+        self._concurrent_counts: dict[str, int] = {}  # IP -> current connections
 
     def check_rate_limit(self, client_ip: str) -> tuple[bool, int]:
         """Check if client can create a new subscription connection.

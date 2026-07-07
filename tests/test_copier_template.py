@@ -2,10 +2,8 @@
 
 from __future__ import annotations
 
-import os
 import pathlib
 import subprocess
-import shutil
 
 import pytest
 
@@ -110,7 +108,7 @@ class TestNoHardcodedStrings:
                 if pattern in content:
                     violations.append(f"{rel}: contains '{pattern}'")
 
-        assert not violations, f"Hardcoded strings found in generated project:\n" + "\n".join(
+        assert not violations, "Hardcoded strings found in generated project:\n" + "\n".join(
             f"  - {v}" for v in violations
         )
 
@@ -228,4 +226,4 @@ class TestOptionalFeatures:
             for pattern in HARDCODED_PATTERNS:
                 if pattern in content:
                     violations.append(f"{rel}: contains '{pattern}'")
-        assert not violations, f"Hardcoded strings found:\n" + "\n".join(f"  - {v}" for v in violations)
+        assert not violations, "Hardcoded strings found:\n" + "\n".join(f"  - {v}" for v in violations)

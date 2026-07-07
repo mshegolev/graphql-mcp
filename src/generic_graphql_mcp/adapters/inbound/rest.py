@@ -21,6 +21,8 @@ from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
 
 if TYPE_CHECKING:
     from starlette.types import ASGIApp
+import contextlib
+
 from generic_graphql_mcp.adapters.inbound.mcp_http import create_mcp_http_app
 from generic_graphql_mcp.adapters.outbound.query_guard import check_query_depth
 from generic_graphql_mcp.config import GraphQLConfig
@@ -517,10 +519,8 @@ async def websocket_subscribe(ws: WebSocket) -> None:
         await ws.close()
     except Exception as exc:
         logger.exception("WebSocket subscription error: %s", exc)
-        try:
+        with contextlib.suppress(Exception):
             await ws.close(code=1011)
-        except Exception:
-            pass
     finally:
         # Decrement connection count when connection ends
         _subscription_limiter.decrement_connection(client_ip)

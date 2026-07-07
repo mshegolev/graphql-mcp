@@ -13,7 +13,7 @@ from generic_graphql_mcp.adapters.outbound.async_http_transport import AsyncHttp
 from generic_graphql_mcp.adapters.outbound.http_transport import HttpTransport
 from generic_graphql_mcp.config import GraphQLConfig
 from generic_graphql_mcp.domain.schema_service import SchemaService
-from tests.conftest import MockSchemaSource, SAMPLE_SDL
+from tests.conftest import SAMPLE_SDL, MockSchemaSource
 
 
 def _get_metric_value(metric_reader, metric_name: str) -> list[dict[str, Any]]:

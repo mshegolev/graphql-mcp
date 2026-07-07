@@ -2,11 +2,6 @@ from __future__ import annotations
 
 import pytest
 
-from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
-from generic_graphql_mcp.config import GraphQLConfig
-from generic_graphql_mcp.domain.models import SchemaGraph
-from generic_graphql_mcp.domain.schema_service import SchemaService
-
 # OTEL test infrastructure
 from opentelemetry import metrics, trace
 from opentelemetry.sdk.metrics import MeterProvider
@@ -14,6 +9,11 @@ from opentelemetry.sdk.metrics.export import InMemoryMetricReader
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
+
+from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
+from generic_graphql_mcp.config import GraphQLConfig
+from generic_graphql_mcp.domain.models import SchemaGraph
+from generic_graphql_mcp.domain.schema_service import SchemaService
 
 SAMPLE_SDL = """\
 type Query {
