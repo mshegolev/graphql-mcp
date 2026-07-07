@@ -1,66 +1,51 @@
-# generic-graphql-mcp v2.1 — Requirements
+# generic-graphql-mcp v2.3 — Requirements
 
-**Milestone:** v2.1 Testing & Quality
-**Scope:** Coverage enforcement, contract testing, mutation testing, property-based testing, snapshot testing, CI quality gates.
-**Predecessor:** v2.0 Production-Grade Platform (shipped 2026-06-16, 17/17 requirements satisfied, 341 tests)
+**Milestone:** v2.3 Release & Staging Enablement
+**Scope:** PyPI publish via OIDC Trusted Publishing, local deployment wired to EORD staging with ISSO auth, and CI hardening (dependency + async config fixes).
+**Predecessor:** v2.2 Performance Excellence (completed 2026-06-18, phases 17-19)
 
 ---
 
 ## Requirements
 
-### Coverage
+### Release (PyPI)
 
-- [ ] **COV-01**: pytest-cov enforces branch coverage with configurable minimum threshold (default 85%); CI fails when coverage drops below threshold — verified by test run with `--cov --cov-branch --cov-fail-under=85`.
-- [ ] **COV-02**: Per-module coverage reports break down coverage by package (domain/, adapters/, ports/) with separate configurable targets — verified by coverage report showing per-package percentages.
-- [ ] **COV-03**: Coverage badge auto-generated in README from CI results — verified by badge URL rendering current coverage percentage after CI run.
+- [ ] **REL-01**: A maintainer publishes `generic-graphql-mcp` to PyPI by pushing a release tag; the GitHub Actions "Publish to PyPI" workflow completes green via OIDC Trusted Publishing with no `invalid-publisher` — verified by a successful publish run and the version appearing on pypi.org.
+- [ ] **REL-02**: The published distribution version equals the release tag (`native/Cargo.toml` is the single version source, synced to the tag) — verified by the uploaded artifact version matching the pushed tag.
+- [ ] **REL-03**: A release runbook documents the pending-publisher claims (project, owner, repo, workflow, environment) and the rerun-on-failure command, so releases are reproducible without tribal knowledge — verified by the runbook existing in-repo (e.g. `docs/RELEASE.md`).
 
-### Contract Testing
+### Staging Enablement
 
-- [ ] **CTR-01**: GraphQL schema snapshots are stored and compared on test run; breaking upstream schema changes are detected automatically — verified by test that fails when schema snapshot drifts.
-- [ ] **CTR-02**: Response shape contracts validate that upstream responses match expected structure beyond basic type checks — verified by test with response shape assertion failing on unexpected field addition/removal.
-- [ ] **CTR-03**: Pact consumer-driven contract tests define brick-upstream contracts and can publish to a Pact broker — verified by running pact tests and generating contract JSON.
+- [ ] **STG-01**: An operator runs the MCP server locally in both `serve` (HTTP) and `stdio` modes pointed at the EORD staging federation gateway via a single documented launcher — verified by the server starting and `/ready` returning 200 (serve) against staging.
+- [ ] **STG-02**: The server obtains a live bearer token from ISSO (Keycloak) via password-grant at startup (`client_id=eordui-stage`, `username=sa0000eord`); no placeholder or hardcoded token is committed — verified by a successful authenticated introspection against staging.
+- [ ] **STG-03**: Staging connection config (endpoint, proxy bypass, SSL verification) is derived reproducibly from `integration-tests/pytest.ini`, with credentials supplied via environment/secret store only — verified by launching from a clean checkout with only credentials in env.
+- [ ] **STG-04**: A staging smoke check confirms live connectivity — `introspect` returns Query fields and `list_subgraphs` returns federation subgraphs — verified by the smoke script exiting 0 against staging.
 
-### Mutation Testing
+### CI Hardening
 
-- [ ] **MUT-01**: mutmut runs against domain/ and query_service modules; mutation score is reported as a percentage — verified by running mutmut and checking output for score.
-- [ ] **MUT-02**: CI blocks merge if mutation score drops below configured threshold — verified by CI workflow configuration with mutation score check step.
-- [ ] **MUT-03**: Mutation testing is scoped to domain/ and query_service only; adapters and config modules are excluded from mutation analysis — verified by mutmut configuration showing module exclusions.
-
-### Property-Based Testing
-
-- [ ] **PROP-01**: Hypothesis custom strategies generate valid and edge-case GraphQL queries, variables dicts, and mock response shapes — verified by test using `@given(graphql_query())` that produces syntactically varied inputs.
-- [ ] **PROP-02**: Fuzz tests generate malformed queries (invalid syntax, deeply nested, oversized), invalid JSON payloads, and boundary-case variables to exercise error handling paths — verified by test that catches no unhandled exceptions across 100+ generated inputs.
-- [ ] **PROP-03**: Domain model invariant tests verify QueryResult, TypeInfo, and Subgraph dataclass contracts hold under random input (e.g., error_class always in {transport, graphql, ok}) — verified by hypothesis test with model strategies.
-
-### Snapshot Testing
-
-- [ ] **SNAP-01**: pytest-syrupy captures response snapshots with auto-update mode (`--snapshot-update`); snapshot mismatches fail tests with clear diffs — verified by test that detects intentional response change.
-- [ ] **SNAP-02**: Schema introspection result snapshots detect schema regressions across refactors — verified by snapshot test against mock introspection endpoint.
-- [ ] **SNAP-03**: Error response snapshots for all three error classes (transport, graphql, schema_unavailable) verify consistent error shapes — verified by snapshot tests for each error path.
-
-### CI Quality Gates
-
-- [ ] **CI-01**: GitHub Actions workflow runs lint (ruff), type check, test suite, and coverage check on every PR push — verified by workflow YAML and successful CI run.
-- [ ] **CI-02**: Required status checks configured so PRs cannot merge without all quality gates passing — verified by branch protection rule configuration.
-- [ ] **CI-03**: Test matrix runs across Python 3.10, 3.11, 3.12 in CI — verified by matrix configuration in workflow YAML and passing runs on all versions.
-- [ ] **CI-04**: Nightly scheduled workflow runs full mutation testing suite and reports results — verified by cron schedule in workflow YAML and mutation report artifact.
+- [ ] **CIH-01**: `pip install .[dev]` resolves successfully — the nonexistent `pytest-syrupy` dependency is corrected to `syrupy` — verified by a clean dev install completing in CI.
+- [ ] **CIH-02**: Async tests are collected and pass — the pytest config section header is corrected so `asyncio_mode=auto` applies — verified by the full suite running with zero "async def not natively supported" errors.
+- [ ] **CIH-03**: The CI `lint-and-test` workflow is green on `main` across the Python version matrix — verified by a passing CI run.
 
 ---
 
 ## Future Requirements (deferred)
 
-_None — all proposed features selected for v2.1._
+- **REG-01**: Publish the server to the MCP registry (`server.json` / glama.json) so it is discoverable by MCP clients.
+- **REPO-01**: Rename the GitHub repository `mshegolev/graphql-mcp` → `generic-graphql-mcp` and update the trusted-publisher claim accordingly.
+- **PROD-01**: Production (non-staging) deployment target with production auth.
+- **ENV-01**: Automate developer-machine `GITHUB_TOKEN` hygiene (a stale env token overrides the valid keychain token).
+
+---
 
 ## Out of Scope
 
 | Feature | Reason |
 |---------|--------|
-| Load/stress testing (locust) | Different concern; belongs in a performance milestone |
-| Visual test reports (Allure) | Nice-to-have but not core quality infrastructure |
-| Fuzzing with AFL/libFuzzer | Overkill for a Python GraphQL client library |
-| Test data factories (factory_boy) | Current test fixtures are sufficient |
-| End-to-end browser testing | No browser UI in this project |
-| Performance regression testing | Benchmarks exist from v1.1; not in quality scope |
+| GitHub repo rename | Separate manual GitHub action; trusted publisher is keyed on the current repo name `graphql-mcp`, so publishing works without it. Deferred to REPO-01. |
+| MCP registry publish | Orthogonal to PyPI distribution; deferred to REG-01. |
+| Production deployment | This milestone targets staging only. |
+| Re-running v1.0–v2.2 phases | Those milestones shipped; v2.3 is net-new scope. |
 
 ---
 
@@ -68,31 +53,13 @@ _None — all proposed features selected for v2.1._
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| COV-01 | Phase 14 | Pending |
-| COV-02 | Phase 14 | Pending |
-| COV-03 | Phase 14 | Pending |
-| CTR-01 | Phase 15 | Pending |
-| CTR-02 | Phase 15 | Pending |
-| CTR-03 | Phase 15 | Pending |
-| MUT-01 | Phase 16 | Pending |
-| MUT-02 | Phase 16 | Pending |
-| MUT-03 | Phase 16 | Pending |
-| PROP-01 | Phase 15 | Pending |
-| PROP-02 | Phase 15 | Pending |
-| PROP-03 | Phase 15 | Pending |
-| SNAP-01 | Phase 14 | Pending |
-| SNAP-02 | Phase 14 | Pending |
-| SNAP-03 | Phase 14 | Pending |
-| CI-01 | Phase 16 | Pending |
-| CI-02 | Phase 16 | Pending |
-| CI-03 | Phase 16 | Pending |
-| CI-04 | Phase 16 | Pending |
-
-**Coverage:**
-- v2.1 requirements: 19 total
-- Mapped to phases: 19
-- Unmapped: 0
-
----
-*Requirements defined: 2026-06-16*
-*Last updated: 2026-06-16 after roadmap creation (all 19 requirements mapped to phases 14-16)*
+| REL-01 | — | Pending roadmap |
+| REL-02 | — | Pending roadmap |
+| REL-03 | — | Pending roadmap |
+| STG-01 | — | Pending roadmap |
+| STG-02 | — | Pending roadmap |
+| STG-03 | — | Pending roadmap |
+| STG-04 | — | Pending roadmap |
+| CIH-01 | — | Pending roadmap |
+| CIH-02 | — | Pending roadmap |
+| CIH-03 | — | Pending roadmap |
