@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from unittest.mock import patch
 
-from graphql_mcp.domain.schema_service import SchemaService
+from generic_graphql_mcp.domain.schema_service import SchemaService
 from tests.conftest import SAMPLE_SDL, MockSchemaSource
 
 
@@ -28,14 +28,14 @@ class TestTTLCache:
 
         # First call -- fetches and caches
         monotonic_values = [100.0, 100.0]  # resolve check + cache set
-        with patch("graphql_mcp.domain.schema_service.time.monotonic", side_effect=monotonic_values):
+        with patch("generic_graphql_mcp.domain.schema_service.time.monotonic", side_effect=monotonic_values):
             service.resolve()
 
         assert source.call_count == 1
 
         # Second call -- TTL expired (time jumped past TTL)
         monotonic_values_2 = [200.0, 200.0]  # resolve check (200-100=100 > 10 TTL) + cache set
-        with patch("graphql_mcp.domain.schema_service.time.monotonic", side_effect=monotonic_values_2):
+        with patch("generic_graphql_mcp.domain.schema_service.time.monotonic", side_effect=monotonic_values_2):
             service.resolve()
 
         assert source.call_count == 2

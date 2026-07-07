@@ -88,9 +88,9 @@
 Based on examination of the codebase:
 
 - **Module Structure**: 
-  - `src/graphql_mcp/domain/` - Core business logic (models, errors, schema_service)
-  - `src/graphql_mcp/adapters/` - Inbound/outbound adapters (CLI, REST, MCP, HTTP transport)
-  - `src/graphql_mcp/ports/` - Protocol interfaces (transport, schema_source, json_codec)
+  - `src/generic_graphql_mcp/domain/` - Core business logic (models, errors, schema_service)
+  - `src/generic_graphql_mcp/adapters/` - Inbound/outbound adapters (CLI, REST, MCP, HTTP transport)
+  - `src/generic_graphql_mcp/ports/` - Protocol interfaces (transport, schema_source, json_codec)
 
 - **Test Structure**: 
   - `tests/` directory with 39+ test files covering all functionality

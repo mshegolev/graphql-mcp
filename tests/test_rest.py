@@ -9,10 +9,10 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 
-from graphql_mcp.adapters.inbound.lib import GraphQLClient
-from graphql_mcp.adapters.inbound.rest import app, set_client
-from graphql_mcp.config import GraphQLConfig
-from graphql_mcp.domain.schema_service import SchemaService
+from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
+from generic_graphql_mcp.adapters.inbound.rest import app, set_client
+from generic_graphql_mcp.config import GraphQLConfig
+from generic_graphql_mcp.domain.schema_service import SchemaService
 from tests.conftest import SAMPLE_SDL, SAMPLE_SUPERGRAPH_SDL, MockSchemaSource
 
 

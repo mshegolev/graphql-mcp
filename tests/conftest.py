@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import pytest
 
-from graphql_mcp.adapters.inbound.lib import GraphQLClient
-from graphql_mcp.config import GraphQLConfig
-from graphql_mcp.domain.models import SchemaGraph
-from graphql_mcp.domain.schema_service import SchemaService
+from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
+from generic_graphql_mcp.config import GraphQLConfig
+from generic_graphql_mcp.domain.models import SchemaGraph
+from generic_graphql_mcp.domain.schema_service import SchemaService
 
 # OTEL test infrastructure
 from opentelemetry import metrics, trace
@@ -89,7 +89,7 @@ SAMPLE_SUPERGRAPH_SDL = (
 @pytest.fixture(autouse=True)
 def _reset_rate_limiter():
     """Reset the rate limiter state before each test to prevent cross-test interference."""
-    from graphql_mcp.adapters.inbound.rest import RateLimitMiddleware, app
+    from generic_graphql_mcp.adapters.inbound.rest import RateLimitMiddleware, app
 
     middleware_stack = getattr(app, "middleware_stack", None)
     if middleware_stack is None:

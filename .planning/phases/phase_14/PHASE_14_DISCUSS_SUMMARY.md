@@ -4,7 +4,7 @@
 
 ## Overview
 
-Phase 14 focuses on implementing comprehensive coverage reporting and snapshot testing infrastructure for the graphql-mcp project. This phase addresses requirements COV-01, COV-02, COV-03, SNAP-01, SNAP-02, and SNAP-03 from the REQUIREMENTS.md document.
+Phase 14 focuses on implementing comprehensive coverage reporting and snapshot testing infrastructure for the generic-graphql-mcp project. This phase addresses requirements COV-01, COV-02, COV-03, SNAP-01, SNAP-02, and SNAP-03 from the REQUIREMENTS.md document.
 
 ## Key Requirements
 
@@ -34,10 +34,10 @@ Phase 14 focuses on implementing comprehensive coverage reporting and snapshot t
 
 ## Project Context
 
-The graphql-mcp project follows a hexagonal architecture with:
-- **Domain layer** (`src/graphql_mcp/domain/`): Pure business logic with zero I/O dependencies
-- **Ports layer** (`src/graphql_mcp/ports/`): Protocol interfaces for transport and schema sources
-- **Adapters layer** (`src/graphql_mcp/adapters/`): Implementation of inbound/outbound adapters
+The generic-graphql-mcp project follows a hexagonal architecture with:
+- **Domain layer** (`src/generic_graphql_mcp/domain/`): Pure business logic with zero I/O dependencies
+- **Ports layer** (`src/generic_graphql_mcp/ports/`): Protocol interfaces for transport and schema sources
+- **Adapters layer** (`src/generic_graphql_mcp/adapters/`): Implementation of inbound/outbound adapters
 
 The project has an established test suite with 341 tests across 39+ test files that will benefit from coverage measurement and snapshot testing.
 

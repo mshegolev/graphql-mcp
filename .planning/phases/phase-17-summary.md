@@ -80,7 +80,7 @@ Comprehensive documentation was created covering:
 - Performance test results for all adapters
 
 ## Next Steps
-With Phase 17 complete, the graphql-mcp project now has:
+With Phase 17 complete, the generic-graphql-mcp project now has:
 - Comprehensive performance monitoring and alerting
 - Significant improvements in query execution time and resource utilization
 - Robust caching infrastructure for reduced upstream load

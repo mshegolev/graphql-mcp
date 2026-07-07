@@ -1,6 +1,6 @@
-# graphql-mcp — Roadmap
+# generic-graphql-mcp — Roadmap
 
-**Project:** graphql-mcp (Investigation MCP Suite — v2 reference brick)
+**Project:** generic-graphql-mcp (Investigation MCP Suite — v2 reference brick)
 **Granularity:** Coarse
 **Mode:** Yolo
 
@@ -84,7 +84,7 @@ _See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for v1.0 phase det
 
 **Success Criteria** (what must be TRUE):
 
-1. `HttpTransport` uses `get_codec()` for JSON encode/decode — `grep 'orjson.dumps\|orjson.loads' src/graphql_mcp/adapters/outbound/http_transport.py` returns empty (no direct orjson usage). Codec parity tests still pass.
+1. `HttpTransport` uses `get_codec()` for JSON encode/decode — `grep 'orjson.dumps\|orjson.loads' src/generic_graphql_mcp/adapters/outbound/http_transport.py` returns empty (no direct orjson usage). Codec parity tests still pass.
 2. When all schema cascade sources fail, REST returns 503 with `{"error": "schema unavailable", ...}`, MCP returns `{"error": "...", "error_class": "schema_unavailable"}`, CLI prints `Error: schema unavailable` and exits 1 — verified by tests.
 3. `with GraphQLClient.from_env() as client:` works as context manager. After exiting, `client._transport._client.is_closed` is True. `atexit` handler registered for non-context-manager usage.
 4. All existing 128 tests still pass with zero regressions.
@@ -113,16 +113,16 @@ _See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for v1.0 phase det
 
 ### Phase 7: MCP-over-HTTP & Serve Infrastructure
 
-**Goal**: `graphql-mcp serve` starts FastAPI with REST + MCP-over-HTTP; Dockerfile ships production-ready container with health and readiness probes.
+**Goal**: `generic-graphql-mcp serve` starts FastAPI with REST + MCP-over-HTTP; Dockerfile ships production-ready container with health and readiness probes.
 **Mode:** mvp
 **Depends on**: Phase 6
 **Requirements**: FACE-01, FACE-02, FACE-03, FACE-04
 
 **Success Criteria** (what must be TRUE):
 
-1. `graphql-mcp serve` starts uvicorn with FastAPI app on configurable `GRAPHQL_HTTP_HOST:GRAPHQL_HTTP_PORT` (default `0.0.0.0:8000`). Verified by test that starts/stops server subprocess.
+1. `generic-graphql-mcp serve` starts uvicorn with FastAPI app on configurable `GRAPHQL_HTTP_HOST:GRAPHQL_HTTP_PORT` (default `0.0.0.0:8000`). Verified by test that starts/stops server subprocess.
 2. MCP-over-HTTP endpoint on FastAPI app accepts streamable HTTP MCP sessions — test client can list tools and call `query` via HTTP MCP transport.
-3. `docker build .` succeeds; container runs with `CMD ["graphql-mcp", "serve"]`. `/health` returns 200, `/ready` returns 503 when no schema source configured (graceful degradation).
+3. `docker build .` succeeds; container runs with `CMD ["generic-graphql-mcp", "serve"]`. `/health` returns 200, `/ready` returns 503 when no schema source configured (graceful degradation).
 4. `/ready` returns 200 only when `SchemaService.resolve()` succeeds; returns 503 otherwise. Separate from `/health` which always returns 200.
 
 **UI hint**: no
@@ -139,7 +139,7 @@ _See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for v1.0 phase det
 **Success Criteria** (what must be TRUE):
 
 1. `client.entities(representations=[{"__typename": "Product", "id": "123"}])` sends `_entities` query to the endpoint and returns typed `QueryResult`. Mutation guard does not block (it's a query).
-2. `entities()` is exposed in all faces: `GraphQLClient.entities()`, `AsyncGraphQLClient.entities()`, REST `POST /graphql/entities`, MCP tool `entities`, CLI `graphql-mcp entities`.
+2. `entities()` is exposed in all faces: `GraphQLClient.entities()`, `AsyncGraphQLClient.entities()`, REST `POST /graphql/entities`, MCP tool `entities`, CLI `generic-graphql-mcp entities`.
 3. `CHANGELOG.md` covers v1.0 and v1.1 changes. `LICENSE` file present (MIT).
 4. Updated `server.json` lists `entities` tool. `glama.json` updated.
 
@@ -160,7 +160,7 @@ _See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for v1.0 phase det
 
 1. Outbound HTTP calls to the upstream GraphQL endpoint produce spans with `http.method` and `http.url` attributes, and W3C `traceparent` header is propagated — verified by test asserting span attributes from in-memory exporter.
 2. Inbound REST/FastAPI requests produce server spans with `http.server.duration` and `http.server.active_requests` metrics emitted — verified by test asserting spans from FastAPI auto-instrumentation middleware.
-3. `graphql_mcp.query.duration` histogram, `graphql_mcp.query.count` counter, and `graphql_mcp.query.errors` counter (broken down by `error_class`) are recorded for every `query()`/`raw()` call — verified by test reading in-memory metric reader.
+3. `generic_graphql_mcp.query.duration` histogram, `generic_graphql_mcp.query.count` counter, and `generic_graphql_mcp.query.errors` counter (broken down by `error_class`) are recorded for every `query()`/`raw()` call — verified by test reading in-memory metric reader.
 4. Every structured log record emitted during a traced request contains `otelTraceID` and `otelSpanID` fields — verified by test capturing log output during a traced operation.
 5. Setting `OTEL_EXPORTER_OTLP_ENDPOINT` and `OTEL_SERVICE_NAME` env vars configures OTLP HTTP export with no code changes — verified by test initializing TracerProvider from env-based config.
 
@@ -208,7 +208,7 @@ _See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for v1.0 phase det
 
 ### Phase 12: DX & Ecosystem
 
-**Goal**: External consumers can `pip install graphql-mcp` from PyPI, and developers can validate the full stack locally with a one-command integration test harness.
+**Goal**: External consumers can `pip install generic-graphql-mcp` from PyPI, and developers can validate the full stack locally with a one-command integration test harness.
 **Depends on**: Phase 11 (API is stable — all features shipped; publish pipeline and examples cover the final API surface)
 **Requirements**: DX-01, DX-02
 
@@ -225,7 +225,7 @@ _See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for v1.0 phase det
 
 ### Phase 13: Copier Template Extraction
 
-**Goal**: A developer can generate a new MCP brick from the graphql-mcp skeleton with a single `copier copy` command, choosing which optional features to include, and the generated project passes its own test suite out of the box.
+**Goal**: A developer can generate a new MCP brick from the generic-graphql-mcp skeleton with a single `copier copy` command, choosing which optional features to include, and the generated project passes its own test suite out of the box.
 **Depends on**: Phase 12 (final v2.0 architecture is complete — template captures the definitive structure)
 **Requirements**: TPL-01
 
@@ -233,7 +233,7 @@ _See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for v1.0 phase det
 
 1. `copier copy <template-repo> <new-brick>` prompts for module name, env prefix, and optional features (Rust native, subscriptions, OTEL) and generates a complete project — verified by running the command.
 2. The generated project's test suite passes (`pytest` in the generated directory) — verified by generating a test brick and running its tests.
-3. No hardcoded `graphql_mcp` or `graphql-mcp` strings remain in the generated project (all parameterized via Jinja2) — verified by grep in generated output.
+3. No hardcoded `generic_graphql_mcp` or `generic-graphql-mcp` strings remain in the generated project (all parameterized via Jinja2) — verified by grep in generated output.
 
 **Plans**: 1/1 complete
 **UI hint**: no
@@ -286,7 +286,7 @@ _See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for v1.0 phase det
 
 **Success Criteria** (what must be TRUE):
 
-1. ✅ `mutmut run --paths-to-mutate=src/graphql_mcp/domain/` produces a mutation score percentage, and adapters/config modules are excluded — mutation testing framework implemented.
+1. ✅ `mutmut run --paths-to-mutate=src/generic_graphql_mcp/domain/` produces a mutation score percentage, and adapters/config modules are excluded — mutation testing framework implemented.
 2. ✅ CI blocks PR merge when mutation score drops below the configured threshold — CI integration configured.
 3. ✅ GitHub Actions workflow runs ruff lint, type check (mypy or pyright), full test suite, and coverage check on every PR push — quality gates enhanced.
 4. ✅ Branch protection rules require all quality gate status checks to pass before merge — branch protection configured.
@@ -303,7 +303,7 @@ _See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for v1.0 phase det
 
 **Success Criteria** (what must be TRUE):
 
-1. `mutmut run --paths-to-mutate=src/graphql_mcp/domain/,src/graphql_mcp/domain/query_service.py` produces a mutation score percentage, and adapters/config modules are excluded — verified by mutmut output showing only domain/ mutations.
+1. `mutmut run --paths-to-mutate=src/generic_graphql_mcp/domain/,src/generic_graphql_mcp/domain/query_service.py` produces a mutation score percentage, and adapters/config modules are excluded — verified by mutmut output showing only domain/ mutations.
 2. CI blocks PR merge when mutation score drops below the configured threshold — verified by CI workflow step that runs mutmut and checks the score.
 3. GitHub Actions workflow runs ruff lint, type check (mypy or pyright), full test suite, and coverage check on every PR push — verified by workflow YAML and a successful CI run.
 4. Branch protection rules require all quality gate status checks to pass before merge — verified by attempting to merge a PR with a failing check.

@@ -7,12 +7,12 @@ from __future__ import annotations
 
 import pytest
 
-from graphql_mcp.adapters.outbound.json_orjson import OrjsonCodec
-from graphql_mcp.ports.json_codec import JsonCodec
+from generic_graphql_mcp.adapters.outbound.json_orjson import OrjsonCodec
+from generic_graphql_mcp.ports.json_codec import JsonCodec
 
 # Try importing RustJsonCodec; skip Rust tests if not built
 try:
-    from graphql_mcp.adapters.outbound.json_native import RustJsonCodec
+    from generic_graphql_mcp.adapters.outbound.json_native import RustJsonCodec
 
     HAS_NATIVE = True
 except ImportError:
@@ -134,13 +134,13 @@ class TestCodecFactory:
     """get_codec() auto-detection."""
 
     def test_get_codec_returns_codec(self):
-        from graphql_mcp.adapters.outbound.codec_factory import get_codec
+        from generic_graphql_mcp.adapters.outbound.codec_factory import get_codec
 
         codec = get_codec()
         assert isinstance(codec, JsonCodec)
 
     def test_get_codec_returns_rust_when_available(self):
-        from graphql_mcp.adapters.outbound.codec_factory import get_codec
+        from generic_graphql_mcp.adapters.outbound.codec_factory import get_codec
 
         codec = get_codec()
         if HAS_NATIVE:

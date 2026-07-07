@@ -76,7 +76,7 @@ This phase depends on:
 ## Success Criteria
 
 As defined in ROADMAP.md:
-1. `mutmut run --paths-to-mutate=src/graphql_mcp/domain/,src/graphql_mcp/domain/query_service.py` produces a mutation score percentage, and adapters/config modules are excluded
+1. `mutmut run --paths-to-mutate=src/generic_graphql_mcp/domain/,src/generic_graphql_mcp/domain/query_service.py` produces a mutation score percentage, and adapters/config modules are excluded
 2. CI blocks PR merge when mutation score drops below the configured threshold
 3. GitHub Actions workflow runs ruff lint, type check (mypy or pyright), full test suite, and coverage check on every PR push
 4. Branch protection rules require all quality gate status checks to pass before merge

@@ -1,4 +1,4 @@
-# graphql-mcp-api Specification
+# generic-graphql-mcp-api Specification
 
 ## Purpose
 This specification defines the requirements for documenting the GraphQL MCP REST API. The GraphQL MCP service exposes a comprehensive REST API for team sharing and Kubernetes deployments. This specification ensures that all endpoints are properly documented with OpenAPI 3.0 to improve developer experience and enable better tooling integration.

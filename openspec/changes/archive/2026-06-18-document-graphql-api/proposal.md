@@ -12,7 +12,7 @@ The GraphQL MCP service exposes a comprehensive REST API for team sharing and Ku
 ## Capabilities
 
 ### New Capabilities
-- `graphql-mcp-api`: Formal specification of all REST API endpoints exposed by the GraphQL MCP service including health checks, GraphQL operations, schema management, federation support, and subscription capabilities
+- `generic-graphql-mcp-api`: Formal specification of all REST API endpoints exposed by the GraphQL MCP service including health checks, GraphQL operations, schema management, federation support, and subscription capabilities
 
 ### Modified Capabilities
 - None

@@ -1,4 +1,4 @@
-# Feature Landscape — graphql-mcp v2.0
+# Feature Landscape — generic-graphql-mcp v2.0
 
 **Domain:** MCP brick — read-only GraphQL client with schema discovery, federation mapping, 4 inbound faces (lib, MCP stdio, REST/FastAPI, CLI)
 **Researched:** 2026-06-16
@@ -12,20 +12,20 @@ Features that any production-grade MCP brick / GraphQL client library **must** h
 
 | # | Feature | Why Expected | Complexity | Depends On | Notes |
 |---|---------|-------------|------------|------------|-------|
-| T1 | **OTEL tracing on outbound HTTP** | Every gRPC/HTTP call to the upstream GraphQL endpoint must produce a span. Without this, distributed traces from `investigator` → `graphql-mcp` → upstream gateway have a gap. Industry standard; Jaeger/Tempo already in the suite. | **Low** | httpx transport layer | `opentelemetry-instrumentation-httpx` auto-instruments `httpx.Client`/`AsyncClient`. One-line `HTTPXClientInstrumentor().instrument()` or per-client via `transport=` kwarg. Propagates W3C traceparent automatically. (HIGH confidence — Context7 verified) |
+| T1 | **OTEL tracing on outbound HTTP** | Every gRPC/HTTP call to the upstream GraphQL endpoint must produce a span. Without this, distributed traces from `investigator` → `generic-graphql-mcp` → upstream gateway have a gap. Industry standard; Jaeger/Tempo already in the suite. | **Low** | httpx transport layer | `opentelemetry-instrumentation-httpx` auto-instruments `httpx.Client`/`AsyncClient`. One-line `HTTPXClientInstrumentor().instrument()` or per-client via `transport=` kwarg. Propagates W3C traceparent automatically. (HIGH confidence — Context7 verified) |
 | T2 | **OTEL tracing on inbound REST** | FastAPI face must produce server spans so callers see the brick's latency and status. | **Low** | FastAPI app | `opentelemetry-instrumentation-fastapi` wraps `app` with middleware producing `http.server.duration`, `http.server.active_requests` metrics + per-request spans. (HIGH confidence — Context7 verified) |
-| T3 | **OTEL metrics: request count, latency histogram, error rate** | Prometheus/Grafana dashboards need `graphql_mcp.query.duration`, `graphql_mcp.query.count`, `graphql_mcp.query.errors` by `error_class` (transport/graphql/ok). Without metrics, on-call has no SLIs. | **Medium** | OTEL SDK MeterProvider | Manual instrumentation in `query_service.py` / transport layer: `meter.create_histogram("graphql_mcp.query.duration")`, `meter.create_counter("graphql_mcp.query.count")`. Record `error_class` as attribute for per-class breakdown. |
+| T3 | **OTEL metrics: request count, latency histogram, error rate** | Prometheus/Grafana dashboards need `generic_graphql_mcp.query.duration`, `generic_graphql_mcp.query.count`, `generic_graphql_mcp.query.errors` by `error_class` (transport/graphql/ok). Without metrics, on-call has no SLIs. | **Medium** | OTEL SDK MeterProvider | Manual instrumentation in `query_service.py` / transport layer: `meter.create_histogram("generic_graphql_mcp.query.duration")`, `meter.create_counter("generic_graphql_mcp.query.count")`. Record `error_class` as attribute for per-class breakdown. |
 | T4 | **OTEL log correlation** | Structured logs must include `trace_id` + `span_id` so Loki/OpenSearch can link to Jaeger traces. | **Low** | OTEL SDK, stdlib logging | `opentelemetry.instrumentation.logging` or manual `LoggingInstrumentor().instrument()`. Injects `otelTraceID`, `otelSpanID` into `LogRecord`. Current code uses `logging.getLogger()` — compatible. |
 | T5 | **OTLP exporter config** | Env-var driven (`OTEL_EXPORTER_OTLP_ENDPOINT`, `OTEL_SERVICE_NAME`). Must work with the suite's Jaeger + Prometheus OTLP receiver. | **Low** | OTEL SDK | `opentelemetry-exporter-otlp` (already in system). `TracerProvider` + `BatchSpanProcessor(OTLPSpanExporter())`. All config via standard OTEL env vars — zero code for endpoint/protocol selection. |
 | T6 | **Input validation / query depth limiting** | Malformed or adversarial queries (deeply nested, excessive aliases) can OOM the upstream. Table stakes for any GraphQL gateway/proxy. | **Medium** | `graphql-core` | `graphql-core` has `validate()` for schema-aware validation. Depth/complexity analysis needs a custom visitor: walk the AST, count nesting depth, reject > N. Also reject introspection in non-dev mode optionally. |
 | T7 | **Rate limiting on REST face** | Without it, a single misbehaving caller can exhaust the upstream's capacity. Any public-facing API needs this. | **Low** | FastAPI app | `slowapi` (v0.1.10, actively maintained, MIT, wraps `limits` library). Decorator: `@limiter.limit("100/minute")`. Supports memory/redis backends. **Caveat:** does not support WebSocket endpoints. (HIGH confidence — verified PyPI) |
 | T8 | **Bearer token forwarding / RBAC header passthrough** | The brick proxies queries to an authenticated upstream. Must forward `Authorization` headers from inbound caller → outbound transport, not just use a static env-var token. | **Medium** | Transport layer, REST adapter | Add `headers` parameter to `query()` / `raw()` that merges with default headers. FastAPI extracts `Authorization` from inbound request and passes through. Requires threading headers through domain layer (break-the-rules or context-var). |
-| T9 | **PyPI publish CI workflow** | Sister bricks (`kafka-mcp`, `ordering-mcp`) and `investigator` need `pip install graphql-mcp`. Without PyPI, they pin to git refs — fragile. | **Medium** | GitHub Actions, cibuildwheel (already built) | Add `publish.yml` triggered on `v*` tag push. Uses existing `wheels` + `sdist` jobs, then `pypa/gh-action-pypi-publish@release/v1`. Needs PyPI API token in repo secrets. Trusted Publishers (OIDC) preferred over static tokens. |
+| T9 | **PyPI publish CI workflow** | Sister bricks (`kafka-mcp`, `ordering-mcp`) and `investigator` need `pip install generic-graphql-mcp`. Without PyPI, they pin to git refs — fragile. | **Medium** | GitHub Actions, cibuildwheel (already built) | Add `publish.yml` triggered on `v*` tag push. Uses existing `wheels` + `sdist` jobs, then `pypa/gh-action-pypi-publish@release/v1`. Needs PyPI API token in repo secrets. Trusted Publishers (OIDC) preferred over static tokens. |
 | T10 | **Copier template extraction** | PROJECT.md: "This is the v2 reference brick — its skeleton is copied by kafka-mcp / ordering-mcp." Currently manual copy. Must become `copier copy` with answers file. | **High** | Copier, project structure refactor | `copier.yml` at repo root with Jinja2 templates. Variables: `project_name`, `module_name`, `graphql_or_kafka`, `has_rust_native`. Requires separating graphql-specific domain from generic brick skeleton. `run_update()` for downstream bricks to absorb improvements. (HIGH confidence — Context7 verified) |
 
 ## Differentiators
 
-Features that set graphql-mcp apart from "just another GraphQL client." Not expected but high-value.
+Features that set generic-graphql-mcp apart from "just another GraphQL client." Not expected but high-value.
 
 | # | Feature | Value Proposition | Complexity | Depends On | Notes |
 |---|---------|-------------------|------------|------------|-------|
@@ -156,7 +156,7 @@ opentelemetry-instrumentation-fastapi>=0.48b0
 opentelemetry-instrumentation-logging>=0.48b0
 ```
 
-**Bootstrap pattern** (new `src/graphql_mcp/telemetry.py`):
+**Bootstrap pattern** (new `src/generic_graphql_mcp/telemetry.py`):
 ```python
 from opentelemetry import trace, metrics
 from opentelemetry.sdk.trace import TracerProvider
@@ -166,7 +166,7 @@ from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import OTLPMetricExporter
 
-def init_telemetry(service_name: str = "graphql-mcp") -> None:
+def init_telemetry(service_name: str = "generic-graphql-mcp") -> None:
     # Traces
     provider = TracerProvider(resource=Resource.create({"service.name": service_name}))
     provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
@@ -180,10 +180,10 @@ def init_telemetry(service_name: str = "graphql-mcp") -> None:
 
 **Custom metrics in domain layer:**
 ```python
-meter = metrics.get_meter("graphql_mcp")
-query_duration = meter.create_histogram("graphql_mcp.query.duration_ms", unit="ms")
-query_count = meter.create_counter("graphql_mcp.query.count")
-query_errors = meter.create_counter("graphql_mcp.query.errors")
+meter = metrics.get_meter("generic_graphql_mcp")
+query_duration = meter.create_histogram("generic_graphql_mcp.query.duration_ms", unit="ms")
+query_count = meter.create_counter("generic_graphql_mcp.query.count")
+query_errors = meter.create_counter("generic_graphql_mcp.query.errors")
 ```
 
 ### T6: Input Validation

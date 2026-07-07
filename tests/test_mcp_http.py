@@ -12,12 +12,12 @@ import json
 import pytest
 from starlette.testclient import TestClient
 
-from graphql_mcp.adapters.inbound.lib import GraphQLClient
-from graphql_mcp.adapters.inbound.mcp_http import create_mcp_http_app
-from graphql_mcp.adapters.inbound.mcp_stdio import mcp as mcp_instance
-from graphql_mcp.adapters.inbound.rest import set_client
-from graphql_mcp.config import GraphQLConfig
-from graphql_mcp.domain.schema_service import SchemaService
+from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
+from generic_graphql_mcp.adapters.inbound.mcp_http import create_mcp_http_app
+from generic_graphql_mcp.adapters.inbound.mcp_stdio import mcp as mcp_instance
+from generic_graphql_mcp.adapters.inbound.rest import set_client
+from generic_graphql_mcp.config import GraphQLConfig
+from generic_graphql_mcp.domain.schema_service import SchemaService
 from tests.conftest import SAMPLE_SDL, MockSchemaSource
 
 
@@ -39,7 +39,7 @@ def _mcp_test_env():
     set_client(client)
 
     # Patch _get_client in mcp_stdio module so MCP tools resolve our test client
-    import graphql_mcp.adapters.inbound.mcp_stdio as mcp_mod
+    import generic_graphql_mcp.adapters.inbound.mcp_stdio as mcp_mod
 
     original_get_client = mcp_mod._get_client
     mcp_mod._get_client = lambda: client
@@ -93,7 +93,7 @@ def _initialize(tc: TestClient) -> str:
     # Verify the response contains serverInfo
     data = _parse_sse_data(resp.text)
     assert "result" in data
-    assert data["result"]["serverInfo"]["name"] == "graphql-mcp"
+    assert data["result"]["serverInfo"]["name"] == "generic-graphql-mcp"
 
     # Send initialized notification
     tc.post(
@@ -130,7 +130,7 @@ class TestMCPHTTPInitialize:
         )
         assert resp.status_code == 200
         data = _parse_sse_data(resp.text)
-        assert data["result"]["serverInfo"]["name"] == "graphql-mcp"
+        assert data["result"]["serverInfo"]["name"] == "generic-graphql-mcp"
         assert "protocolVersion" in data["result"]
 
 

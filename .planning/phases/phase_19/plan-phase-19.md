@@ -1,7 +1,7 @@
 # Phase 19 Plan: Resource Efficiency and Green Computing
 
 ## Overview
-This plan outlines the implementation of resource efficiency and green computing practices for the graphql-mcp project. The focus is on reducing memory footprint, optimizing CPU usage, and implementing energy-efficient computing to minimize environmental impact.
+This plan outlines the implementation of resource efficiency and green computing practices for the generic-graphql-mcp project. The focus is on reducing memory footprint, optimizing CPU usage, and implementing energy-efficient computing to minimize environmental impact.
 
 ## Success Criteria
 1. Memory footprint reduction by 35%

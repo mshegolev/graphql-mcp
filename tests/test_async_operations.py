@@ -10,12 +10,12 @@ import httpx
 import pytest
 import respx
 
-from graphql_mcp.adapters.inbound.async_lib import AsyncGraphQLClient
-from graphql_mcp.adapters.outbound.async_http_transport import AsyncHttpTransport
-from graphql_mcp.config import GraphQLConfig
-from graphql_mcp.domain.errors import MutationGuardError
-from graphql_mcp.domain.models import ErrorClass, SchemaSummary, TypeInfo
-from graphql_mcp.domain.schema_service import SchemaService
+from generic_graphql_mcp.adapters.inbound.async_lib import AsyncGraphQLClient
+from generic_graphql_mcp.adapters.outbound.async_http_transport import AsyncHttpTransport
+from generic_graphql_mcp.config import GraphQLConfig
+from generic_graphql_mcp.domain.errors import MutationGuardError
+from generic_graphql_mcp.domain.models import ErrorClass, SchemaSummary, TypeInfo
+from generic_graphql_mcp.domain.schema_service import SchemaService
 from tests.conftest import SAMPLE_SDL, SAMPLE_SUPERGRAPH_SDL, MockSchemaSource
 
 MOCK_ENDPOINT = "https://mock.test/graphql"

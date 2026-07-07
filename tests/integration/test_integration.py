@@ -1,4 +1,4 @@
-"""Integration tests for graphql-mcp SDK against a real GraphQL server.
+"""Integration tests for generic-graphql-mcp SDK against a real GraphQL server.
 
 These tests exercise the full stack: SDK → HTTP transport → mock GraphQL server.
 They verify that the library works end-to-end as a consumer would use it.
@@ -10,8 +10,8 @@ import os
 
 import pytest
 
-from graphql_mcp import AsyncGraphQLClient, GraphQLClient
-from graphql_mcp.domain.models import ErrorClass
+from generic_graphql_mcp import AsyncGraphQLClient, GraphQLClient
+from generic_graphql_mcp.domain.models import ErrorClass
 
 
 class TestSyncClient:

@@ -1,7 +1,7 @@
 # Phase 19 Summary: Resource Efficiency and Green Computing
 
 ## Phase Overview
-Phase 19 focused on reducing memory footprint, optimizing CPU usage, and implementing energy-efficient computing practices to make the graphql-mcp project more environmentally sustainable while maintaining high performance.
+Phase 19 focused on reducing memory footprint, optimizing CPU usage, and implementing energy-efficient computing practices to make the generic-graphql-mcp project more environmentally sustainable while maintaining high performance.
 
 ## Key Accomplishments
 

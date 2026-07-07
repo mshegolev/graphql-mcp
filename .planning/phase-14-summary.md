@@ -1,7 +1,7 @@
 # Phase 14 Summary: Coverage & Snapshot Infrastructure
 
 ## Overview
-This document summarizes the planning work completed for Phase 14 of the graphql-mcp project, which focuses on implementing comprehensive testing infrastructure including coverage enforcement and snapshot testing.
+This document summarizes the planning work completed for Phase 14 of the generic-graphql-mcp project, which focuses on implementing comprehensive testing infrastructure including coverage enforcement and snapshot testing.
 
 ## Documents Created
 

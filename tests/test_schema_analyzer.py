@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from graphql_mcp.adapters.outbound.schema_analyzer import SchemaAnalyzer
+from generic_graphql_mcp.adapters.outbound.schema_analyzer import SchemaAnalyzer
 from tests.conftest import SAMPLE_SDL, SAMPLE_SUPERGRAPH_SDL
 
 analyzer = SchemaAnalyzer()

@@ -1,7 +1,7 @@
 # Phase 18 Summary: Scalability Enhancements
 
 ## Phase Overview
-Phase 18 focused on implementing horizontal scaling capabilities, connection pooling, and throughput optimization to enable the graphql-mcp project to handle high-concurrency environments effectively.
+Phase 18 focused on implementing horizontal scaling capabilities, connection pooling, and throughput optimization to enable the generic-graphql-mcp project to handle high-concurrency environments effectively.
 
 ## Key Accomplishments
 

@@ -1,4 +1,4 @@
-"""Tests for `graphql-mcp serve` CLI command."""
+"""Tests for `generic-graphql-mcp serve` CLI command."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ from unittest.mock import patch
 
 from click.testing import CliRunner
 
-from graphql_mcp.adapters.inbound.cli import main
+from generic_graphql_mcp.adapters.inbound.cli import main
 
 
 class TestServeCommand:
@@ -23,7 +23,7 @@ class TestServeCommand:
         assert result.exit_code == 0
         mock_run.assert_called_once()
         args, kwargs = mock_run.call_args
-        assert args[0] == "graphql_mcp.adapters.inbound.rest:app"
+        assert args[0] == "generic_graphql_mcp.adapters.inbound.rest:app"
         assert kwargs["host"] == "0.0.0.0"
         assert kwargs["port"] == 8000
 

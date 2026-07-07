@@ -1,7 +1,7 @@
 # Phase 15 Plan: Contract & Property-Based Testing
 
 ## Goal
-Implement contract testing with schema snapshots and response shape validation, along with property-based testing using Hypothesis to ensure the robustness and reliability of the graphql-mcp library.
+Implement contract testing with schema snapshots and response shape validation, along with property-based testing using Hypothesis to ensure the robustness and reliability of the generic-graphql-mcp library.
 
 ## Success Criteria
 ✅ A stored GraphQL schema snapshot is compared on every test run; when the upstream schema drifts (field added/removed/type changed), the test fails with a clear diff  
@@ -33,7 +33,7 @@ Implement contract testing with schema snapshots and response shape validation, 
 
 #### Files to Modify:
 - tests/test_contract_schema.py (new file for schema snapshots)
-- src/graphql_mcp/domain/schema_service.py (if needed for introspection)
+- src/generic_graphql_mcp/domain/schema_service.py (if needed for introspection)
 
 #### Verification:
 - Schema snapshot tests pass with current implementation
@@ -62,7 +62,7 @@ Implement contract testing with schema snapshots and response shape validation, 
 #### Files to Modify:
 - tests/test_contract_shapes.py (new file for response shape validation)
 - tests/conftest.py (add validation helpers)
-- src/graphql_mcp/domain/models.py (if needed for validation methods)
+- src/generic_graphql_mcp/domain/models.py (if needed for validation methods)
 
 #### Verification:
 - Response shape tests pass with current implementation

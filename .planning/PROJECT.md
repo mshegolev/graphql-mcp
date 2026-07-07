@@ -1,4 +1,4 @@
-# graphql-mcp — brick project
+# generic-graphql-mcp — brick project
 
 > Part of **Investigation MCP Suite** (umbrella: `/opt/develop/aiqa/investigate-suite/`).
 > Full design: `/opt/develop/aiqa/docs/superpowers/specs/2026-06-05-investigation-mcp-suite-design.md` (§3).
@@ -8,13 +8,13 @@
 
 Генерик read-only GraphQL MCP-кирпич: discovery схемы + выполнение query + типизация
 ошибок, с актуальной схемой из нескольких источников и federation ownership-маппингом
-(поле → сабграф → serviceName). Library-first: `from graphql_mcp import GraphQLClient`
+(поле → сабграф → serviceName). Library-first: `from generic_graphql_mcp import GraphQLClient`
 работает в pytest без сети/MCP/FastAPI.
 
 ## Architecture (hexagonal v2, копируется в остальные кирпичи)
 
 ```
-src/graphql_mcp/
+src/generic_graphql_mcp/
   domain/    models.py errors.py query_service.py schema_service.py federation.py   # чистое, без I/O
   ports/     transport.py schema_source.py json_codec.py                            # Protocol
   adapters/
@@ -22,7 +22,7 @@ src/graphql_mcp/
     outbound/ http_transport.py gitlab_source.py introspection_source.py
               service_sdl_source.py file_source.py json_native.py(Rust) json_orjson.py(fallback)
   config.py  server.py(composition root + main()/serve())
-native/      Cargo.toml src/lib.rs   # pyo3 крейт graphql_mcp_native
+native/      Cargo.toml src/lib.rs   # pyo3 крейт generic_graphql_mcp_native
 ```
 
 Стек: `mcp>=1.27`, `fastapi`+`uvicorn[standard]`, `graphql-core>=3.3`, `gql`+`httpx`/`requests`,
@@ -52,7 +52,7 @@ Anti/out-of-scope: мутации by default, schema composition.
 нормализованные **Evidence**:
 
 ```python
-from graphql_mcp import GraphQLClient
+from generic_graphql_mcp import GraphQLClient
 c = GraphQLClient.from_env()           # или GraphQLClient(endpoint=..., headers=...)
 
 QueryResult = c.query(query: str, variables: dict | None = None)

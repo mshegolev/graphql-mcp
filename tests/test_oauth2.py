@@ -8,8 +8,8 @@ import httpx
 import pytest
 import respx
 
-from graphql_mcp.adapters.outbound.oauth2 import OAuth2TokenManager
-from graphql_mcp.config import GraphQLConfig
+from generic_graphql_mcp.adapters.outbound.oauth2 import OAuth2TokenManager
+from generic_graphql_mcp.config import GraphQLConfig
 
 
 class TestOAuth2Config:
@@ -234,7 +234,7 @@ class TestOAuth2TransportIntegration:
                     },
                 )
             )
-            from graphql_mcp.adapters.outbound.http_transport import HttpTransport
+            from generic_graphql_mcp.adapters.outbound.http_transport import HttpTransport
 
             mgr = OAuth2TokenManager(
                 token_url="https://auth.test/token",
@@ -272,7 +272,7 @@ class TestOAuth2TransportIntegration:
                     },
                 )
             )
-            from graphql_mcp.adapters.outbound.http_transport import HttpTransport
+            from generic_graphql_mcp.adapters.outbound.http_transport import HttpTransport
 
             mgr = OAuth2TokenManager(
                 token_url="https://auth.test/token",
@@ -301,7 +301,7 @@ class TestOAuth2FromEnvWiring:
         monkeypatch.setenv("GRAPHQL_OAUTH2_CLIENT_ID", "my-id")
         monkeypatch.setenv("GRAPHQL_OAUTH2_CLIENT_SECRET", "my-secret")
 
-        from graphql_mcp.adapters.inbound.lib import GraphQLClient
+        from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
 
         client = GraphQLClient.from_env()
         assert client._transport is not None
@@ -314,7 +314,7 @@ class TestOAuth2FromEnvWiring:
         monkeypatch.setenv("GRAPHQL_OAUTH2_CLIENT_ID", "my-id")
         monkeypatch.setenv("GRAPHQL_OAUTH2_CLIENT_SECRET", "my-secret")
 
-        from graphql_mcp.adapters.inbound.lib import GraphQLClient
+        from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
 
         client = GraphQLClient.from_env()
         assert client._transport is not None

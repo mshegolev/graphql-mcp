@@ -1,6 +1,6 @@
 # Technology Stack — v2.0 Additions
 
-**Project:** graphql-mcp v2.0 Production-Grade Platform
+**Project:** generic-graphql-mcp v2.0 Production-Grade Platform
 **Researched:** 2026-06-16
 **Scope:** NEW libraries only — existing stack (httpx, FastAPI, pydantic, mcp, graphql-core, gql, orjson, pyo3/maturin, ruff, pytest) is validated and unchanged.
 
@@ -201,7 +201,7 @@ subscriptions = [
 ]
 
 all = [
-    "graphql-mcp[server,mcp,cli,otel,security,subscriptions]",
+    "generic-graphql-mcp[server,mcp,cli,otel,security,subscriptions]",
 ]
 
 dev = [
@@ -210,7 +210,7 @@ dev = [
 ]
 ```
 
-**Design principle:** All v2.0 features are **optional extras**. The core library (`from graphql_mcp import GraphQLClient`) keeps its minimal dependency footprint. Features activate based on installed extras + config flags.
+**Design principle:** All v2.0 features are **optional extras**. The core library (`from generic_graphql_mcp import GraphQLClient`) keeps its minimal dependency footprint. Features activate based on installed extras + config flags.
 
 ---
 

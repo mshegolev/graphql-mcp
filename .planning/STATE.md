@@ -13,15 +13,15 @@ progress:
   percent: 100
 ---
 
-# graphql-mcp — Project State
+# generic-graphql-mcp — Project State
 
 ## Project Reference
 
-**Core value**: Generic read-only GraphQL MCP brick — schema discovery, query execution, 3-class error typing, and federation ownership mapping (field → subgraph → serviceName). Library-first: `from graphql_mcp import GraphQLClient` works in pytest without network/MCP/FastAPI. Serves as the v2 hexagonal reference template copied by kafka-mcp and ordering-mcp.
+**Core value**: Generic read-only GraphQL MCP brick — schema discovery, query execution, 3-class error typing, and federation ownership mapping (field → subgraph → serviceName). Library-first: `from generic_graphql_mcp import GraphQLClient` works in pytest without network/MCP/FastAPI. Serves as the v2 hexagonal reference template copied by kafka-mcp and ordering-mcp.
 
 **Investigator contract**: `GraphQLClient` exposes `query`, `raw`, `entities`, `introspect`, `describe_type`, `list_subgraphs`, `refresh_schema`. The `error_class` field lets investigator distinguish "service down" (transport) from "asked wrong thing" (graphql). `subgraph` on `TypeInfo` is the correlation key to `service_name` in Jaeger/OpenSearch.
 
-**Repository**: `/opt/develop/aiqa/mcps/graphql-mcp/`
+**Repository**: `/opt/develop/aiqa/mcps/generic-graphql-mcp/`
 **Spec**: `/opt/develop/aiqa/docs/superpowers/specs/2026-06-05-investigation-mcp-suite-design.md` §3
 **Roadmap**: `.planning/ROADMAP.md`
 **Requirements**: `.planning/REQUIREMENTS.md`

@@ -7,8 +7,8 @@ import re
 import httpx
 import respx
 
-from graphql_mcp.adapters.outbound.async_http_transport import AsyncHttpTransport
-from graphql_mcp.adapters.outbound.http_transport import HttpTransport
+from generic_graphql_mcp.adapters.outbound.async_http_transport import AsyncHttpTransport
+from generic_graphql_mcp.adapters.outbound.http_transport import HttpTransport
 
 
 class TestOutboundHttpSpans:

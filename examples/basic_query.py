@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Basic synchronous GraphQL query using graphql-mcp.
+"""Basic synchronous GraphQL query using generic-graphql-mcp.
 
 This example demonstrates the library-first approach: import GraphQLClient,
 configure via environment variables, and execute queries with typed results.
 
 Setup:
-    pip install graphql-mcp
+    pip install generic-graphql-mcp
 
 Environment variables:
     GRAPHQL_ENDPOINT    URL of your GraphQL endpoint (required)
@@ -18,7 +18,7 @@ Usage:
 
 from __future__ import annotations
 
-from graphql_mcp import GraphQLClient
+from generic_graphql_mcp import GraphQLClient
 
 
 def main() -> None:

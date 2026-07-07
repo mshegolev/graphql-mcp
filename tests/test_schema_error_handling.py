@@ -12,11 +12,11 @@ from click.testing import CliRunner
 from fastapi.testclient import TestClient
 from mcp.server.fastmcp.exceptions import ToolError
 
-from graphql_mcp.adapters.inbound.cli import main
-from graphql_mcp.adapters.inbound.lib import GraphQLClient
-from graphql_mcp.adapters.inbound.rest import app, set_client
-from graphql_mcp.config import GraphQLConfig
-from graphql_mcp.domain.schema_service import SchemaService
+from generic_graphql_mcp.adapters.inbound.cli import main
+from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
+from generic_graphql_mcp.adapters.inbound.rest import app, set_client
+from generic_graphql_mcp.config import GraphQLConfig
+from generic_graphql_mcp.domain.schema_service import SchemaService
 from tests.conftest import MockSchemaSource
 
 
@@ -71,7 +71,7 @@ class TestMCPSchemaError:
     """MCP adapter raises an actionable ToolError (isError) when schema unavailable."""
 
     def test_introspect_raises_tool_error(self) -> None:
-        import graphql_mcp.adapters.inbound.mcp_stdio as mod
+        import generic_graphql_mcp.adapters.inbound.mcp_stdio as mod
 
         with (
             patch.object(mod, "_get_client", return_value=_failing_client()),
@@ -81,7 +81,7 @@ class TestMCPSchemaError:
         assert "Schema unavailable" in str(exc_info.value)
 
     def test_describe_type_raises_tool_error(self) -> None:
-        import graphql_mcp.adapters.inbound.mcp_stdio as mod
+        import generic_graphql_mcp.adapters.inbound.mcp_stdio as mod
 
         with (
             patch.object(mod, "_get_client", return_value=_failing_client()),
@@ -91,7 +91,7 @@ class TestMCPSchemaError:
         assert "Schema unavailable" in str(exc_info.value)
 
     def test_list_subgraphs_raises_tool_error(self) -> None:
-        import graphql_mcp.adapters.inbound.mcp_stdio as mod
+        import generic_graphql_mcp.adapters.inbound.mcp_stdio as mod
 
         with (
             patch.object(mod, "_get_client", return_value=_failing_client()),

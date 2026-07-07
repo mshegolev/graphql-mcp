@@ -4,13 +4,13 @@ import logging
 
 import pytest
 
-from graphql_mcp.adapters.outbound.audit import _query_hash, emit_audit_log
+from generic_graphql_mcp.adapters.outbound.audit import _query_hash, emit_audit_log
 
 
 class TestAuditLogEmission:
     def test_audit_log_emitted_with_required_fields(self, caplog):
         """emit_audit_log produces a log record with all required fields."""
-        with caplog.at_level(logging.INFO, logger="graphql_mcp.audit"):
+        with caplog.at_level(logging.INFO, logger="generic_graphql_mcp.audit"):
             emit_audit_log(
                 operation="query",
                 query_str="{ hello }",
@@ -44,7 +44,7 @@ class TestAuditLogEmission:
 
     def test_trace_id_none_without_otel_context(self):
         """Without active OTEL span, trace_id is 'none'."""
-        from graphql_mcp.adapters.outbound.audit import _get_trace_id
+        from generic_graphql_mcp.adapters.outbound.audit import _get_trace_id
 
         # No active span → "none" or "0" * 32 depending on OTEL state
         tid = _get_trace_id()
@@ -52,7 +52,7 @@ class TestAuditLogEmission:
 
     def test_audit_log_defaults(self, caplog):
         """Default caller_ip='local' and caller_identity='anonymous'."""
-        with caplog.at_level(logging.INFO, logger="graphql_mcp.audit"):
+        with caplog.at_level(logging.INFO, logger="generic_graphql_mcp.audit"):
             emit_audit_log(
                 operation="raw",
                 query_str="{ test }",
@@ -66,7 +66,7 @@ class TestAuditLogEmission:
 
     def test_latency_ms_precision(self, caplog):
         """Latency is rounded to 2 decimal places."""
-        with caplog.at_level(logging.INFO, logger="graphql_mcp.audit"):
+        with caplog.at_level(logging.INFO, logger="generic_graphql_mcp.audit"):
             emit_audit_log(
                 operation="query",
                 query_str="{ test }",
@@ -79,9 +79,9 @@ class TestAuditLogEmission:
 class TestAuditViaLibFacade:
     def test_audit_logged_on_query(self, caplog):
         """GraphQLClient.query() emits audit log when audit_log=True."""
-        from graphql_mcp.adapters.inbound.lib import GraphQLClient
-        from graphql_mcp.config import GraphQLConfig
-        from graphql_mcp.domain.schema_service import SchemaService
+        from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
+        from generic_graphql_mcp.config import GraphQLConfig
+        from generic_graphql_mcp.domain.schema_service import SchemaService
         from tests.conftest import SAMPLE_SDL, MockSchemaSource
 
         source = MockSchemaSource("test", sdl=SAMPLE_SDL)
@@ -89,20 +89,20 @@ class TestAuditViaLibFacade:
         config = GraphQLConfig(allow_mutations=False, audit_log=True)
         client = GraphQLClient(schema_service=service, transport=None, config=config)
 
-        with caplog.at_level(logging.INFO, logger="graphql_mcp.audit"):
+        with caplog.at_level(logging.INFO, logger="generic_graphql_mcp.audit"):
             result = client.query("{ hello }")
 
         # Should have one audit record (transport error — no transport configured)
-        audit_records = [r for r in caplog.records if r.name == "graphql_mcp.audit"]
+        audit_records = [r for r in caplog.records if r.name == "generic_graphql_mcp.audit"]
         assert len(audit_records) == 1
         assert audit_records[0].operation == "query"
         assert audit_records[0].error_class == "transport"
 
     def test_no_audit_when_disabled(self, caplog):
         """GraphQLClient.query() does NOT emit audit log when audit_log=False."""
-        from graphql_mcp.adapters.inbound.lib import GraphQLClient
-        from graphql_mcp.config import GraphQLConfig
-        from graphql_mcp.domain.schema_service import SchemaService
+        from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
+        from generic_graphql_mcp.config import GraphQLConfig
+        from generic_graphql_mcp.domain.schema_service import SchemaService
         from tests.conftest import SAMPLE_SDL, MockSchemaSource
 
         source = MockSchemaSource("test", sdl=SAMPLE_SDL)
@@ -110,17 +110,17 @@ class TestAuditViaLibFacade:
         config = GraphQLConfig(allow_mutations=False, audit_log=False)
         client = GraphQLClient(schema_service=service, transport=None, config=config)
 
-        with caplog.at_level(logging.INFO, logger="graphql_mcp.audit"):
+        with caplog.at_level(logging.INFO, logger="generic_graphql_mcp.audit"):
             result = client.query("{ hello }")
 
-        audit_records = [r for r in caplog.records if r.name == "graphql_mcp.audit"]
+        audit_records = [r for r in caplog.records if r.name == "generic_graphql_mcp.audit"]
         assert len(audit_records) == 0
 
     def test_audit_on_raw(self, caplog):
         """GraphQLClient.raw() emits audit log when audit_log=True."""
-        from graphql_mcp.adapters.inbound.lib import GraphQLClient
-        from graphql_mcp.config import GraphQLConfig
-        from graphql_mcp.domain.schema_service import SchemaService
+        from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
+        from generic_graphql_mcp.config import GraphQLConfig
+        from generic_graphql_mcp.domain.schema_service import SchemaService
         from tests.conftest import SAMPLE_SDL, MockSchemaSource
 
         source = MockSchemaSource("test", sdl=SAMPLE_SDL)
@@ -128,18 +128,18 @@ class TestAuditViaLibFacade:
         config = GraphQLConfig(allow_mutations=False, audit_log=True)
         client = GraphQLClient(schema_service=service, transport=None, config=config)
 
-        with caplog.at_level(logging.INFO, logger="graphql_mcp.audit"):
+        with caplog.at_level(logging.INFO, logger="generic_graphql_mcp.audit"):
             result = client.raw({"query": "{ hello }"})
 
-        audit_records = [r for r in caplog.records if r.name == "graphql_mcp.audit"]
+        audit_records = [r for r in caplog.records if r.name == "generic_graphql_mcp.audit"]
         assert len(audit_records) == 1
         assert audit_records[0].operation == "raw"
 
     def test_audit_on_entities(self, caplog):
         """GraphQLClient.entities() emits audit log when audit_log=True."""
-        from graphql_mcp.adapters.inbound.lib import GraphQLClient
-        from graphql_mcp.config import GraphQLConfig
-        from graphql_mcp.domain.schema_service import SchemaService
+        from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
+        from generic_graphql_mcp.config import GraphQLConfig
+        from generic_graphql_mcp.domain.schema_service import SchemaService
         from tests.conftest import SAMPLE_SDL, MockSchemaSource
 
         source = MockSchemaSource("test", sdl=SAMPLE_SDL)
@@ -147,10 +147,10 @@ class TestAuditViaLibFacade:
         config = GraphQLConfig(allow_mutations=False, audit_log=True)
         client = GraphQLClient(schema_service=service, transport=None, config=config)
 
-        with caplog.at_level(logging.INFO, logger="graphql_mcp.audit"):
+        with caplog.at_level(logging.INFO, logger="generic_graphql_mcp.audit"):
             result = client.entities([{"__typename": "User", "id": "1"}])
 
-        audit_records = [r for r in caplog.records if r.name == "graphql_mcp.audit"]
+        audit_records = [r for r in caplog.records if r.name == "generic_graphql_mcp.audit"]
         assert len(audit_records) == 1
         assert audit_records[0].operation == "entities"
 
@@ -160,10 +160,10 @@ class TestAuditViaREST:
         """REST endpoint audit log includes caller IP from request."""
         from fastapi.testclient import TestClient
 
-        from graphql_mcp.adapters.inbound.lib import GraphQLClient
-        from graphql_mcp.adapters.inbound.rest import app, set_client
-        from graphql_mcp.config import GraphQLConfig
-        from graphql_mcp.domain.schema_service import SchemaService
+        from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
+        from generic_graphql_mcp.adapters.inbound.rest import app, set_client
+        from generic_graphql_mcp.config import GraphQLConfig
+        from generic_graphql_mcp.domain.schema_service import SchemaService
         from tests.conftest import SAMPLE_SDL, MockSchemaSource
 
         source = MockSchemaSource("test", sdl=SAMPLE_SDL)
@@ -173,10 +173,10 @@ class TestAuditViaREST:
         set_client(client)
         tc = TestClient(app)
 
-        with caplog.at_level(logging.INFO, logger="graphql_mcp.audit"):
+        with caplog.at_level(logging.INFO, logger="generic_graphql_mcp.audit"):
             resp = tc.post("/graphql/query", json={"query": "{ hello }"})
 
-        audit_records = [r for r in caplog.records if r.name == "graphql_mcp.audit"]
+        audit_records = [r for r in caplog.records if r.name == "generic_graphql_mcp.audit"]
         assert len(audit_records) == 1
         assert audit_records[0].caller_ip  # should be testclient IP
         assert audit_records[0].query_hash  # 16-char hex
@@ -185,10 +185,10 @@ class TestAuditViaREST:
         """REST audit log uses X-User-Id header as caller_identity."""
         from fastapi.testclient import TestClient
 
-        from graphql_mcp.adapters.inbound.lib import GraphQLClient
-        from graphql_mcp.adapters.inbound.rest import app, set_client
-        from graphql_mcp.config import GraphQLConfig
-        from graphql_mcp.domain.schema_service import SchemaService
+        from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
+        from generic_graphql_mcp.adapters.inbound.rest import app, set_client
+        from generic_graphql_mcp.config import GraphQLConfig
+        from generic_graphql_mcp.domain.schema_service import SchemaService
         from tests.conftest import SAMPLE_SDL, MockSchemaSource
 
         source = MockSchemaSource("test", sdl=SAMPLE_SDL)
@@ -198,14 +198,14 @@ class TestAuditViaREST:
         set_client(client)
         tc = TestClient(app)
 
-        with caplog.at_level(logging.INFO, logger="graphql_mcp.audit"):
+        with caplog.at_level(logging.INFO, logger="generic_graphql_mcp.audit"):
             resp = tc.post(
                 "/graphql/query",
                 json={"query": "{ hello }"},
                 headers={"X-User-Id": "testuser-99"},
             )
 
-        audit_records = [r for r in caplog.records if r.name == "graphql_mcp.audit"]
+        audit_records = [r for r in caplog.records if r.name == "generic_graphql_mcp.audit"]
         assert len(audit_records) == 1
         assert audit_records[0].caller_identity == "testuser-99"
 
@@ -217,14 +217,14 @@ class TestAuditWithOTEL:
 
         tracer = trace.get_tracer("test")
         with tracer.start_as_current_span("test-span"):
-            with caplog.at_level(logging.INFO, logger="graphql_mcp.audit"):
+            with caplog.at_level(logging.INFO, logger="generic_graphql_mcp.audit"):
                 emit_audit_log(
                     operation="query",
                     query_str="{ hello }",
                     error_class="ok",
                     latency_s=0.01,
                 )
-        audit_records = [r for r in caplog.records if r.name == "graphql_mcp.audit"]
+        audit_records = [r for r in caplog.records if r.name == "generic_graphql_mcp.audit"]
         assert len(audit_records) == 1
         assert audit_records[0].trace_id != "none"
         assert len(audit_records[0].trace_id) == 32  # 128-bit trace ID as hex

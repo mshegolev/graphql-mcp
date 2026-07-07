@@ -1,7 +1,7 @@
 """Detailed contract tests for GraphQL schema snapshots."""
 
 import pytest
-from graphql_mcp.domain.models import QueryResult, ErrorClass
+from generic_graphql_mcp.domain.models import QueryResult, ErrorClass
 
 
 def test_schema_root_types_exist():

@@ -11,10 +11,10 @@ from unittest.mock import patch
 import pytest
 from click.testing import CliRunner
 
-from graphql_mcp.adapters.inbound.cli import main
-from graphql_mcp.adapters.inbound.lib import GraphQLClient
-from graphql_mcp.config import GraphQLConfig
-from graphql_mcp.domain.schema_service import SchemaService
+from generic_graphql_mcp.adapters.inbound.cli import main
+from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
+from generic_graphql_mcp.config import GraphQLConfig
+from generic_graphql_mcp.domain.schema_service import SchemaService
 from tests.conftest import SAMPLE_SDL, MockSchemaSource
 
 

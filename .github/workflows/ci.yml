@@ -134,8 +134,8 @@ jobs:
 
       - name: Install wheel without Rust
         run: |
-          pip install dist/graphql_mcp-*cp311*manylinux*x86_64*.whl
+          pip install dist/generic_graphql_mcp-*cp311*manylinux*x86_64*.whl
 
       - name: Verify import
         run: |
-          python -c "from graphql_mcp import GraphQLClient; print('OK')"
+          python -c "from generic_graphql_mcp import GraphQLClient; print('OK')"

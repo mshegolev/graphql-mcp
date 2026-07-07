@@ -10,10 +10,10 @@ from __future__ import annotations
 
 import pytest
 
-from graphql_mcp.adapters.outbound.json_orjson import OrjsonCodec
+from generic_graphql_mcp.adapters.outbound.json_orjson import OrjsonCodec
 
 try:
-    from graphql_mcp.adapters.outbound.json_native import RustJsonCodec
+    from generic_graphql_mcp.adapters.outbound.json_native import RustJsonCodec
 
     HAS_NATIVE = True
 except ImportError:

@@ -1,10 +1,10 @@
 [package]
-name = "graphql_mcp_native"
+name = "generic_graphql_mcp_native"
 version = "1.2.0"
 edition = "2021"
 
 [lib]
-name = "graphql_mcp_native"
+name = "generic_graphql_mcp_native"
 crate-type = ["cdylib"]
 
 [dependencies]

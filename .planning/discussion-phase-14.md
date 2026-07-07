@@ -2,7 +2,7 @@
 
 ## Context
 
-This phase focuses on implementing comprehensive testing infrastructure for the graphql-mcp project, specifically:
+This phase focuses on implementing comprehensive testing infrastructure for the generic-graphql-mcp project, specifically:
 1. Coverage enforcement with pytest-cov
 2. Snapshot testing with pytest-syrupy
 

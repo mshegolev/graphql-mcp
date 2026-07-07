@@ -1,15 +1,15 @@
 # Project Research Summary
 
-**Project:** graphql-mcp v2.0 "Production-Grade Platform"
+**Project:** generic-graphql-mcp v2.0 "Production-Grade Platform"
 **Domain:** MCP brick — read-only GraphQL client with hexagonal architecture, 4 inbound faces
 **Researched:** 2026-06-16
 **Confidence:** HIGH
 
 ## Executive Summary
 
-graphql-mcp v2.0 transforms a feature-complete read-only GraphQL client brick into a production-grade platform. The research confirms that all five target capabilities — OpenTelemetry observability, security hardening, GraphQL subscriptions, DX/CI pipeline, and Copier template extraction — can be delivered using mature, well-documented libraries with minimal architectural disruption. The existing hexagonal architecture (domain → ports → adapters) is the primary enabler: every v2.0 feature integrates as new adapters or decorator wrappers, with **zero changes to the domain layer** and **zero changes to existing port contracts**. This is a rare position of strength — the v1.x architecture was built exactly right for this evolution.
+generic-graphql-mcp v2.0 transforms a feature-complete read-only GraphQL client brick into a production-grade platform. The research confirms that all five target capabilities — OpenTelemetry observability, security hardening, GraphQL subscriptions, DX/CI pipeline, and Copier template extraction — can be delivered using mature, well-documented libraries with minimal architectural disruption. The existing hexagonal architecture (domain → ports → adapters) is the primary enabler: every v2.0 feature integrates as new adapters or decorator wrappers, with **zero changes to the domain layer** and **zero changes to existing port contracts**. This is a rare position of strength — the v1.x architecture was built exactly right for this evolution.
 
-The recommended approach follows a strict dependency-driven build order: OTEL first (so everything else is observable from day one), security second (harden before exposing new attack surface), subscriptions third (the highest-complexity feature, built on secure+traced transports), DX/CI fourth (requires stable API), and Copier template last (requires final architecture). All new dependencies ship as **optional extras** (`pip install graphql-mcp[otel,security,subscriptions]`), preserving the core library's minimal footprint.
+The recommended approach follows a strict dependency-driven build order: OTEL first (so everything else is observable from day one), security second (harden before exposing new attack surface), subscriptions third (the highest-complexity feature, built on secure+traced transports), DX/CI fourth (requires stable API), and Copier template last (requires final architecture). All new dependencies ship as **optional extras** (`pip install generic-graphql-mcp[otel,security,subscriptions]`), preserving the core library's minimal footprint.
 
 The primary risk is subscription implementation complexity — the `graphql-transport-ws` protocol is a stateful bidirectional protocol with connection lifecycle management, backpressure, and keepalive concerns. This is the only HIGH-risk feature. Everything else follows established patterns with verified libraries. A secondary risk is the Copier template boundary design — separating generic brick skeleton from GraphQL-specific domain requires careful judgment. Both risks are manageable with proper phase planning and integration testing.
 
@@ -17,7 +17,7 @@ The primary risk is subscription implementation complexity — the `graphql-tran
 
 ### Recommended Stack
 
-All v2.0 dependencies are optional extras. The core library (`from graphql_mcp import GraphQLClient`) remains unchanged. See [STACK.md](./STACK.md) for full version matrix and rationale.
+All v2.0 dependencies are optional extras. The core library (`from generic_graphql_mcp import GraphQLClient`) remains unchanged. See [STACK.md](./STACK.md) for full version matrix and rationale.
 
 **New dependencies by feature group:**
 
@@ -73,7 +73,7 @@ The v1.x hexagonal architecture absorbs all v2.0 features cleanly. See [ARCHITEC
 | Security (rate limit, audit) | FastAPI middleware chain | Inbound adapter |
 | Subscriptions | New port (`SubscriptionTransport`) + new inbound/outbound adapters | All layers (port + 3 adapters) |
 | DX/CI | GitHub Actions workflows, examples directory | Peripheral (no architecture) |
-| Copier | Separate template repo; graphql-mcp is a clean instance | External |
+| Copier | Separate template repo; generic-graphql-mcp is a clean instance | External |
 
 **New files: 13 | Modified files: 9 | Domain/ports unchanged: all existing contracts preserved**
 
@@ -87,7 +87,7 @@ The v1.x hexagonal architecture absorbs all v2.0 features cleanly. See [ARCHITEC
 
 > Note: PITFALLS.md was not produced as a separate document. Pitfalls are synthesized from anti-patterns identified across STACK.md, FEATURES.md, and ARCHITECTURE.md.
 
-1. **OTEL leaking into domain** — Importing `opentelemetry` in `domain/` or `ports/` violates hexagonal purity and makes domain untestable without OTEL SDK. **Prevention:** Decorator pattern in `adapters/outbound/`; domain stays clean. Verify with `grep -r "opentelemetry" src/graphql_mcp/domain/` = zero hits.
+1. **OTEL leaking into domain** — Importing `opentelemetry` in `domain/` or `ports/` violates hexagonal purity and makes domain untestable without OTEL SDK. **Prevention:** Decorator pattern in `adapters/outbound/`; domain stays clean. Verify with `grep -r "opentelemetry" src/generic_graphql_mcp/domain/` = zero hits.
 
 2. **WebSocket handler conflating protocol + business logic** — A monolithic `ws_handler.py` implementing both `graphql-transport-ws` protocol AND query validation/routing. **Prevention:** Protocol handling in outbound adapter (`ws_subscription.py`); inbound handler is a thin bridge that delegates.
 
@@ -95,7 +95,7 @@ The v1.x hexagonal architecture absorbs all v2.0 features cleanly. See [ARCHITEC
 
 4. **Per-worker rate limiter state divergence** — Module-level rate limiter dict shared across uvicorn worker forks means each worker has independent limits. **Prevention:** Accept per-worker limiting for single-brick deployment; document Redis backend option for multi-worker scenarios.
 
-5. **Copier template with hardcoded `graphql_mcp` references** — Generated `kafka-mcp` would have `graphql_mcp` imports. **Prevention:** Thorough Jinja2 parameterization audit (`{{module_name}}`, `{{client_class_name}}`); integration test: generate + import + run tests on generated project.
+5. **Copier template with hardcoded `generic_graphql_mcp` references** — Generated `kafka-mcp` would have `generic_graphql_mcp` imports. **Prevention:** Thorough Jinja2 parameterization audit (`{{module_name}}`, `{{client_class_name}}`); integration test: generate + import + run tests on generated project.
 
 6. **slowapi incompatibility with WebSocket endpoints** — slowapi does NOT support WebSocket rate limiting. **Prevention:** Use asyncio semaphore per client IP for WS connection limiting; slowapi only on REST routes.
 
@@ -147,7 +147,7 @@ Based on combined research, the following 5-phase structure is recommended. The 
 **Addresses:** T10
 **Architecture decision:** Separate template repo (recommended in ARCHITECTURE.md) vs in-repo `template/` directory. Recommend separate repo for clean separation.
 **Stack used:** `copier>=9.15,<10`
-**Avoids:** Hardcoded `graphql_mcp` references pitfall
+**Avoids:** Hardcoded `generic_graphql_mcp` references pitfall
 **Estimated effort:** ~2 days | **Risk:** MEDIUM (template boundary design)
 
 ### Phase Ordering Rationale

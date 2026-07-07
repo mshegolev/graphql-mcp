@@ -12,11 +12,11 @@ import respx
 import httpx
 from fastapi.testclient import TestClient
 
-from graphql_mcp.adapters.inbound.lib import GraphQLClient
-from graphql_mcp.adapters.inbound.rest import RateLimitMiddleware, app, set_client
-from graphql_mcp.adapters.outbound.http_transport import HttpTransport
-from graphql_mcp.config import GraphQLConfig
-from graphql_mcp.domain.schema_service import SchemaService
+from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
+from generic_graphql_mcp.adapters.inbound.rest import RateLimitMiddleware, app, set_client
+from generic_graphql_mcp.adapters.outbound.http_transport import HttpTransport
+from generic_graphql_mcp.config import GraphQLConfig
+from generic_graphql_mcp.domain.schema_service import SchemaService
 from tests.conftest import SAMPLE_SDL, MockSchemaSource
 
 

@@ -14,7 +14,7 @@ from unittest.mock import patch
 import pytest
 from websockets.asyncio.server import serve as ws_serve
 
-from graphql_mcp.domain.models import ErrorClass
+from generic_graphql_mcp.domain.models import ErrorClass
 
 
 # ---------------------------------------------------------------------------
@@ -101,7 +101,7 @@ async def ws_error_server():
 class TestWSTransportReceive:
     async def test_ws_transport_receives_subscription_results(self, ws_server: str) -> None:
         """UpstreamWSTransport receives 3 QueryResult from mock server."""
-        from graphql_mcp.adapters.outbound.ws_transport import UpstreamWSTransport
+        from generic_graphql_mcp.adapters.outbound.ws_transport import UpstreamWSTransport
 
         results = []
         async with UpstreamWSTransport(
@@ -121,7 +121,7 @@ class TestWSTransportReceive:
 class TestWSTransportError:
     async def test_ws_transport_handles_error_message(self, ws_error_server: str) -> None:
         """UpstreamWSTransport yields error QueryResult when upstream sends type:error."""
-        from graphql_mcp.adapters.outbound.ws_transport import UpstreamWSTransport
+        from generic_graphql_mcp.adapters.outbound.ws_transport import UpstreamWSTransport
 
         results = []
         async with UpstreamWSTransport(
@@ -139,7 +139,7 @@ class TestWSTransportError:
 class TestWSTransportClose:
     async def test_ws_transport_clean_close(self, ws_server: str) -> None:
         """WS connection is properly closed after complete."""
-        from graphql_mcp.adapters.outbound.ws_transport import UpstreamWSTransport
+        from generic_graphql_mcp.adapters.outbound.ws_transport import UpstreamWSTransport
 
         transport = UpstreamWSTransport(
             ws_endpoint=ws_server,
@@ -155,12 +155,12 @@ class TestWSTransportClose:
 class TestWSTransportImportGuard:
     def test_ws_transport_import_guard(self) -> None:
         """ImportError raised with install instructions when websockets is missing."""
-        import graphql_mcp.adapters.outbound.ws_transport as ws_mod
+        import generic_graphql_mcp.adapters.outbound.ws_transport as ws_mod
 
         original_ws = ws_mod.websockets
         try:
             ws_mod.websockets = None
-            with pytest.raises(ImportError, match="pip install graphql-mcp\\[subscriptions\\]"):
+            with pytest.raises(ImportError, match="pip install generic-graphql-mcp\\[subscriptions\\]"):
                 ws_mod.UpstreamWSTransport(
                     ws_endpoint="ws://localhost:9999",
                     query="subscription { x }",

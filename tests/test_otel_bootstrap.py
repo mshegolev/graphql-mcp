@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import graphql_mcp.adapters.outbound.otel_bootstrap as otel_bootstrap
+import generic_graphql_mcp.adapters.outbound.otel_bootstrap as otel_bootstrap
 
 
 class TestOtelBootstrap:

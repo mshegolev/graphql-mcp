@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import pytest
 
-from graphql_mcp.adapters.outbound.query_guard import (
+from generic_graphql_mcp.adapters.outbound.query_guard import (
     check_mutation_guard,
     contains_mutation,
 )
-from graphql_mcp.domain.errors import MutationGuardError
+from generic_graphql_mcp.domain.errors import MutationGuardError
 
 
 class TestContainsMutation:

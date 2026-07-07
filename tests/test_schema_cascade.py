@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from graphql_mcp.domain.errors import SchemaResolutionError
-from graphql_mcp.domain.schema_service import SchemaService
+from generic_graphql_mcp.domain.errors import SchemaResolutionError
+from generic_graphql_mcp.domain.schema_service import SchemaService
 from tests.conftest import SAMPLE_SDL, MockSchemaSource
 
 

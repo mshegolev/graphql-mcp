@@ -1,7 +1,7 @@
 # Phase 19 Context: Resource Efficiency and Green Computing
 
 ## Phase Goal
-Reduce memory footprint, optimize CPU usage, and implement energy-efficient computing practices to make the graphql-mcp project more environmentally sustainable while maintaining high performance.
+Reduce memory footprint, optimize CPU usage, and implement energy-efficient computing practices to make the generic-graphql-mcp project more environmentally sustainable while maintaining high performance.
 
 ## Dependencies
 - Phase 18 (Scalability Enhancements) completed

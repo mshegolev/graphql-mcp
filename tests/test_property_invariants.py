@@ -1,7 +1,7 @@
 """Property-based tests for domain model invariants."""
 
 import pytest
-from graphql_mcp.domain.models import QueryResult, ErrorClass
+from generic_graphql_mcp.domain.models import QueryResult, ErrorClass
 
 
 def test_query_result_error_class_invariants():

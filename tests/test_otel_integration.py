@@ -9,11 +9,11 @@ import respx
 from fastapi.testclient import TestClient
 from opentelemetry.trace import SpanKind
 
-from graphql_mcp.adapters.inbound.lib import GraphQLClient
-from graphql_mcp.adapters.inbound.rest import app, set_client
-from graphql_mcp.adapters.outbound.http_transport import HttpTransport
-from graphql_mcp.config import GraphQLConfig
-from graphql_mcp.domain.schema_service import SchemaService
+from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
+from generic_graphql_mcp.adapters.inbound.rest import app, set_client
+from generic_graphql_mcp.adapters.outbound.http_transport import HttpTransport
+from generic_graphql_mcp.config import GraphQLConfig
+from generic_graphql_mcp.domain.schema_service import SchemaService
 from tests.conftest import SAMPLE_SDL, MockSchemaSource
 
 
@@ -146,8 +146,8 @@ class TestEndToEndTrace:
         assert len(spans) >= 1, f"Expected at least 1 span, got {len(spans)}"
 
         # Verify custom metrics exist (metrics pillar)
-        count_points = _get_metric_value(otel_setup["metric_reader"], "graphql_mcp.query.count")
-        assert len(count_points) >= 1, "Expected graphql_mcp.query.count metric"
+        count_points = _get_metric_value(otel_setup["metric_reader"], "generic_graphql_mcp.query.count")
+        assert len(count_points) >= 1, "Expected generic_graphql_mcp.query.count metric"
         query_points = [p for p in count_points if p["attributes"].get("operation") == "query"]
         assert len(query_points) >= 1, f"Expected query.count with operation=query. Got: {count_points}"
 
@@ -168,7 +168,7 @@ class TestEndToEndTrace:
         )
 
         # Verify custom metrics exist (metrics pillar)
-        count_points = _get_metric_value(otel_setup["metric_reader"], "graphql_mcp.query.count")
-        assert len(count_points) >= 1, "Expected graphql_mcp.query.count metric"
+        count_points = _get_metric_value(otel_setup["metric_reader"], "generic_graphql_mcp.query.count")
+        assert len(count_points) >= 1, "Expected generic_graphql_mcp.query.count metric"
         query_points = [p for p in count_points if p["attributes"].get("operation") == "query"]
         assert len(query_points) >= 1, f"Expected query.count with operation=query. Got: {count_points}"

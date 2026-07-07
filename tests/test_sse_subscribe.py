@@ -14,7 +14,7 @@ from typing import Any
 import pytest
 from websockets.asyncio.server import serve as ws_serve
 
-from graphql_mcp.adapters.inbound.rest import app
+from generic_graphql_mcp.adapters.inbound.rest import app
 
 
 # ---------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-"""Tests for custom graphql_mcp.query.* metrics (OTEL-03)."""
+"""Tests for custom generic_graphql_mcp.query.* metrics (OTEL-03)."""
 
 from __future__ import annotations
 
@@ -7,12 +7,12 @@ from typing import Any
 import httpx
 import respx
 
-from graphql_mcp.adapters.inbound.async_lib import AsyncGraphQLClient
-from graphql_mcp.adapters.inbound.lib import GraphQLClient
-from graphql_mcp.adapters.outbound.async_http_transport import AsyncHttpTransport
-from graphql_mcp.adapters.outbound.http_transport import HttpTransport
-from graphql_mcp.config import GraphQLConfig
-from graphql_mcp.domain.schema_service import SchemaService
+from generic_graphql_mcp.adapters.inbound.async_lib import AsyncGraphQLClient
+from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
+from generic_graphql_mcp.adapters.outbound.async_http_transport import AsyncHttpTransport
+from generic_graphql_mcp.adapters.outbound.http_transport import HttpTransport
+from generic_graphql_mcp.config import GraphQLConfig
+from generic_graphql_mcp.domain.schema_service import SchemaService
 from tests.conftest import MockSchemaSource, SAMPLE_SDL
 
 
@@ -60,11 +60,11 @@ def _make_async_client(endpoint: str) -> AsyncGraphQLClient:
 
 
 class TestQueryCountMetric:
-    """Verify graphql_mcp.query.count increments correctly."""
+    """Verify generic_graphql_mcp.query.count increments correctly."""
 
     @respx.mock
     def test_query_count_increments(self, otel_setup) -> None:
-        """query() increments graphql_mcp.query.count with operation=query, error_class=ok."""
+        """query() increments generic_graphql_mcp.query.count with operation=query, error_class=ok."""
         respx.post("http://metrics.test/graphql/").mock(
             return_value=httpx.Response(200, json={"data": {"hello": "world"}})
         )
@@ -75,7 +75,7 @@ class TestQueryCountMetric:
         finally:
             client.close()
 
-        points = _get_metric_value(otel_setup["metric_reader"], "graphql_mcp.query.count")
+        points = _get_metric_value(otel_setup["metric_reader"], "generic_graphql_mcp.query.count")
         assert len(points) >= 1, f"Expected at least 1 count data point, got {points}"
         p = points[0]
         assert p["value"] == 1
@@ -84,11 +84,11 @@ class TestQueryCountMetric:
 
 
 class TestQueryDurationMetric:
-    """Verify graphql_mcp.query.duration histogram records latency."""
+    """Verify generic_graphql_mcp.query.duration histogram records latency."""
 
     @respx.mock
     def test_query_duration_recorded(self, otel_setup) -> None:
-        """query() records a duration > 0 in graphql_mcp.query.duration."""
+        """query() records a duration > 0 in generic_graphql_mcp.query.duration."""
         respx.post("http://metrics.test/graphql/").mock(
             return_value=httpx.Response(200, json={"data": {"hello": "world"}})
         )
@@ -99,17 +99,17 @@ class TestQueryDurationMetric:
         finally:
             client.close()
 
-        points = _get_metric_value(otel_setup["metric_reader"], "graphql_mcp.query.duration")
+        points = _get_metric_value(otel_setup["metric_reader"], "generic_graphql_mcp.query.duration")
         assert len(points) >= 1, f"Expected at least 1 duration data point, got {points}"
         assert points[0]["value"] > 0, "Duration should be > 0"
 
 
 class TestQueryErrorsMetric:
-    """Verify graphql_mcp.query.errors counter by error_class."""
+    """Verify generic_graphql_mcp.query.errors counter by error_class."""
 
     @respx.mock
     def test_query_errors_counter_by_error_class(self, otel_setup) -> None:
-        """query() on HTTP 500 increments graphql_mcp.query.errors with error_class=transport."""
+        """query() on HTTP 500 increments generic_graphql_mcp.query.errors with error_class=transport."""
         respx.post("http://metrics.test/graphql/").mock(return_value=httpx.Response(500, text="Internal Server Error"))
 
         client = _make_sync_client("http://metrics.test/graphql")
@@ -118,7 +118,7 @@ class TestQueryErrorsMetric:
         finally:
             client.close()
 
-        points = _get_metric_value(otel_setup["metric_reader"], "graphql_mcp.query.errors")
+        points = _get_metric_value(otel_setup["metric_reader"], "generic_graphql_mcp.query.errors")
         assert len(points) >= 1, f"Expected at least 1 error data point, got {points}"
         p = points[0]
         assert p["value"] == 1
@@ -130,7 +130,7 @@ class TestRawOperationMetrics:
 
     @respx.mock
     def test_raw_operation_records_metrics(self, otel_setup) -> None:
-        """raw() records graphql_mcp.query.count with operation=raw."""
+        """raw() records generic_graphql_mcp.query.count with operation=raw."""
         respx.post("http://metrics.test/graphql/").mock(
             return_value=httpx.Response(200, json={"data": {"hello": "world"}})
         )
@@ -141,7 +141,7 @@ class TestRawOperationMetrics:
         finally:
             client.close()
 
-        points = _get_metric_value(otel_setup["metric_reader"], "graphql_mcp.query.count")
+        points = _get_metric_value(otel_setup["metric_reader"], "generic_graphql_mcp.query.count")
         assert len(points) >= 1
         # Find the point with operation=raw
         raw_points = [p for p in points if p["attributes"].get("operation") == "raw"]
@@ -154,7 +154,7 @@ class TestEntitiesOperationMetrics:
 
     @respx.mock
     def test_entities_operation_records_metrics(self, otel_setup) -> None:
-        """entities() records graphql_mcp.query.count with operation=entities."""
+        """entities() records generic_graphql_mcp.query.count with operation=entities."""
         respx.post("http://metrics.test/graphql/").mock(
             return_value=httpx.Response(200, json={"data": {"_entities": [{"__typename": "User"}]}})
         )
@@ -165,7 +165,7 @@ class TestEntitiesOperationMetrics:
         finally:
             client.close()
 
-        points = _get_metric_value(otel_setup["metric_reader"], "graphql_mcp.query.count")
+        points = _get_metric_value(otel_setup["metric_reader"], "generic_graphql_mcp.query.count")
         assert len(points) >= 1
         entities_points = [p for p in points if p["attributes"].get("operation") == "entities"]
         assert len(entities_points) >= 1, f"No entities operation point found in {points}"
@@ -177,7 +177,7 @@ class TestAsyncQueryMetrics:
 
     @respx.mock
     async def test_async_query_records_metrics(self, otel_setup) -> None:
-        """async query() records graphql_mcp.query.count with operation=query."""
+        """async query() records generic_graphql_mcp.query.count with operation=query."""
         respx.post("http://metrics.test/graphql/").mock(
             return_value=httpx.Response(200, json={"data": {"hello": "world"}})
         )
@@ -188,7 +188,7 @@ class TestAsyncQueryMetrics:
         finally:
             await client.close()
 
-        points = _get_metric_value(otel_setup["metric_reader"], "graphql_mcp.query.count")
+        points = _get_metric_value(otel_setup["metric_reader"], "generic_graphql_mcp.query.count")
         assert len(points) >= 1, f"Expected at least 1 count data point, got {points}"
         query_points = [p for p in points if p["attributes"].get("operation") == "query"]
         assert len(query_points) >= 1

@@ -6,9 +6,9 @@ import ssl
 
 import pytest
 
-from graphql_mcp.adapters.outbound.http_transport import HttpTransport
-from graphql_mcp.adapters.outbound.async_http_transport import AsyncHttpTransport
-from graphql_mcp.config import GraphQLConfig
+from generic_graphql_mcp.adapters.outbound.http_transport import HttpTransport
+from generic_graphql_mcp.adapters.outbound.async_http_transport import AsyncHttpTransport
+from generic_graphql_mcp.config import GraphQLConfig
 
 
 class TestMtlsConfig:
@@ -79,7 +79,7 @@ class TestMtlsSslContextWiring:
     def test_from_env_without_mtls_creates_transport_without_ssl_context(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Without mTLS env vars, transport is created normally."""
         monkeypatch.setenv("GRAPHQL_ENDPOINT", "https://example.com")
-        from graphql_mcp.adapters.inbound.lib import GraphQLClient
+        from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
 
         client = GraphQLClient.from_env()
         assert client._transport is not None
@@ -99,7 +99,7 @@ class TestMtlsSslContextWiring:
         monkeypatch.setenv("GRAPHQL_CLIENT_CERT", str(cert_file))
         monkeypatch.setenv("GRAPHQL_CLIENT_KEY", str(key_file))
 
-        from graphql_mcp.adapters.inbound.lib import GraphQLClient
+        from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
 
         # ssl.create_default_context().load_cert_chain() will fail with bad certs
         with pytest.raises(ssl.SSLError):
@@ -111,7 +111,7 @@ class TestMtlsSslContextWiring:
         monkeypatch.setenv("GRAPHQL_CLIENT_CERT", "/some/cert.pem")
         # No GRAPHQL_CLIENT_KEY set
 
-        from graphql_mcp.adapters.inbound.lib import GraphQLClient
+        from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
 
         # Should not attempt to build ssl_context (no key), so no error
         client = GraphQLClient.from_env()

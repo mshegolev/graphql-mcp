@@ -17,7 +17,7 @@ GraphQL subscriptions provide a way to receive real-time updates from a GraphQL 
 - `graphql-subscriptions`: Real-time event streaming via GraphQL subscriptions with support for both SSE and WebSocket transports
 
 ### Modified Capabilities
-- `graphql-mcp-api`: Extend REST API specification to include subscription endpoints
+- `generic-graphql-mcp-api`: Extend REST API specification to include subscription endpoints
 
 ## Impact
 

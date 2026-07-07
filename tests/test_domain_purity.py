@@ -4,8 +4,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-DOMAIN_DIR = Path(__file__).resolve().parent.parent / "src" / "graphql_mcp" / "domain"
-PORTS_DIR = Path(__file__).resolve().parent.parent / "src" / "graphql_mcp" / "ports"
+DOMAIN_DIR = Path(__file__).resolve().parent.parent / "src" / "generic_graphql_mcp" / "domain"
+PORTS_DIR = Path(__file__).resolve().parent.parent / "src" / "generic_graphql_mcp" / "ports"
 
 FORBIDDEN_IMPORTS = [
     "import httpx",

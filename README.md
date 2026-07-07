@@ -1,4 +1,4 @@
-# graphql-mcp
+# generic-graphql-mcp
 
 ![CI](https://github.com/mshegolev/graphql-mcp/actions/workflows/ci.yml/badge.svg)
 [![Coverage](https://img.shields.io/badge/Coverage-80%25-yellow.svg)](https://github.com/mshegolev/graphql-mcp)
@@ -16,35 +16,35 @@ Generic read-only GraphQL MCP brick — schema discovery, query execution, 3-cla
 - **Federation ownership**: maps types and fields to subgraphs via supergraph SDL parsing
 - **Rust-native JSON codec**: pyo3 extension for high-throughput JSON processing, with automatic orjson fallback
 - **Async support**: `AsyncGraphQLClient` with full behavioral parity for FastAPI and async workflows
-- **Library-first**: `from graphql_mcp import GraphQLClient` works in pytest without network, MCP, or FastAPI
+- **Library-first**: `from generic_graphql_mcp import GraphQLClient` works in pytest without network, MCP, or FastAPI
 - **Real-time subscriptions**: Server-Sent Events (SSE) and WebSocket support for real-time GraphQL subscriptions
 
 ## Installation
 
 ```bash
 # Core (includes Rust native extension when available)
-pip install graphql-mcp
+pip install generic-graphql-mcp
 
 # With FastAPI REST adapter
-pip install graphql-mcp[server]
+pip install generic-graphql-mcp[server]
 
 # With MCP stdio support
-pip install graphql-mcp[mcp]
+pip install generic-graphql-mcp[mcp]
 
 # With Click CLI
-pip install graphql-mcp[cli]
+pip install generic-graphql-mcp[cli]
 
 # With WebSocket subscription support
-pip install graphql-mcp[subscriptions]
+pip install generic-graphql-mcp[subscriptions]
 
 # Everything
-pip install graphql-mcp[all]
+pip install generic-graphql-mcp[all]
 ```
 
 ## Quick Start
 
 ```python
-from graphql_mcp import GraphQLClient
+from generic_graphql_mcp import GraphQLClient
 
 # Create client from GRAPHQL_* environment variables
 client = GraphQLClient.from_env()
@@ -90,7 +90,7 @@ for result in client.subscribe("subscription { events { id type payload } }"):
 ### Async Usage
 
 ```python
-from graphql_mcp import AsyncGraphQLClient
+from generic_graphql_mcp import AsyncGraphQLClient
 
 async with AsyncGraphQLClient.from_env() as client:
     result = await client.query("{ users { id } }")
@@ -142,7 +142,7 @@ Detailed API documentation is available in the [OpenAPI specification](./openapi
 Direct in-process usage — ideal for tests and scripts:
 
 ```python
-from graphql_mcp import GraphQLClient
+from generic_graphql_mcp import GraphQLClient
 client = GraphQLClient.from_env()
 result = client.query("{ __typename }")
 ```
@@ -152,8 +152,8 @@ result = client.query("{ __typename }")
 HTTP API for team sharing and Kubernetes deployments:
 
 ```bash
-pip install graphql-mcp[server]
-uvicorn graphql_mcp.adapters.inbound.rest:app --host 0.0.0.0 --port 8000
+pip install generic-graphql-mcp[server]
+uvicorn generic_graphql_mcp.adapters.inbound.rest:app --host 0.0.0.0 --port 8000
 ```
 
 Endpoints:
@@ -175,8 +175,8 @@ WebSocket endpoints:
 For Glama, Claude Desktop, and other MCP-compatible AI agents:
 
 ```bash
-pip install graphql-mcp[mcp]
-python -m graphql_mcp.adapters.inbound.mcp_stdio
+pip install generic-graphql-mcp[mcp]
+python -m generic_graphql_mcp.adapters.inbound.mcp_stdio
 ```
 
 Exposes 8 MCP tools: `query`, `raw`, `introspect`, `describe_type`, `list_subgraphs`, `refresh_schema`, `entities`, `subscribe`.
@@ -186,15 +186,15 @@ Exposes 8 MCP tools: `query`, `raw`, `introspect`, `describe_type`, `list_subgra
 Ad-hoc terminal queries:
 
 ```bash
-pip install graphql-mcp[cli]
+pip install generic-graphql-mcp[cli]
 
-graphql-mcp query '{ __typename }'
-graphql-mcp introspect
-graphql-mcp describe-type User
-graphql-mcp list-subgraphs
-graphql-mcp refresh
-graphql-mcp entities '[{"__typename": "Product", "id": "123"}]'
-graphql-mcp subscribe 'subscription { events { id type payload } }'
+generic-graphql-mcp query '{ __typename }'
+generic-graphql-mcp introspect
+generic-graphql-mcp describe-type User
+generic-graphql-mcp list-subgraphs
+generic-graphql-mcp refresh
+generic-graphql-mcp entities '[{"__typename": "Product", "id": "123"}]'
+generic-graphql-mcp subscribe 'subscription { events { id type payload } }'
 ```
 
 ### Serve (REST + MCP-over-HTTP)
@@ -202,23 +202,23 @@ graphql-mcp subscribe 'subscription { events { id type payload } }'
 Start FastAPI with REST endpoints and MCP-over-HTTP transport:
 
 ```bash
-pip install graphql-mcp[all]
+pip install generic-graphql-mcp[all]
 
 # Start the server
-graphql-mcp serve --host 0.0.0.0 --port 8000
+generic-graphql-mcp serve --host 0.0.0.0 --port 8000
 ```
 
 ### Docker
 
 ```bash
-docker build -t graphql-mcp .
+docker build -t generic-graphql-mcp .
 docker run -e GRAPHQL_ENDPOINT=https://api.example.com/graphql \
-  -p 8000:8000 graphql-mcp
+  -p 8000:8000 generic-graphql-mcp
 ```
 
 ## Architecture
 
-graphql-mcp follows **hexagonal architecture** (ports & adapters):
+generic-graphql-mcp follows **hexagonal architecture** (ports & adapters):
 
 ```
 ┌─────────────────────────────────────────────────┐

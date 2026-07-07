@@ -12,8 +12,8 @@ from unittest.mock import MagicMock
 import httpx
 import respx
 
-from graphql_mcp.adapters.outbound.async_http_transport import AsyncHttpTransport
-from graphql_mcp.domain.models import ErrorClass
+from generic_graphql_mcp.adapters.outbound.async_http_transport import AsyncHttpTransport
+from generic_graphql_mcp.domain.models import ErrorClass
 
 
 class SpyCodec:
@@ -130,7 +130,7 @@ class TestAsyncHttpTransportUsesCodec:
 
     async def test_default_codec_from_factory(self) -> None:
         """When no codec passed, AsyncHttpTransport uses get_codec() factory."""
-        from graphql_mcp.ports.json_codec import JsonCodec
+        from generic_graphql_mcp.ports.json_codec import JsonCodec
 
         transport = AsyncHttpTransport("https://example.com/")
         assert isinstance(transport._codec, JsonCodec)
@@ -168,7 +168,7 @@ class TestAsyncProtocolConformance:
 
     async def test_async_transport_is_instance_of_protocol(self) -> None:
         """AsyncHttpTransport satisfies AsyncGraphQLTransport protocol."""
-        from graphql_mcp.ports.transport import AsyncGraphQLTransport
+        from generic_graphql_mcp.ports.transport import AsyncGraphQLTransport
 
         transport = AsyncHttpTransport("https://example.com/")
         assert isinstance(transport, AsyncGraphQLTransport)

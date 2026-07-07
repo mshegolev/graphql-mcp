@@ -2,7 +2,7 @@
 
 ## Context
 
-This phase focuses on implementing contract testing and property-based testing for the graphql-mcp project to ensure robustness and reliability:
+This phase focuses on implementing contract testing and property-based testing for the generic-graphql-mcp project to ensure robustness and reliability:
 
 1. Contract testing with schema snapshots and response shape validation
 2. Property-based testing with Hypothesis for comprehensive input validation

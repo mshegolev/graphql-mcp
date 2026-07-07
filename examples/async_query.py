@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Async GraphQL queries using graphql-mcp.
+"""Async GraphQL queries using generic-graphql-mcp.
 
 This example demonstrates the async client for use with asyncio,
 FastAPI, or any async Python application.
 
 Setup:
-    pip install graphql-mcp
+    pip install generic-graphql-mcp
 
 Environment variables:
     GRAPHQL_ENDPOINT    URL of your GraphQL endpoint (required)
@@ -20,7 +20,7 @@ from __future__ import annotations
 
 import asyncio
 
-from graphql_mcp import AsyncGraphQLClient
+from generic_graphql_mcp import AsyncGraphQLClient
 
 
 async def main() -> None:

@@ -11,8 +11,8 @@ from unittest.mock import MagicMock
 import httpx
 import respx
 
-from graphql_mcp.adapters.outbound.http_transport import HttpTransport
-from graphql_mcp.domain.models import ErrorClass
+from generic_graphql_mcp.adapters.outbound.http_transport import HttpTransport
+from generic_graphql_mcp.domain.models import ErrorClass
 
 
 class SpyCodec:
@@ -72,7 +72,7 @@ class TestHttpTransportUsesCodec:
 
     def test_default_codec_from_factory(self) -> None:
         """When no codec passed, HttpTransport uses get_codec() factory."""
-        from graphql_mcp.ports.json_codec import JsonCodec
+        from generic_graphql_mcp.ports.json_codec import JsonCodec
 
         transport = HttpTransport("https://example.com/")
         assert isinstance(transport._codec, JsonCodec)
@@ -97,7 +97,7 @@ class TestNoOrjsonInTransport:
     """Verify the orjson import has been removed from http_transport.py."""
 
     def test_no_orjson_in_module_dict(self) -> None:
-        import graphql_mcp.adapters.outbound.http_transport as mod
+        import generic_graphql_mcp.adapters.outbound.http_transport as mod
 
         source_file = mod.__file__
         with open(source_file) as f:

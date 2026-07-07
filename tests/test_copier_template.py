@@ -11,8 +11,8 @@ import pytest
 
 TEMPLATE_DIR = pathlib.Path(__file__).resolve().parent.parent / "template"
 HARDCODED_PATTERNS = [
-    "graphql_mcp",
-    "graphql-mcp",
+    "generic_graphql_mcp",
+    "generic-graphql-mcp",
     "GRAPHQL_",
     "GraphqlMcp",
 ]
@@ -88,7 +88,7 @@ class TestGeneratedStructure:
 
 
 class TestNoHardcodedStrings:
-    """Verify no hardcoded graphql_mcp / graphql-mcp / GRAPHQL_ strings remain."""
+    """Verify no hardcoded generic_graphql_mcp / generic-graphql-mcp / GRAPHQL_ strings remain."""
 
     def test_no_hardcoded_strings_in_generated_output(self, generated_project: pathlib.Path) -> None:
         """Grep all generated files for hardcoded parent-project references."""

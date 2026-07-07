@@ -17,10 +17,10 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 - `entities()` operation — federation `_entities(representations:)` pass-through on `GraphQLClient` and `AsyncGraphQLClient`
 - `POST /graphql/entities` REST endpoint
 - `entities` MCP tool
-- `graphql-mcp entities` CLI command
+- `generic-graphql-mcp entities` CLI command
 - `AsyncGraphQLClient` — async counterpart to `GraphQLClient` with full behavioral parity
 - `AsyncHttpTransport` — async httpx-based transport
-- `graphql-mcp serve` CLI command — starts FastAPI with REST + MCP-over-HTTP
+- `generic-graphql-mcp serve` CLI command — starts FastAPI with REST + MCP-over-HTTP
 - MCP-over-HTTP transport on FastAPI app (streamable HTTP alongside REST)
 - `/ready` endpoint — readiness probe (200 when schema resolvable, 503 otherwise)
 - Dockerfile with multi-stage build, health probes, non-root user

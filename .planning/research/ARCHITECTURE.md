@@ -7,7 +7,7 @@
 ## Current Architecture Map
 
 ```
-src/graphql_mcp/
+src/generic_graphql_mcp/
   domain/          # Pure logic, no I/O
     models.py        QueryResult, ErrorClass, SchemaGraph, TypeInfo, Subgraph, SchemaSummary
     errors.py        SchemaResolutionError, MutationGuardError
@@ -132,11 +132,11 @@ opentelemetry-instrumentation-logging     # correlate logs with trace IDs
 
 | Metric | Type | Where |
 |--------|------|-------|
-| `graphql_mcp.query.duration` | Histogram | TracedTransport |
-| `graphql_mcp.query.count` | Counter | TracedTransport (by error_class) |
-| `graphql_mcp.schema.resolve.duration` | Histogram | Schema service wrapper |
-| `graphql_mcp.schema.cache.hit` | Counter | Schema service wrapper |
-| `graphql_mcp.transport.error` | Counter | TracedTransport (by error type) |
+| `generic_graphql_mcp.query.duration` | Histogram | TracedTransport |
+| `generic_graphql_mcp.query.count` | Counter | TracedTransport (by error_class) |
+| `generic_graphql_mcp.schema.resolve.duration` | Histogram | Schema service wrapper |
+| `generic_graphql_mcp.schema.cache.hit` | Counter | Schema service wrapper |
+| `generic_graphql_mcp.transport.error` | Counter | TracedTransport (by error type) |
 
 #### Confidence: HIGH
 - Context7 verified: OTEL Python SDK, OTLP exporters, FastAPI/httpx auto-instrumentation all well-documented
@@ -405,7 +405,7 @@ DX/CI changes are entirely outside the hexagonal architecture. They're build/too
 
 ### 5. Copier Template Extraction
 
-**Goal:** Extract graphql-mcp skeleton into a Copier template so kafka-mcp/ordering-mcp can be generated from it.
+**Goal:** Extract generic-graphql-mcp skeleton into a Copier template so kafka-mcp/ordering-mcp can be generated from it.
 
 #### Integration Strategy: Overlay — Template Files Alongside Source
 
@@ -414,15 +414,15 @@ Copier template extraction means the **source files themselves become templates*
 **Approach A: Separate template repo** (recommended)
 - Create `investigate-mcp-template/` as a separate repo
 - Files use Jinja2 templating: `{{project_name}}/`, `{{module_name}}.py.jinja`
-- graphql-mcp is the first **instance** generated from this template
+- generic-graphql-mcp is the first **instance** generated from this template
 
 **Approach B: In-repo `template/` directory** (simpler but less clean)
-- `template/` directory within graphql-mcp with `copier.yml` + templated sources
+- `template/` directory within generic-graphql-mcp with `copier.yml` + templated sources
 - Other bricks run `copier copy ./template ../kafka-mcp`
 
-**Recommendation: Approach A** — separate template repo. The graphql-mcp repo should not contain template meta-files; it should be a clean instance. The template lives in the umbrella (`investigate-suite/`) or its own repo.
+**Recommendation: Approach A** — separate template repo. The generic-graphql-mcp repo should not contain template meta-files; it should be a clean instance. The template lives in the umbrella (`investigate-suite/`) or its own repo.
 
-#### What the Template Needs from graphql-mcp
+#### What the Template Needs from generic-graphql-mcp
 
 The template extracts the **hexagonal skeleton**:
 
@@ -492,8 +492,8 @@ template/
 
 | File | Change | Why |
 |------|--------|-----|
-| None in graphql-mcp | — | Template lives in separate repo |
-| PROJECT.md | Document that graphql-mcp is the reference brick | Traceability |
+| None in generic-graphql-mcp | — | Template lives in separate repo |
+| PROJECT.md | Document that generic-graphql-mcp is the reference brick | Traceability |
 
 #### Confidence: HIGH
 - Copier template structure verified via Context7
@@ -642,7 +642,7 @@ ports/subscription.py
 ### Phase 5: Copier Template (last — needs stable architecture)
 
 ```
-Analyze final graphql-mcp structure
+Analyze final generic-graphql-mcp structure
   → Create template repo with copier.yml
   → Jinja2-ify all templatable files
   → Test: generate kafka-mcp from template
@@ -670,9 +670,9 @@ Analyze final graphql-mcp structure
 **Why bad:** Each worker fork gets its own copy; limits are per-worker not per-server
 **Instead:** Per-worker rate limiting (acceptable for single-brick), or shared backend if needed
 
-### Anti-Pattern 4: Copier Template with Hardcoded graphql-mcp References
-**What:** Template files that still reference `graphql_mcp` or `GraphQLClient` literally
-**Why bad:** Generated kafka-mcp would have graphql_mcp imports
+### Anti-Pattern 4: Copier Template with Hardcoded generic-graphql-mcp References
+**What:** Template files that still reference `generic_graphql_mcp` or `GraphQLClient` literally
+**Why bad:** Generated kafka-mcp would have generic_graphql_mcp imports
 **Instead:** Thorough Jinja2 parameterization: `{{module_name}}`, `{{client_class_name}}`
 
 ### Anti-Pattern 5: WebSocket Handler Doing Protocol + Business Logic

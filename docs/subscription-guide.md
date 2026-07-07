@@ -1,6 +1,6 @@
 # GraphQL MCP Subscription Guide
 
-This guide explains how to use GraphQL subscriptions with the graphql-mcp library, covering all supported transports and client interfaces.
+This guide explains how to use GraphQL subscriptions with the generic-graphql-mcp library, covering all supported transports and client interfaces.
 
 ## Overview
 
@@ -20,7 +20,7 @@ Both transports are supported across all client interfaces:
 ### Synchronous Client
 
 ```python
-from graphql_mcp import GraphQLClient
+from generic_graphql_mcp import GraphQLClient
 
 client = GraphQLClient.from_env()
 
@@ -40,7 +40,7 @@ for result in client.subscribe("subscription { events { id type payload } }"):
 ### Asynchronous Client
 
 ```python
-from graphql_mcp import AsyncGraphQLClient
+from generic_graphql_mcp import AsyncGraphQLClient
 
 async with AsyncGraphQLClient.from_env() as client:
     # Subscribe to events using async for
@@ -144,7 +144,7 @@ asyncio.run(subscribe_to_events())
 When using the MCP stdio adapter, the `subscribe` tool is available:
 
 ```bash
-python -m graphql_mcp.adapters.inbound.mcp_stdio
+python -m generic_graphql_mcp.adapters.inbound.mcp_stdio
 ```
 
 The tool can be called with a subscription query and optional variables.
@@ -159,16 +159,16 @@ The CLI now includes a `subscribe` command:
 
 ```bash
 # Install with subscription support
-pip install graphql-mcp[subscriptions]
+pip install generic-graphql-mcp[subscriptions]
 
 # Subscribe to events
-graphql-mcp subscribe 'subscription { events { id type payload } }'
+generic-graphql-mcp subscribe 'subscription { events { id type payload } }'
 
 # With variables
-graphql-mcp subscribe 'subscription FilteredEvents($eventType: String!) { events(type: $eventType) { id payload } }' --variables '{"eventType": "user_action"}'
+generic-graphql-mcp subscribe 'subscription FilteredEvents($eventType: String!) { events(type: $eventType) { id payload } }' --variables '{"eventType": "user_action"}'
 
 # With table formatting
-graphql-mcp subscribe 'subscription { events { id type payload } }' --format table
+generic-graphql-mcp subscribe 'subscription { events { id type payload } }' --format table
 ```
 
 ## Configuration
@@ -229,7 +229,7 @@ When rate limits are exceeded, clients receive a 429 status code with a `Retry-A
 If you encounter an ImportError about websockets, install the subscriptions extra:
 
 ```bash
-pip install graphql-mcp[subscriptions]
+pip install generic-graphql-mcp[subscriptions]
 ```
 
 ### "No subscription endpoint configured" Error

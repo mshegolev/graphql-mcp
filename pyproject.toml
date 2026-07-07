@@ -3,7 +3,7 @@ requires = ["maturin>=1.0,<2.0"]
 build-backend = "maturin"
 
 [project]
-name = "graphql-mcp"
+name = "generic-graphql-mcp"
 dynamic = ["version"]
 description = "Generic read-only GraphQL MCP brick — schema discovery, query execution, error typing, federation ownership"
 requires-python = ">=3.10"
@@ -29,7 +29,7 @@ dev = [
     "pytest-cov>=5",
     "httpx[cli]>=0.28",
     "websockets>=12,<14",
-    "graphql-mcp[otel]",
+    "generic-graphql-mcp[otel]",
 ]
 server = [
     "fastapi>=0.100,<1",
@@ -53,15 +53,15 @@ subscriptions = [
     "websockets>=12,<14",
 ]
 all = [
-    "graphql-mcp[server,mcp,cli,otel,subscriptions]",
+    "generic-graphql-mcp[server,mcp,cli,otel,subscriptions]",
 ]
 
 [project.scripts]
-graphql-mcp = "graphql_mcp.adapters.inbound.cli:main"
+generic-graphql-mcp = "generic_graphql_mcp.adapters.inbound.cli:main"
 
 [tool.maturin]
 python-source = "src"
-module-name = "graphql_mcp._native"
+module-name = "generic_graphql_mcp._native"
 manifest-path = "native/Cargo.toml"
 features = ["pyo3/extension-module"]
 

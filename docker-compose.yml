@@ -1,4 +1,4 @@
-# Docker Compose integration test harness for graphql-mcp.
+# Docker Compose integration test harness for generic-graphql-mcp.
 #
 # Usage:
 #   docker compose up --build --abort-on-container-exit

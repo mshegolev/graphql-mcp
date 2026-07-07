@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""GraphQL subscription streaming using graphql-mcp.
+"""GraphQL subscription streaming using generic-graphql-mcp.
 
 This example demonstrates real-time subscription support via the async
 client's subscribe() method. Events are streamed over WebSocket using
 the graphql-transport-ws sub-protocol.
 
 Setup:
-    pip install 'graphql-mcp[subscriptions]'
+    pip install 'generic-graphql-mcp[subscriptions]'
 
 Environment variables:
     GRAPHQL_ENDPOINT             HTTP endpoint (used for schema + ws:// derivation)
@@ -30,7 +30,7 @@ from __future__ import annotations
 
 import asyncio
 
-from graphql_mcp import AsyncGraphQLClient
+from generic_graphql_mcp import AsyncGraphQLClient
 
 
 async def main() -> None:

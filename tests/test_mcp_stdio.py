@@ -13,11 +13,11 @@ from unittest.mock import patch
 import pytest
 from mcp.server.fastmcp.exceptions import ToolError
 
-from graphql_mcp.adapters.inbound.lib import GraphQLClient
-from graphql_mcp.adapters.inbound.mcp_stdio import RefreshResult
-from graphql_mcp.config import GraphQLConfig
-from graphql_mcp.domain.models import SchemaSummary, TypeInfo
-from graphql_mcp.domain.schema_service import SchemaService
+from generic_graphql_mcp.adapters.inbound.lib import GraphQLClient
+from generic_graphql_mcp.adapters.inbound.mcp_stdio import RefreshResult
+from generic_graphql_mcp.config import GraphQLConfig
+from generic_graphql_mcp.domain.models import SchemaSummary, TypeInfo
+from generic_graphql_mcp.domain.schema_service import SchemaService
 from tests.conftest import SAMPLE_SDL, MockSchemaSource
 
 
@@ -32,14 +32,14 @@ class TestMCPToolRegistration:
     """Verify all 8 operations are registered as MCP tools."""
 
     def test_mcp_server_exists(self) -> None:
-        from graphql_mcp.adapters.inbound.mcp_stdio import mcp
+        from generic_graphql_mcp.adapters.inbound.mcp_stdio import mcp
 
         assert mcp is not None
-        assert mcp.name == "graphql-mcp"
+        assert mcp.name == "generic-graphql-mcp"
 
     def test_all_tools_registered(self) -> None:
         """All 8 GraphQLClient operations should be registered as MCP tools."""
-        import graphql_mcp.adapters.inbound.mcp_stdio as mod
+        import generic_graphql_mcp.adapters.inbound.mcp_stdio as mod
 
         expected_tools = {
             "query",
@@ -61,7 +61,7 @@ class TestMCPToolDelegation:
 
     def test_introspect_tool_returns_summary(self) -> None:
         """introspect tool should return a SchemaSummary with query_fields."""
-        import graphql_mcp.adapters.inbound.mcp_stdio as mod
+        import generic_graphql_mcp.adapters.inbound.mcp_stdio as mod
 
         with patch.object(mod, "_get_client", return_value=_mock_client()):
             result = mod.introspect()
@@ -69,7 +69,7 @@ class TestMCPToolDelegation:
         assert "hello" in result.query_fields
 
     def test_describe_type_tool(self) -> None:
-        import graphql_mcp.adapters.inbound.mcp_stdio as mod
+        import generic_graphql_mcp.adapters.inbound.mcp_stdio as mod
 
         with patch.object(mod, "_get_client", return_value=_mock_client()):
             result = mod.describe_type("User")
@@ -77,14 +77,14 @@ class TestMCPToolDelegation:
         assert result.name == "User"
 
     def test_list_subgraphs_tool(self) -> None:
-        import graphql_mcp.adapters.inbound.mcp_stdio as mod
+        import generic_graphql_mcp.adapters.inbound.mcp_stdio as mod
 
         with patch.object(mod, "_get_client", return_value=_mock_client()):
             result = mod.list_subgraphs()
         assert isinstance(result, list)
 
     def test_refresh_schema_tool(self) -> None:
-        import graphql_mcp.adapters.inbound.mcp_stdio as mod
+        import generic_graphql_mcp.adapters.inbound.mcp_stdio as mod
 
         with patch.object(mod, "_get_client", return_value=_mock_client()):
             result = mod.refresh_schema()
@@ -92,21 +92,21 @@ class TestMCPToolDelegation:
         assert result.status == "refreshed"
 
     def test_query_tool_no_transport(self) -> None:
-        import graphql_mcp.adapters.inbound.mcp_stdio as mod
+        import generic_graphql_mcp.adapters.inbound.mcp_stdio as mod
 
         with patch.object(mod, "_get_client", return_value=_mock_client()):
             result = mod.query("{ hello }")
         assert result.error_class.value == "transport"
 
     def test_raw_tool_no_transport(self) -> None:
-        import graphql_mcp.adapters.inbound.mcp_stdio as mod
+        import generic_graphql_mcp.adapters.inbound.mcp_stdio as mod
 
         with patch.object(mod, "_get_client", return_value=_mock_client()):
             result = mod.raw({"query": "{ hello }"})
         assert result.error_class.value == "transport"
 
     def test_entities_tool_no_transport(self) -> None:
-        import graphql_mcp.adapters.inbound.mcp_stdio as mod
+        import generic_graphql_mcp.adapters.inbound.mcp_stdio as mod
 
         with patch.object(mod, "_get_client", return_value=_mock_client()):
             result = mod.entities([{"__typename": "Product", "id": "123"}])
@@ -117,7 +117,7 @@ class TestMCPToolErrors:
     """Verify a blocked mutation surfaces as an actionable MCP ToolError."""
 
     def test_query_mutation_blocked_raises_tool_error(self) -> None:
-        import graphql_mcp.adapters.inbound.mcp_stdio as mod
+        import generic_graphql_mcp.adapters.inbound.mcp_stdio as mod
 
         with (
             patch.object(mod, "_get_client", return_value=_mock_client()),

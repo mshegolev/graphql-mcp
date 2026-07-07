@@ -1,7 +1,7 @@
 # Phase 17 Plan: Advanced Performance Monitoring and Optimization
 
 ## Overview
-This plan outlines the implementation of advanced performance monitoring and optimization features for the graphql-mcp project. The focus is on reducing latency, improving resource utilization, and providing comprehensive performance insights.
+This plan outlines the implementation of advanced performance monitoring and optimization features for the generic-graphql-mcp project. The focus is on reducing latency, improving resource utilization, and providing comprehensive performance insights.
 
 ## Success Criteria
 1. Real-time performance dashboards displaying query execution times, throughput metrics, and resource utilization

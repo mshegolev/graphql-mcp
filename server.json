@@ -1,5 +1,5 @@
 {
-  "name": "graphql-mcp",
+  "name": "generic-graphql-mcp",
   "description": "Generic read-only GraphQL MCP server — schema discovery, query execution, error typing, federation ownership and entity resolution",
   "version": "1.1.0",
   "tools": [
@@ -35,6 +35,6 @@
   "transport": {
     "type": "stdio",
     "command": "python",
-    "args": ["-m", "graphql_mcp.adapters.inbound.mcp_stdio"]
+    "args": ["-m", "generic_graphql_mcp.adapters.inbound.mcp_stdio"]
   }
 }

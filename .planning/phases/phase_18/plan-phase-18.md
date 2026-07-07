@@ -1,7 +1,7 @@
 # Phase 18 Plan: Scalability Enhancements
 
 ## Overview
-This plan outlines the implementation of scalability enhancements for the graphql-mcp project. The focus is on horizontal scaling capabilities, connection pooling, and throughput optimization to handle high-concurrency environments.
+This plan outlines the implementation of scalability enhancements for the generic-graphql-mcp project. The focus is on horizontal scaling capabilities, connection pooling, and throughput optimization to handle high-concurrency environments.
 
 ## Success Criteria
 1. Horizontal scaling capabilities with sharding and load balancing

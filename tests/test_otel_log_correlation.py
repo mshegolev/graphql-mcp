@@ -7,7 +7,7 @@ import logging
 import httpx
 import respx
 
-from graphql_mcp.adapters.outbound.http_transport import HttpTransport
+from generic_graphql_mcp.adapters.outbound.http_transport import HttpTransport
 
 
 class RecordCapture(logging.Handler):
@@ -38,7 +38,7 @@ class TestLogCorrelation:
         instrumentor.instrument(set_logging_format=True)
 
         capture = RecordCapture()
-        log = logging.getLogger("graphql_mcp.test.correlation")
+        log = logging.getLogger("generic_graphql_mcp.test.correlation")
         log.addHandler(capture)
         log.setLevel(logging.DEBUG)
 
@@ -83,7 +83,7 @@ class TestLogCorrelation:
         instrumentor.instrument(set_logging_format=True)
 
         capture = RecordCapture()
-        log = logging.getLogger("graphql_mcp.test.no_span")
+        log = logging.getLogger("generic_graphql_mcp.test.no_span")
         log.addHandler(capture)
         log.setLevel(logging.DEBUG)
 
@@ -115,7 +115,7 @@ class TestLogCorrelation:
         instrumentor.instrument(set_logging_format=True)
 
         capture = RecordCapture()
-        transport_logger = logging.getLogger("graphql_mcp.adapters.outbound.http_transport")
+        transport_logger = logging.getLogger("generic_graphql_mcp.adapters.outbound.http_transport")
         transport_logger.addHandler(capture)
 
         try:

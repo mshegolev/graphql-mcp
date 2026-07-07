@@ -1,4 +1,4 @@
-# graphql-mcp v2.1 — Requirements
+# generic-graphql-mcp v2.1 — Requirements
 
 **Milestone:** v2.1 Testing & Quality
 **Scope:** Coverage enforcement, contract testing, mutation testing, property-based testing, snapshot testing, CI quality gates.

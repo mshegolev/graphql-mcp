@@ -44,7 +44,7 @@ fn decode(py: Python<'_>, data: &[u8]) -> PyResult<Py<PyAny>> {
 
 #[pymodule]
 #[pyo3(name = "_native")]
-fn graphql_mcp_native(m: &Bound<'_, PyModule>) -> PyResult<()> {
+fn generic_graphql_mcp_native(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add("__version__", "0.1.0")?;
     m.add_function(wrap_pyfunction!(encode, m)?)?;
     m.add_function(wrap_pyfunction!(decode, m)?)?;

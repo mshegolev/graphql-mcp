@@ -4,7 +4,7 @@
 Prove that the test suite catches real bugs (not just passes on correct code), and ensure every PR is automatically gated on lint, type check, tests, coverage, and multi-version compatibility to prevent merging broken code.
 
 ## Success Criteria
-✅ `mutmut run --paths-to-mutate=src/graphql_mcp/domain/` produces a mutation score percentage, and adapters/config modules are excluded  
+✅ `mutmut run --paths-to-mutate=src/generic_graphql_mcp/domain/` produces a mutation score percentage, and adapters/config modules are excluded  
 ✅ CI blocks PR merge when mutation score drops below the configured threshold  
 ✅ GitHub Actions workflow runs ruff lint, type check (mypy or pyright), full test suite, and coverage check on every PR push  
 ✅ Branch protection rules require all quality gate status checks to pass before merge  
