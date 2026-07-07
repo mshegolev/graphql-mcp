@@ -13,6 +13,7 @@
 - ✅ **v2.0 Production-Grade Platform** — Phases 9-13 (shipped 2026-06-16)
 - ✅ **v2.1 Testing & Quality** — Phases 14-16 (complete 2026-06-18)
 - ✅ **v2.2 Performance Excellence** — Phases 17-19 (complete 2026-06-18)
+- ⬜ **v2.3 Release & Staging Enablement** — Phases 20-22
 
 ## Phases
 
@@ -60,6 +61,14 @@
 - [x] **Phase 17: Advanced Performance Monitoring and Optimization** — Detailed performance profiling, memory usage tracking, and advanced caching strategies to optimize GraphQL query execution and reduce latency across all adapters (complete 2026-06-18)
 - [x] **Phase 18: Scalability Enhancements** — Horizontal scaling capabilities, connection pooling, and throughput optimization for high-concurrency environments (complete 2026-06-18)
 - [x] **Phase 19: Resource Efficiency and Green Computing** — Memory footprint reduction, CPU optimization, and energy-efficient computing practices (complete 2026-06-18)
+
+---
+
+### ⬜ v2.3 Release & Staging Enablement
+
+- [ ] **Phase 20: CI Hardening** — Fix broken dev dependency and pytest config so the full async test suite installs and runs green on CI
+- [ ] **Phase 21: PyPI Release** — Publish `generic-graphql-mcp` to PyPI via OIDC Trusted Publishing with tag-driven version provenance and a documented release runbook
+- [ ] **Phase 22: Staging Enablement** — Wire the MCP server to the EORD staging federation gateway with live ISSO bearer auth and validate connectivity via a smoke check
 
 ---
 
@@ -297,25 +306,6 @@ _See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for v1.0 phase det
 
 ---
 
-**Goal**: The test suite is proven to catch real bugs (not just pass on correct code), and every PR is automatically gated on lint, type check, tests, coverage, and multi-version compatibility — merging broken code requires deliberate override.
-**Depends on**: Phase 15 (all test methodologies in place — CI gates enforce the complete quality stack)
-**Requirements**: MUT-01, MUT-02, MUT-03, CI-01, CI-02, CI-03, CI-04
-
-**Success Criteria** (what must be TRUE):
-
-1. `mutmut run --paths-to-mutate=src/generic_graphql_mcp/domain/,src/generic_graphql_mcp/domain/query_service.py` produces a mutation score percentage, and adapters/config modules are excluded — verified by mutmut output showing only domain/ mutations.
-2. CI blocks PR merge when mutation score drops below the configured threshold — verified by CI workflow step that runs mutmut and checks the score.
-3. GitHub Actions workflow runs ruff lint, type check (mypy or pyright), full test suite, and coverage check on every PR push — verified by workflow YAML and a successful CI run.
-4. Branch protection rules require all quality gate status checks to pass before merge — verified by attempting to merge a PR with a failing check.
-5. Test matrix runs across Python 3.10, 3.11, 3.12 — verified by matrix configuration in workflow YAML showing all three versions and passing runs.
-6. Nightly scheduled workflow runs full mutation testing and uploads the report as a CI artifact — verified by cron schedule in workflow YAML and mutation report artifact in CI.
-
-**Plans**: TBD
-
----
-
----
-
 ### Phase 17: Advanced Performance Monitoring and Optimization
 
 **Goal**: Implement comprehensive performance monitoring, detailed profiling capabilities, and advanced optimization techniques to significantly reduce latency and improve resource utilization across all GraphQL operations and adapters.
@@ -333,7 +323,95 @@ _See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for v1.0 phase det
 5. Custom metrics track hot paths, bottlenecks, and performance regressions with alerting capabilities.
 6. Benchmark suites compare performance before/after optimizations with statistical significance reporting.
 
+**Plans**: 6/6 complete
+
+---
+
+### Phase 18: Scalability Enhancements
+
+**Goal**: The server handles high-concurrency workloads through horizontal scaling, connection pooling, and throughput optimization — a deployment under sustained load degrades gracefully rather than cascading.
+
+**Depends on**: Phase 17 (performance baseline established — scaling work builds on measured foundations)
+
+**Requirements**: SCALE-01, SCALE-02, SCALE-03, SCALE-04, SCALE-05
+
+**Success Criteria** (what must be TRUE):
+
+1. Connection pooling limits and reuses upstream HTTP connections; pool exhaustion returns 503 rather than hanging.
+2. Throughput under concurrent load improves measurably compared to the v2.1 baseline.
+3. Horizontal scaling documentation and configuration present.
+4. Load test suite validates throughput targets.
+5. Graceful degradation under overload is verified by test.
+
+**Plans**: 5/5 complete
+
+---
+
+### Phase 19: Resource Efficiency and Green Computing
+
+**Goal**: Memory footprint and CPU utilization are reduced and measured — the brick runs efficiently on constrained deployments and energy consumption is tracked.
+
+**Depends on**: Phase 18 (scalability complete — efficiency optimizations build on stable scaling foundation)
+
+**Requirements**: RES-01, RES-02, RES-03, RES-04
+
+**Success Criteria** (what must be TRUE):
+
+1. Memory footprint reduced by at least 30% versus v2.1 baseline under equivalent load.
+2. CPU utilization improved by at least 28% for hot-path operations.
+3. Energy efficiency metrics tracked and documented.
+4. Resource efficiency benchmarks run in CI and results committed.
+
+**Plans**: 4/4 complete
+
+---
+
+### Phase 20: CI Hardening
+
+**Goal**: The test suite installs cleanly, async tests collect and pass, and the CI `lint-and-test` workflow is green on main — every blocker preventing a reliable CI baseline is removed before release work begins.
+**Depends on**: Phase 19 (v2.2 complete — stable codebase to green-up)
+**Requirements**: CIH-01, CIH-02, CIH-03
+
+**Success Criteria** (what must be TRUE):
+
+1. `pip install .[dev]` completes in a clean virtualenv with no package-not-found error for `syrupy` — the `pyproject.toml` dev dependency list names `syrupy`, not `pytest-syrupy`.
+2. `pytest` collects and executes async test functions without "PytestUnraisableExceptionWarning" or "async def not natively supported" errors — the pytest config section header is `[pytest]` (not `[tool:pytest]`) so `asyncio_mode = auto` is applied.
+3. The full test suite passes on the CI matrix (Python 3.10, 3.11, 3.12) with zero collection errors and zero fixture failures attributable to the config issues above.
 **Plans**: TBD
+**UI hint**: no
+
+---
+
+### Phase 21: PyPI Release
+
+**Goal**: A maintainer publishes `generic-graphql-mcp` to PyPI by pushing a release tag; the GitHub Actions publish workflow completes green via OIDC Trusted Publishing, the uploaded version matches the tag, and a runbook makes the process reproducible.
+**Depends on**: Phase 20 (CI green — release workflow depends on a passing test suite)
+**Requirements**: REL-01, REL-02, REL-03
+
+**Success Criteria** (what must be TRUE):
+
+1. Pushing a `vX.Y.Z` tag triggers the GitHub Actions "Publish to PyPI" workflow and the package `generic-graphql-mcp` appears on pypi.org under that version with no `invalid-publisher` error.
+2. The version of the uploaded distribution matches the pushed tag exactly — `native/Cargo.toml` is the single version source and it is synced to the tag before the workflow runs.
+3. `docs/RELEASE.md` exists in the repository and documents the pending-publisher claims (project name, owner, repo, workflow filename, environment), the tag-push procedure, and the rerun-on-failure command — a maintainer with no tribal knowledge can reproduce a release from a clean checkout.
+**Plans**: TBD
+**UI hint**: no
+
+---
+
+### Phase 22: Staging Enablement
+
+**Goal**: A developer can run the MCP server locally in `serve` (HTTP) and `stdio` modes pointed at the EORD staging federation gateway, the server obtains a live ISSO bearer token at startup, and a smoke check confirms real connectivity to the live schema.
+**Depends on**: Phase 21 (PyPI release complete — staging wires a released or editable-install build against the live environment)
+**Requirements**: STG-01, STG-02, STG-03, STG-04
+
+**Success Criteria** (what must be TRUE):
+
+1. `generic-graphql-mcp serve` and `generic-graphql-mcp stdio` both start successfully with `GRAPHQL_ENDPOINT=https://gql.enp-stage.mts-corp.ru/` set; `/ready` returns 200 in serve mode when schema resolves.
+2. At startup the server performs a Keycloak password-grant (`client_id=eordui-stage`, `username=sa0000eord`) and injects the returned bearer token into all upstream requests — no placeholder or hardcoded token appears in any committed file.
+3. Staging connection config (endpoint URL, proxy bypass, SSL verification flag) is derived reproducibly from `integration-tests/pytest.ini`; credentials (`ISSO_PASSWORD` or equivalent) are supplied only via environment variables and are never committed.
+4. A smoke script (`scripts/staging_smoke.py` or equivalent) exits 0 when run against staging: `introspect()` returns at least one Query field and `list_subgraphs()` returns at least one named federation subgraph.
+**Plans**: TBD
+**UI hint**: no
 
 ---
 
@@ -360,3 +438,6 @@ _See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for v1.0 phase det
 | 17. Advanced Performance Monitoring and Optimization | v2.2 | 6/6 | Complete | 2026-06-18 |
 | 18. Scalability Enhancements | v2.2 | 5/5 | Complete | 2026-06-18 |
 | 19. Resource Efficiency and Green Computing | v2.2 | 4/4 | Complete | 2026-06-18 |
+| 20. CI Hardening | v2.3 | 0/? | Not started | - |
+| 21. PyPI Release | v2.3 | 0/? | Not started | - |
+| 22. Staging Enablement | v2.3 | 0/? | Not started | - |

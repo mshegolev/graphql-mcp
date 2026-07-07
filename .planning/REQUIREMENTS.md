@@ -53,13 +53,13 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| REL-01 | — | Pending roadmap |
-| REL-02 | — | Pending roadmap |
-| REL-03 | — | Pending roadmap |
-| STG-01 | — | Pending roadmap |
-| STG-02 | — | Pending roadmap |
-| STG-03 | — | Pending roadmap |
-| STG-04 | — | Pending roadmap |
-| CIH-01 | — | Pending roadmap |
-| CIH-02 | — | Pending roadmap |
-| CIH-03 | — | Pending roadmap |
+| CIH-01 | Phase 20 | Pending |
+| CIH-02 | Phase 20 | Pending |
+| CIH-03 | Phase 20 | Pending |
+| REL-01 | Phase 21 | Pending |
+| REL-02 | Phase 21 | Pending |
+| REL-03 | Phase 21 | Pending |
+| STG-01 | Phase 22 | Pending |
+| STG-02 | Phase 22 | Pending |
+| STG-03 | Phase 22 | Pending |
+| STG-04 | Phase 22 | Pending |

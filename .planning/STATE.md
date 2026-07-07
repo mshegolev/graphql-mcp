@@ -2,11 +2,11 @@
 gsd_state_version: 1.0
 milestone: v2.3
 milestone_name: Release & Staging Enablement
-status: planning
-last_updated: "2026-07-07T19:17:14.643Z"
-last_activity: 2026-07-07
+status: in-progress
+last_updated: "2026-07-08T00:00:00.000Z"
+last_activity: 2026-07-08
 progress:
-  total_phases: 0
+  total_phases: 3
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -21,7 +21,7 @@ progress:
 
 **Investigator contract**: `GraphQLClient` exposes `query`, `raw`, `entities`, `introspect`, `describe_type`, `list_subgraphs`, `refresh_schema`. The `error_class` field lets investigator distinguish "service down" (transport) from "asked wrong thing" (graphql). `subgraph` on `TypeInfo` is the correlation key to `service_name` in Jaeger/OpenSearch.
 
-**Repository**: `/opt/develop/aiqa/mcps/generic-graphql-mcp/`
+**Repository**: `/opt/develop/aiqa/mcps/graphql-mcp/`
 **Spec**: `/opt/develop/aiqa/docs/superpowers/specs/2026-06-05-investigation-mcp-suite-design.md` §3
 **Roadmap**: `.planning/ROADMAP.md`
 **Requirements**: `.planning/REQUIREMENTS.md`
@@ -30,10 +30,13 @@ progress:
 
 ## Current Position
 
-Phase: Not started (defining requirements)
-Plan: —
-Status: Defining requirements
-Last activity: 2026-07-07 — Milestone v2.3 started
+**Milestone**: v2.3 Release & Staging Enablement
+**Phase**: 20 — CI Hardening (not started)
+**Plan**: —
+**Status**: Roadmap created; ready to plan Phase 20
+**Last activity**: 2026-07-08 — Roadmap created for v2.3 (Phases 20-22)
+
+Progress bar: `[ ] Phase 20` `[ ] Phase 21` `[ ] Phase 22` — 0/3 complete
 
 ## Performance Metrics
 
@@ -55,6 +58,8 @@ Last activity: 2026-07-07 — Milestone v2.3 started
 | v2.1 Requirements | 19/19 (All requirements satisfied) |
 | v2.2 Phases | 3/3 (Phase 17 complete, Phase 18 complete, Phase 19 complete) |
 | v2.2 Requirements | 18/18 (All requirements satisfied) |
+| v2.3 Phases | 0/3 (Phase 20 pending, Phase 21 pending, Phase 22 pending) |
+| v2.3 Requirements | 0/10 (10 requirements mapped to roadmap) |
 
 ---
 
@@ -95,12 +100,24 @@ Last activity: 2026-07-07 — Milestone v2.3 started
 | 2026-06-16 | Domain files not Jinja2-templated | models.py, errors.py have no module_name refs; stay as plain Python |
 | 2026-06-16 | Config class name derived from env_prefix | KafkaConfig, OrderingConfig — derived via Jinja2 title() filter |
 
+### v2.3 Decisions
+
+| Date | Decision | Rationale |
+|------|----------|-----------|
+| 2026-07-08 | Renamed dist graphql-mcp → generic-graphql-mcp | PyPI name graphql-mcp taken; blocked Trusted Publishing |
+| 2026-07-08 | OIDC Trusted Publishing over API token | No long-lived PyPI secret in CI; per-repo pending publisher configured on pypi.org |
+| 2026-07-08 | ISSO Keycloak password-grant for staging auth | Real auth mechanism for EORD staging; `client_id=eordui-stage`, `username=sa0000eord` |
+| 2026-07-08 | Staging config sourced from integration-tests/pytest.ini | Single source of truth for connection parameters; credentials from env only |
+| 2026-07-08 | `native/Cargo.toml` as single version source | Tag → Cargo.toml version → distribution version; avoids version drift |
+
 ### Key Constraints
 
 - `domain/` must never import fastapi, requests, httpx, or any I/O library — enforced by ruff + test
 - Mutation-guard is always on unless `GRAPHQL_ALLOW_MUTATIONS=true`; applies to both `query` and `raw`
 - Schema cascade priority: GitLab (pinned SDL) > introspection (live) > `_service{sdl}` (federation) > SDL file (offline)
 - CI wheel matrix: Linux manylinux+musllinux x86_64+aarch64, macOS arm64+x86_64, Windows AMD64, py3.10–3.12 + sdist
+- GitHub repo stays `graphql-mcp` (rename deferred to REPO-01); PyPI dist is `generic-graphql-mcp`
+- GraphQL_AUTH_TOKEN in integration-tests/pytest.ini is a placeholder; real auth is ISSO password-grant
 
 ### Blockers
 
@@ -110,6 +127,6 @@ None currently.
 
 ## Session Continuity
 
-**Last session**: 2026-06-18 — v2.2 milestone completed
-**Next action**: Plan next milestone or maintenance activities
-**Context**: v2.2 Performance Excellence milestone successfully completed with all 18 requirements satisfied across 3 phases. The project now delivers exceptional performance, scalability, and resource efficiency.
+**Last session**: 2026-07-08 — v2.3 roadmap created (Phases 20-22)
+**Next action**: Plan Phase 20 — CI Hardening (`/gsd-plan-phase 20`)
+**Context**: v2.3 roadmap maps 10 requirements across 3 phases. CI hardening (Phase 20) unblocks the release workflow. Phase 21 ships the PyPI distribution via OIDC Trusted Publishing. Phase 22 wires the server against the live EORD staging federation gateway with Keycloak password-grant auth.
