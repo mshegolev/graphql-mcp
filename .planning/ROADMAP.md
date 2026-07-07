@@ -66,7 +66,7 @@
 
 ### ⬜ v2.3 Release & Staging Enablement
 
-- [ ] **Phase 20: CI Hardening** — Fix broken dev dependency and pytest config so the full async test suite installs and runs green on CI
+- [x] **Phase 20: CI Hardening** — Fix broken dev dependency and pytest config so the full async test suite installs and runs green on CI (completed 2026-07-08)
 - [ ] **Phase 21: PyPI Release** — Publish `generic-graphql-mcp` to PyPI via OIDC Trusted Publishing with tag-driven version provenance and a documented release runbook
 - [ ] **Phase 22: Staging Enablement** — Wire the MCP server to the EORD staging federation gateway with live ISSO bearer auth and validate connectivity via a smoke check
 
@@ -438,6 +438,6 @@ _See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for v1.0 phase det
 | 17. Advanced Performance Monitoring and Optimization | v2.2 | 6/6 | Complete | 2026-06-18 |
 | 18. Scalability Enhancements | v2.2 | 5/5 | Complete | 2026-06-18 |
 | 19. Resource Efficiency and Green Computing | v2.2 | 4/4 | Complete | 2026-06-18 |
-| 20. CI Hardening | v2.3 | 0/? | Not started | - |
+| 20. CI Hardening | v2.3 | direct | Complete | 2026-07-08 |
 | 21. PyPI Release | v2.3 | 0/? | Not started | - |
 | 22. Staging Enablement | v2.3 | 0/? | Not started | - |

@@ -23,9 +23,9 @@
 
 ### CI Hardening
 
-- [ ] **CIH-01**: `pip install .[dev]` resolves successfully — the nonexistent `pytest-syrupy` dependency is corrected to `syrupy` — verified by a clean dev install completing in CI.
-- [ ] **CIH-02**: Async tests are collected and pass — the pytest config section header is corrected so `asyncio_mode=auto` applies — verified by the full suite running with zero "async def not natively supported" errors.
-- [ ] **CIH-03**: The CI `lint-and-test` workflow is green on `main` across the Python version matrix — verified by a passing CI run.
+- [x] **CIH-01**: `pip install .[dev]` resolves successfully — the nonexistent `pytest-syrupy` dependency is corrected to `syrupy` — verified by a clean dev install completing in CI.
+- [x] **CIH-02**: Async tests are collected and pass — the pytest config section header is corrected so `asyncio_mode=auto` applies — verified by the full suite running with zero "async def not natively supported" errors.
+- [x] **CIH-03**: The CI `lint-and-test` workflow is green on `main` across the Python version matrix — verified by a passing CI run.
 
 ---
 
@@ -53,9 +53,9 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CIH-01 | Phase 20 | Pending |
-| CIH-02 | Phase 20 | Pending |
-| CIH-03 | Phase 20 | Pending |
+| CIH-01 | Phase 20 | Verified |
+| CIH-02 | Phase 20 | Verified |
+| CIH-03 | Phase 20 | Verified |
 | REL-01 | Phase 21 | Pending |
 | REL-02 | Phase 21 | Pending |
 | REL-03 | Phase 21 | Pending |
