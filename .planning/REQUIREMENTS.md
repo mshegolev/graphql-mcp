@@ -12,14 +12,14 @@
 
 - [ ] **REL-01**: A maintainer publishes `generic-graphql-mcp` to PyPI by pushing a release tag; the GitHub Actions "Publish to PyPI" workflow completes green via OIDC Trusted Publishing with no `invalid-publisher` — verified by a successful publish run and the version appearing on pypi.org.
 - [ ] **REL-02**: The published distribution version equals the release tag (`native/Cargo.toml` is the single version source, synced to the tag) — verified by the uploaded artifact version matching the pushed tag.
-- [ ] **REL-03**: A release runbook documents the pending-publisher claims (project, owner, repo, workflow, environment) and the rerun-on-failure command, so releases are reproducible without tribal knowledge — verified by the runbook existing in-repo (e.g. `docs/RELEASE.md`).
+- [x] **REL-03**: A release runbook documents the pending-publisher claims (project, owner, repo, workflow, environment) and the rerun-on-failure command, so releases are reproducible without tribal knowledge — verified by the runbook existing in-repo (e.g. `docs/RELEASE.md`).
 
 ### Staging Enablement
 
-- [ ] **STG-01**: An operator runs the MCP server locally in both `serve` (HTTP) and `stdio` modes pointed at the EORD staging federation gateway via a single documented launcher — verified by the server starting and `/ready` returning 200 (serve) against staging.
+- [x] **STG-01**: An operator runs the MCP server locally in both `serve` (HTTP) and `stdio` modes pointed at the EORD staging federation gateway via a single documented launcher — verified by the server starting and `/ready` returning 200 (serve) against staging.
 - [ ] **STG-02**: The server obtains a live bearer token from ISSO (Keycloak) via password-grant at startup (`client_id=eordui-stage`, `username=sa0000eord`); no placeholder or hardcoded token is committed — verified by a successful authenticated introspection against staging.
-- [ ] **STG-03**: Staging connection config (endpoint, proxy bypass, SSL verification) is derived reproducibly from `integration-tests/pytest.ini`, with credentials supplied via environment/secret store only — verified by launching from a clean checkout with only credentials in env.
-- [ ] **STG-04**: A staging smoke check confirms live connectivity — `introspect` returns Query fields and `list_subgraphs` returns federation subgraphs — verified by the smoke script exiting 0 against staging.
+- [x] **STG-03**: Staging connection config (endpoint, proxy bypass, SSL verification) is derived reproducibly from `integration-tests/pytest.ini`, with credentials supplied via environment/secret store only — verified by launching from a clean checkout with only credentials in env.
+- [x] **STG-04**: A staging smoke check confirms live connectivity — `introspect` returns Query fields and `list_subgraphs` returns federation subgraphs — verified by the smoke script exiting 0 against staging.
 
 ### CI Hardening
 
@@ -56,10 +56,10 @@
 | CIH-01 | Phase 20 | Verified |
 | CIH-02 | Phase 20 | Verified |
 | CIH-03 | Phase 20 | Verified |
-| REL-01 | Phase 21 | Pending |
+| REL-01 | Phase 21 | Pending (external) |
 | REL-02 | Phase 21 | Pending |
-| REL-03 | Phase 21 | Pending |
-| STG-01 | Phase 22 | Pending |
-| STG-02 | Phase 22 | Pending |
-| STG-03 | Phase 22 | Pending |
-| STG-04 | Phase 22 | Pending |
+| REL-03 | Phase 21 | Verified |
+| STG-01 | Phase 22 | Verified |
+| STG-02 | Phase 22 | Pending (external) |
+| STG-03 | Phase 22 | Verified |
+| STG-04 | Phase 22 | Verified |
