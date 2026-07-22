@@ -94,6 +94,59 @@ class TestAsyncExplicitClose:
         assert client._closed
 
 
+class TestIsEndpointConfigured:
+    """AsyncGraphQLClient.is_endpoint_configured() reflects transport presence."""
+
+    def test_true_when_transport_present(self) -> None:
+        client, _ = _make_async_client_with_mock_transport()
+        assert client.is_endpoint_configured() is True
+
+    def test_false_when_transport_none(self) -> None:
+        source = MockSchemaSource("test", sdl=SAMPLE_SDL)
+        service = SchemaService(sources=[source], ttl_seconds=0)
+        config = GraphQLConfig(allow_mutations=False)
+        client = AsyncGraphQLClient(schema_service=service, transport=None, config=config)
+        assert client.is_endpoint_configured() is False
+
+
+class TestCloseSync:
+    """AsyncGraphQLClient.close_sync() is a loop-safe, idempotent close."""
+
+    def test_no_running_loop_drives_async_close(self) -> None:
+        """With no running loop, close_sync() runs the async close to completion."""
+        client, mock_transport = _make_async_client_with_mock_transport()
+        client.close_sync()  # called from sync context (no running loop)
+        mock_transport.close.assert_awaited_once()
+        assert client._closed
+
+    def test_idempotent(self) -> None:
+        client, mock_transport = _make_async_client_with_mock_transport()
+        client.close_sync()
+        client.close_sync()
+        client.close_sync()
+        mock_transport.close.assert_awaited_once()
+
+    def test_no_transport_does_not_crash(self) -> None:
+        source = MockSchemaSource("test", sdl=SAMPLE_SDL)
+        service = SchemaService(sources=[source], ttl_seconds=0)
+        config = GraphQLConfig(allow_mutations=False)
+        client = AsyncGraphQLClient(schema_service=service, transport=None, config=config)
+        client.close_sync()  # must not raise
+        assert client._closed
+
+    async def test_inside_running_loop_uses_sync_fallback(self) -> None:
+        """Called from within a running loop, close_sync() must not use
+        asyncio.run(); it marks closed and best-effort closes the transport."""
+        client, mock_transport = _make_async_client_with_mock_transport()
+        # _client.close exists as a MagicMock, so the best-effort sync close fires.
+        client.close_sync()
+        assert client._closed
+        # The async close() coroutine must NOT have been awaited via asyncio.run
+        # (that would raise inside a running loop); the sync fallback ran instead.
+        mock_transport.close.assert_not_awaited()
+        mock_transport._client.close.assert_called_once()
+
+
 class TestAsyncAtexitRegistration:
     """from_env() registers atexit handler."""
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import atexit
 import contextlib
 import logging
@@ -159,16 +160,15 @@ class AsyncGraphQLClient:
             config=config,
         )
 
-        # atexit cannot await async close; use sync cleanup path.
-        # httpx.AsyncClient exposes a sync-safe close() via __del__,
-        # so we directly close the underlying client for cleanup.
+        # atexit cannot await async close; use the sync cleanup path. At
+        # interpreter shutdown there is no event loop to drive aclose(), so
+        # the connection pool is released best-effort (see
+        # _close_transport_sync) and otherwise reclaimed by GC.
         def _sync_cleanup() -> None:
             if not instance._closed:
                 instance._closed = True
-                if instance._transport is not None:
-                    with contextlib.suppress(Exception):
-                        instance._transport._client.close()
-                    logger.debug("Async transport cleaned up via atexit")
+                cls._close_transport_sync(instance._transport)
+                logger.debug("Async transport cleaned up via atexit")
 
         atexit.register(_sync_cleanup)
         return instance
@@ -308,6 +308,17 @@ class AsyncGraphQLClient:
         """Clear schema cache, forcing next access to re-fetch."""
         self._schema_service.invalidate()
 
+    def is_endpoint_configured(self) -> bool:
+        """Return True when a transport (query endpoint) is configured.
+
+        Public, stable accessor for whether the client can reach an upstream
+        endpoint. Query/entity operations return a ``TRANSPORT``-classed
+        "No endpoint configured" result when this is False, so callers can use
+        it to skip a liveness ping on a schema-only client without reaching
+        into private internals (e.g. ``client._transport``).
+        """
+        return self._transport is not None
+
     def _resolve_ws_endpoint(self) -> str:
         """Determine the WebSocket endpoint for subscriptions.
 
@@ -389,6 +400,49 @@ class AsyncGraphQLClient:
         if self._transport is not None:
             await self._transport.close()
             logger.debug("Async transport closed")
+
+    def close_sync(self) -> None:
+        """Loop-safe synchronous close. Idempotent.
+
+        Public counterpart to :meth:`close` for callers that are not in an
+        ``await`` position — notably sync teardown paths and code running
+        inside an already-running event loop (where ``asyncio.run`` raises).
+
+        - No running loop: performs a full async close via ``asyncio.run``.
+        - Running loop: cannot block on the coroutine, so it marks the client
+          closed and best-effort closes the underlying transport connection
+          synchronously (mirroring the ``atexit`` cleanup path). Errors are
+          suppressed so teardown never raises.
+        """
+        if self._closed:
+            return
+        try:
+            asyncio.get_running_loop()
+        except RuntimeError:
+            # No running loop — safe to drive the async close to completion.
+            asyncio.run(self.close())
+            return
+        # Inside a running loop: fall back to a best-effort synchronous close.
+        self._closed = True
+        self._close_transport_sync(self._transport)
+        logger.debug("Async transport closed (sync fallback)")
+
+    @staticmethod
+    def _close_transport_sync(transport: AsyncHttpTransport | None) -> None:
+        """Best-effort synchronous release of an async transport's client.
+
+        ``httpx.AsyncClient`` exposes only the async ``aclose``; it has no
+        supported synchronous close, so from a non-async context the
+        connection pool is reclaimed by garbage collection. If the underlying
+        client ever exposes a sync ``close`` it is used; otherwise this is a
+        safe no-op. Errors are suppressed so teardown never raises.
+        """
+        if transport is None:
+            return
+        close = getattr(transport._client, "close", None)
+        if callable(close):
+            with contextlib.suppress(Exception):
+                close()
 
     async def __aenter__(self) -> AsyncGraphQLClient:
         return self
