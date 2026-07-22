@@ -1,0 +1,52 @@
+name: Mutation Testing
+
+# Phase 16 SC6: a nightly scheduled run performs full mutation testing over
+# the domain layer and uploads the report as a CI artifact. Mutation testing
+# is slow, so it runs nightly (and on demand) rather than on every PR — the
+# per-PR quality gate is the lint + type-check + test matrix in ci.yml.
+on:
+  schedule:
+    # 02:30 UTC daily
+    - cron: "30 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mutmut:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install dependencies
+        run: pip install -e ".[dev,all]"
+
+      # mutmut config lives in setup.cfg ([mutmut]); it mutates the domain
+      # layer only. Do not fail the job on surviving mutants — this run
+      # publishes a report for review rather than blocking a pipeline.
+      - name: Run mutation testing
+        continue-on-error: true
+        run: mutmut run
+
+      - name: Collect results
+        if: always()
+        run: |
+          mutmut results > mutation-results.txt || true
+          mutmut junitxml > mutation-results.xml || true
+
+      - name: Upload mutation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-report
+          path: |
+            mutation-results.txt
+            mutation-results.xml
