@@ -68,7 +68,7 @@
 
 - [x] **Phase 20: CI Hardening** — Fix broken dev dependency and pytest config so the full async test suite installs and runs green on CI (completed 2026-07-08)
 - [ ] **Phase 21: PyPI Release** — Publish `generic-graphql-mcp` to PyPI via OIDC Trusted Publishing with tag-driven version provenance and a documented release runbook
-- [ ] **Phase 22: Staging Enablement** — Wire the MCP server to the EORD staging federation gateway with live ISSO bearer auth and validate connectivity via a smoke check
+- [ ] **Phase 22: Staging Enablement** — Wire the MCP server to a GraphQL federation gateway with live OAuth2 bearer auth and validate connectivity via a smoke check
 
 ---
 
@@ -400,16 +400,16 @@ _See [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md) for v1.0 phase det
 
 ### Phase 22: Staging Enablement
 
-**Goal**: A developer can run the MCP server locally in `serve` (HTTP) and `stdio` modes pointed at the EORD staging federation gateway, the server obtains a live ISSO bearer token at startup, and a smoke check confirms real connectivity to the live schema.
+**Goal**: A developer can run the MCP server locally in `serve` (HTTP) and `stdio` modes pointed at a GraphQL federation gateway, the server obtains a live OAuth2 bearer token at startup, and a smoke check confirms real connectivity to the live schema.
 **Depends on**: Phase 21 (PyPI release complete — staging wires a released or editable-install build against the live environment)
 **Requirements**: STG-01, STG-02, STG-03, STG-04
 
 **Success Criteria** (what must be TRUE):
 
-1. `generic-graphql-mcp serve` and `generic-graphql-mcp stdio` both start successfully with `GRAPHQL_ENDPOINT=https://gql.enp-stage.mts-corp.ru/` set; `/ready` returns 200 in serve mode when schema resolves.
-2. At startup the server performs a Keycloak password-grant (`client_id=eordui-stage`, `username=sa0000eord`) and injects the returned bearer token into all upstream requests — no placeholder or hardcoded token appears in any committed file.
-3. Staging connection config (endpoint URL, proxy bypass, SSL verification flag) is derived reproducibly from `integration-tests/pytest.ini`; credentials (`ISSO_PASSWORD` or equivalent) are supplied only via environment variables and are never committed.
-4. A smoke script (`scripts/staging_smoke.py` or equivalent) exits 0 when run against staging: `introspect()` returns at least one Query field and `list_subgraphs()` returns at least one named federation subgraph.
+1. `generic-graphql-mcp serve` and `generic-graphql-mcp stdio` both start successfully with `GRAPHQL_ENDPOINT=https://graphql.example.com/` set; `/ready` returns 200 in serve mode when schema resolves.
+2. At startup the server performs a OAuth2 password-grant (`client_id=my-client`, `username=acme-user`) and injects the returned bearer token into all upstream requests — no placeholder or hardcoded token appears in any committed file.
+3. Staging connection config (endpoint URL, proxy bypass, SSL verification flag) is derived reproducibly from environment variables; credentials (`OAUTH_PASSWORD` or equivalent) are supplied only via environment variables and are never committed.
+4. A smoke script (`scripts/smoke_check.py` or equivalent) exits 0 when run against staging: `introspect()` returns at least one Query field and `list_subgraphs()` returns at least one named federation subgraph.
 **Plans**: TBD
 **UI hint**: no
 

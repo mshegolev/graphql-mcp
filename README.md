@@ -131,6 +131,14 @@ All settings are read from environment variables with the `GRAPHQL_` prefix.
 | `GRAPHQL_SUBSCRIPTION_RATE_LIMIT` | `"10/minute"` | Rate limit for subscription connections per IP (`"{count}/{window}"`) |
 | `GRAPHQL_MAX_CONCURRENT_SUBSCRIPTIONS` | `100` | Maximum concurrent subscription connections per IP |
 
+### Local launcher
+
+`scripts/run_local.sh [serve|stdio|smoke]` runs the server (or a connectivity smoke check) against any endpoint.
+`GRAPHQL_ENDPOINT` is required (e.g. `https://graphql.example.com/`). For auth, set either `GRAPHQL_BEARER_TOKEN`
+or `OAUTH_TOKEN_URL` (e.g. `https://auth.example.com/realms/acme/protocol/openid-connect/token`), `OAUTH_CLIENT_ID`
+(e.g. `my-client`), `OAUTH_CLIENT_SECRET`, `OAUTH_USERNAME` (e.g. `acme-user`) and `OAUTH_PASSWORD` to fetch a token
+via the OAuth2 password grant. Set `GRAPHQL_NO_PROXY=true` to bypass HTTP proxies.
+
 ## API Documentation
 
 Detailed API documentation is available in the [OpenAPI specification](./openapi/openapi.yaml) which describes all REST endpoints exposed by the service.

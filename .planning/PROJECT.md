@@ -88,11 +88,11 @@ D1 гибрид C · D2 library-first · D5 Python+Rust · D7 hexagonal · D8 Fa
 
 ## Current Milestone: v2.3 Release & Staging Enablement
 
-**Goal:** Take generic-graphql-mcp from "builds locally" to "shipped and connectable" — a green PyPI publish via OIDC Trusted Publishing, a working local deployment wired to the EORD staging federation gateway, and a green CI.
+**Goal:** Take generic-graphql-mcp from "builds locally" to "shipped and connectable" — a green PyPI publish via OIDC Trusted Publishing, a working local deployment wired to a GraphQL federation gateway, and a green CI.
 
 **Target features:**
 - PyPI release: GitHub Actions OIDC Trusted Publishing configured so the release tag publishes `generic-graphql-mcp` cleanly (no `invalid-publisher`)
-- Staging enablement: local MCP server (`serve`/`stdio`) connected to `https://gql.enp-stage.mts-corp.ru/` with ISSO (Keycloak) password-grant bearer auth, config sourced from integration-tests/pytest.ini
+- Staging enablement: local MCP server (`serve`/`stdio`) connected to `https://graphql.example.com/` with OAuth2 (Keycloak-style) password-grant bearer auth, config sourced from environment variables
 - CI hardening: fix broken dev dependency `pytest-syrupy` → `syrupy` and `pytest.ini` section header `[tool:pytest]` → `[pytest]` so `asyncio_mode=auto` applies and async tests run green
 
 ## Validated Requirements

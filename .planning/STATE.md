@@ -106,8 +106,8 @@ Progress bar: `[ ] Phase 20` `[ ] Phase 21` `[ ] Phase 22` — 0/3 complete
 |------|----------|-----------|
 | 2026-07-08 | Renamed dist graphql-mcp → generic-graphql-mcp | PyPI name graphql-mcp taken; blocked Trusted Publishing |
 | 2026-07-08 | OIDC Trusted Publishing over API token | No long-lived PyPI secret in CI; per-repo pending publisher configured on pypi.org |
-| 2026-07-08 | ISSO Keycloak password-grant for staging auth | Real auth mechanism for EORD staging; `client_id=eordui-stage`, `username=sa0000eord` |
-| 2026-07-08 | Staging config sourced from integration-tests/pytest.ini | Single source of truth for connection parameters; credentials from env only |
+| 2026-07-08 | OAuth2 password-grant for staging auth | Generic OAuth2 password-grant example; `client_id=my-client`, `username=acme-user` |
+| 2026-07-08 | Staging config sourced from environment variables | Single source of truth for connection parameters; credentials from env only |
 | 2026-07-08 | `native/Cargo.toml` as single version source | Tag → Cargo.toml version → distribution version; avoids version drift |
 
 ### Key Constraints
@@ -117,7 +117,7 @@ Progress bar: `[ ] Phase 20` `[ ] Phase 21` `[ ] Phase 22` — 0/3 complete
 - Schema cascade priority: GitLab (pinned SDL) > introspection (live) > `_service{sdl}` (federation) > SDL file (offline)
 - CI wheel matrix: Linux manylinux+musllinux x86_64+aarch64, macOS arm64+x86_64, Windows AMD64, py3.10–3.12 + sdist
 - GitHub repo stays `graphql-mcp` (rename deferred to REPO-01); PyPI dist is `generic-graphql-mcp`
-- GraphQL_AUTH_TOKEN in integration-tests/pytest.ini is a placeholder; real auth is ISSO password-grant
+- Any static token in config is a placeholder; real auth is OAuth2 password-grant
 
 ### Blockers
 
@@ -129,4 +129,4 @@ None currently.
 
 **Last session**: 2026-07-08 — v2.3 roadmap created (Phases 20-22)
 **Next action**: Plan Phase 20 — CI Hardening (`/gsd-plan-phase 20`)
-**Context**: v2.3 roadmap maps 10 requirements across 3 phases. CI hardening (Phase 20) unblocks the release workflow. Phase 21 ships the PyPI distribution via OIDC Trusted Publishing. Phase 22 wires the server against the live EORD staging federation gateway with Keycloak password-grant auth.
+**Context**: v2.3 roadmap maps 10 requirements across 3 phases. CI hardening (Phase 20) unblocks the release workflow. Phase 21 ships the PyPI distribution via OIDC Trusted Publishing. Phase 22 wires the server against the live GraphQL federation gateway with OAuth2 password-grant auth.

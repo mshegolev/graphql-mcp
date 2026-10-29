@@ -1,7 +1,7 @@
 # generic-graphql-mcp v2.3 — Requirements
 
 **Milestone:** v2.3 Release & Staging Enablement
-**Scope:** PyPI publish via OIDC Trusted Publishing, local deployment wired to EORD staging with ISSO auth, and CI hardening (dependency + async config fixes).
+**Scope:** PyPI publish via OIDC Trusted Publishing, local deployment wired to a generic GraphQL endpoint with OAuth2 auth, and CI hardening (dependency + async config fixes).
 **Predecessor:** v2.2 Performance Excellence (completed 2026-06-18, phases 17-19)
 
 ---
@@ -16,9 +16,9 @@
 
 ### Staging Enablement
 
-- [x] **STG-01**: An operator runs the MCP server locally in both `serve` (HTTP) and `stdio` modes pointed at the EORD staging federation gateway via a single documented launcher — verified by the server starting and `/ready` returning 200 (serve) against staging.
-- [ ] **STG-02**: The server obtains a live bearer token from ISSO (Keycloak) via password-grant at startup (`client_id=eordui-stage`, `username=sa0000eord`); no placeholder or hardcoded token is committed — verified by a successful authenticated introspection against staging.
-- [x] **STG-03**: Staging connection config (endpoint, proxy bypass, SSL verification) is derived reproducibly from `integration-tests/pytest.ini`, with credentials supplied via environment/secret store only — verified by launching from a clean checkout with only credentials in env.
+- [x] **STG-01**: An operator runs the MCP server locally in both `serve` (HTTP) and `stdio` modes pointed at a GraphQL federation gateway via a single documented launcher — verified by the server starting and `/ready` returning 200 (serve) against staging.
+- [ ] **STG-02**: The server obtains a live bearer token from the OAuth2 provider (Keycloak) via password-grant at startup (`client_id=my-client`, `username=acme-user`); no placeholder or hardcoded token is committed — verified by a successful authenticated introspection against staging.
+- [x] **STG-03**: Staging connection config (endpoint, proxy bypass, SSL verification) is derived reproducibly from environment variables, with credentials supplied via environment/secret store only — verified by launching from a clean checkout with only credentials in env.
 - [x] **STG-04**: A staging smoke check confirms live connectivity — `introspect` returns Query fields and `list_subgraphs` returns federation subgraphs — verified by the smoke script exiting 0 against staging.
 
 ### CI Hardening

@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""Staging connectivity smoke check for generic-graphql-mcp.
+"""Connectivity smoke check for generic-graphql-mcp.
 
-Builds a GraphQLClient from the GRAPHQL_* environment (see scripts/run_staging.sh)
-and verifies live connectivity to the EORD staging federation gateway:
+Builds a GraphQLClient from the GRAPHQL_* environment (see scripts/run_local.sh)
+and verifies live connectivity to the configured GraphQL endpoint:
 
   1. introspect() returns at least one Query root field, and
   2. list_subgraphs() returns at least one named federation subgraph.
 
 Exit code 0 on success, 1 on any failure. Secrets are never printed.
 
-Run via: scripts/run_staging.sh smoke   (or set GRAPHQL_* + run directly)
+Run via: scripts/run_local.sh smoke   (or set GRAPHQL_* + run directly)
 """
 
 from __future__ import annotations
@@ -29,8 +29,8 @@ def main() -> int:
     except SchemaResolutionError as exc:
         print(f"FAIL introspect: schema unavailable — {exc}", file=sys.stderr)
         print(
-            "     (401 from the gateway means no/expired bearer token — set "
-            "ISSO_CLIENT_SECRET/ISSO_PASSWORD or GRAPHQL_BEARER_TOKEN)",
+            "     (401 from the endpoint means no/expired bearer token — set "
+            "OAUTH_* credentials or GRAPHQL_BEARER_TOKEN)",
             file=sys.stderr,
         )
         return 1
@@ -54,7 +54,7 @@ def main() -> int:
     names = ", ".join(sorted(s.name for s in subgraphs)[:8])
     print(f"OK  list_subgraphs: {len(subgraphs)} subgraphs — {names}")
 
-    print("staging smoke OK")
+    print("smoke check OK")
     return 0
 
 
