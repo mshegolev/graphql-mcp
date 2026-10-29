@@ -18,7 +18,9 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=8",
+    # <9.2: pytest 9.2 dropped Node._nodeid, which pytest-benchmark 5.3.0 still reads
+    # (AttributeError at benchmark fixture setup). Lift once pytest-benchmark ships a fix.
+    "pytest>=8,<9.2",
     "pytest-asyncio>=0.24",
     "pytest-benchmark>=4.0",
     "syrupy>=4.0",
