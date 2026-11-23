@@ -13,7 +13,7 @@ import asyncio
 import contextlib
 import json
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 from generic_graphql_mcp.domain.models import ErrorClass, QueryResult
 
@@ -23,11 +23,14 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 try:
+    ws_connect: Any = None
     import websockets  # type: ignore[import-untyped]
-    from websockets.asyncio.client import connect as ws_connect  # type: ignore[import-untyped]
+    from websockets.asyncio.client import connect as _ws_connect  # type: ignore[import-untyped]
+
+    ws_connect = _ws_connect
 except ImportError:
     websockets = None  # type: ignore[assignment]
-    ws_connect = None  # type: ignore[assignment]
+    ws_connect = None
 
 _WS_IMPORT_ERROR = (
     "websockets is required for subscription support. Install it with: pip install generic-graphql-mcp[subscriptions]"
@@ -68,7 +71,7 @@ class UpstreamWSTransport:
         """Establish WS connection, perform graphql-transport-ws handshake, start reader."""
         self._ws = await ws_connect(
             self._ws_endpoint,
-            subprotocols=["graphql-transport-ws"],
+            subprotocols=cast("Any", ["graphql-transport-ws"]),
             additional_headers=self._extra_headers or {},
             open_timeout=self._timeout,
             close_timeout=self._timeout,

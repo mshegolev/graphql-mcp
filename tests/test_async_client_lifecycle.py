@@ -6,6 +6,7 @@ Async counterpart to test_client_lifecycle.py.
 
 from __future__ import annotations
 
+import asyncio
 import atexit
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -134,17 +135,14 @@ class TestCloseSync:
         client.close_sync()  # must not raise
         assert client._closed
 
-    async def test_inside_running_loop_uses_sync_fallback(self) -> None:
-        """Called from within a running loop, close_sync() must not use
-        asyncio.run(); it marks closed and best-effort closes the transport."""
+    async def test_inside_running_loop_schedules_async_close(self) -> None:
+        """A running loop completes the async transport close after close_sync returns."""
         client, mock_transport = _make_async_client_with_mock_transport()
-        # _client.close exists as a MagicMock, so the best-effort sync close fires.
         client.close_sync()
-        assert client._closed
-        # The async close() coroutine must NOT have been awaited via asyncio.run
-        # (that would raise inside a running loop); the sync fallback ran instead.
         mock_transport.close.assert_not_awaited()
-        mock_transport._client.close.assert_called_once()
+        await asyncio.sleep(0)
+        mock_transport.close.assert_awaited_once()
+        assert client._closed
 
 
 class TestAsyncAtexitRegistration:

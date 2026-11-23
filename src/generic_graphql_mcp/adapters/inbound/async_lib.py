@@ -71,6 +71,7 @@ class AsyncGraphQLClient:
         self._supergraph_source = config.supergraph_source if config else "auto"
         self._analyzer = SchemaAnalyzer()
         self._closed = False
+        self._close_task: asyncio.Task[None] | None = None
         # Audit context — set per-request by REST adapter, defaults for lib usage
         self._audit_caller_ip: str = "local"
         self._audit_caller_identity: str = "anonymous"
@@ -409,23 +410,30 @@ class AsyncGraphQLClient:
         inside an already-running event loop (where ``asyncio.run`` raises).
 
         - No running loop: performs a full async close via ``asyncio.run``.
-        - Running loop: cannot block on the coroutine, so it marks the client
-          closed and best-effort closes the underlying transport connection
-          synchronously (mirroring the ``atexit`` cleanup path). Errors are
-          suppressed so teardown never raises.
+        - Running loop: schedules :meth:`close` on that loop and returns;
+          use ``await close()`` when the caller must wait for teardown.
         """
         if self._closed:
             return
         try:
-            asyncio.get_running_loop()
+            loop = asyncio.get_running_loop()
         except RuntimeError:
             # No running loop — safe to drive the async close to completion.
             asyncio.run(self.close())
             return
-        # Inside a running loop: fall back to a best-effort synchronous close.
-        self._closed = True
-        self._close_transport_sync(self._transport)
-        logger.debug("Async transport closed (sync fallback)")
+        if self._close_task is None:
+            self._close_task = loop.create_task(self.close())
+            self._close_task.add_done_callback(self._finish_scheduled_close)
+
+    def _finish_scheduled_close(self, task: asyncio.Task[None]) -> None:
+        if self._close_task is task:
+            self._close_task = None
+        try:
+            task.result()
+        except asyncio.CancelledError:
+            logger.debug("Scheduled async transport close was cancelled")
+        except Exception:
+            logger.exception("Scheduled async transport close failed")
 
     @staticmethod
     def _close_transport_sync(transport: AsyncHttpTransport | None) -> None:
