@@ -6,6 +6,7 @@ Async counterpart to test_client_lifecycle.py.
 
 from __future__ import annotations
 
+import asyncio
 import atexit
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -91,6 +92,56 @@ class TestAsyncExplicitClose:
         client, _ = _make_async_client_with_mock_transport()
         assert not client._closed
         await client.close()
+        assert client._closed
+
+
+class TestIsEndpointConfigured:
+    """AsyncGraphQLClient.is_endpoint_configured() reflects transport presence."""
+
+    def test_true_when_transport_present(self) -> None:
+        client, _ = _make_async_client_with_mock_transport()
+        assert client.is_endpoint_configured() is True
+
+    def test_false_when_transport_none(self) -> None:
+        source = MockSchemaSource("test", sdl=SAMPLE_SDL)
+        service = SchemaService(sources=[source], ttl_seconds=0)
+        config = GraphQLConfig(allow_mutations=False)
+        client = AsyncGraphQLClient(schema_service=service, transport=None, config=config)
+        assert client.is_endpoint_configured() is False
+
+
+class TestCloseSync:
+    """AsyncGraphQLClient.close_sync() is a loop-safe, idempotent close."""
+
+    def test_no_running_loop_drives_async_close(self) -> None:
+        """With no running loop, close_sync() runs the async close to completion."""
+        client, mock_transport = _make_async_client_with_mock_transport()
+        client.close_sync()  # called from sync context (no running loop)
+        mock_transport.close.assert_awaited_once()
+        assert client._closed
+
+    def test_idempotent(self) -> None:
+        client, mock_transport = _make_async_client_with_mock_transport()
+        client.close_sync()
+        client.close_sync()
+        client.close_sync()
+        mock_transport.close.assert_awaited_once()
+
+    def test_no_transport_does_not_crash(self) -> None:
+        source = MockSchemaSource("test", sdl=SAMPLE_SDL)
+        service = SchemaService(sources=[source], ttl_seconds=0)
+        config = GraphQLConfig(allow_mutations=False)
+        client = AsyncGraphQLClient(schema_service=service, transport=None, config=config)
+        client.close_sync()  # must not raise
+        assert client._closed
+
+    async def test_inside_running_loop_schedules_async_close(self) -> None:
+        """A running loop completes the async transport close after close_sync returns."""
+        client, mock_transport = _make_async_client_with_mock_transport()
+        client.close_sync()
+        mock_transport.close.assert_not_awaited()
+        await asyncio.sleep(0)
+        mock_transport.close.assert_awaited_once()
         assert client._closed
 
 

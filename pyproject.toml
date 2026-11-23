@@ -29,6 +29,8 @@ dev = [
     "pact-python>=1.0",
     "respx>=0.22",
     "ruff>=0.15",
+    "mypy>=1.10",
+    "mutmut>=2.4,<3",
     "pytest-cov>=5",
     "httpx[cli]>=0.28",
     "websockets>=12,<14",
@@ -75,6 +77,14 @@ src = ["src"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM", "TCH"]
+
+[tool.mypy]
+python_version = "3.10"
+files = ["src"]
+# Optional third-party integrations (mcp, fastapi, opentelemetry, click,
+# websockets, pact) and the compiled Rust extension (_native) ship without
+# stubs; the type-check gate validates our own annotations, not theirs.
+ignore_missing_imports = true
 
 [tool.coverage.run]
 branch = true

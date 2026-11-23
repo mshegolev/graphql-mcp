@@ -1,7 +1,7 @@
 {
   "name": "generic-graphql-mcp",
   "description": "Generic read-only GraphQL MCP server — schema discovery, query execution, error typing, federation ownership and entity resolution",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "tools": [
     {
       "name": "query",
